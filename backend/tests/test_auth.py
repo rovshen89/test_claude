@@ -51,3 +51,38 @@ async def test_login_wrong_password_returns_401(client):
         "password": "wrong",
     })
     assert response.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_login_nonexistent_email_returns_401(client):
+    response = await client.post("/auth/login", json={
+        "email": "nobody@example.com",
+        "password": "whatever",
+    })
+    assert response.status_code == 401
+    assert "detail" in response.json()
+
+
+@pytest.mark.asyncio
+async def test_login_wrong_password_has_error_detail(client):
+    await client.post("/auth/register", json={
+        "email": "detail@example.com",
+        "password": "correct",
+        "role": "consumer",
+    })
+    response = await client.post("/auth/login", json={
+        "email": "detail@example.com",
+        "password": "wrong",
+    })
+    assert response.status_code == 401
+    assert "detail" in response.json()
+
+
+@pytest.mark.asyncio
+async def test_register_invalid_role_returns_422(client):
+    response = await client.post("/auth/register", json={
+        "email": "hacker@example.com",
+        "password": "pass",
+        "role": "superuser",
+    })
+    assert response.status_code == 422
