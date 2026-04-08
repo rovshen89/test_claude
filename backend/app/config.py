@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     database_url: str = "postgresql+asyncpg://postgres:postgres@localhost/furniture_constructor"
-    secret_key: str = Field(default="change-me-in-production", min_length=32)
+    secret_key: str = Field(default="change-me-in-production-replace-this-key", min_length=32)
 
 
 settings = Settings()
