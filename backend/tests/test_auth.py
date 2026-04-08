@@ -17,7 +17,7 @@ async def test_register_success(client):
 
 @pytest.mark.asyncio
 async def test_register_duplicate_email_returns_400(client):
-    payload = {"email": "dup@example.com", "password": "pass", "role": "consumer"}
+    payload = {"email": "dup@example.com", "password": "password", "role": "consumer"}
     await client.post("/auth/register", json=payload)
     response = await client.post("/auth/register", json=payload)
     assert response.status_code == 400
@@ -28,12 +28,12 @@ async def test_register_duplicate_email_returns_400(client):
 async def test_login_success(client):
     await client.post("/auth/register", json={
         "email": "login@example.com",
-        "password": "secret",
+        "password": "password",
         "role": "designer",
     })
     response = await client.post("/auth/login", json={
         "email": "login@example.com",
-        "password": "secret",
+        "password": "password",
     })
     assert response.status_code == 200
     assert "access_token" in response.json()
@@ -43,7 +43,7 @@ async def test_login_success(client):
 async def test_login_wrong_password_returns_401(client):
     await client.post("/auth/register", json={
         "email": "wrong@example.com",
-        "password": "correct",
+        "password": "password",
         "role": "consumer",
     })
     response = await client.post("/auth/login", json={
@@ -67,7 +67,7 @@ async def test_login_nonexistent_email_returns_401(client):
 async def test_login_wrong_password_has_error_detail(client):
     await client.post("/auth/register", json={
         "email": "detail@example.com",
-        "password": "correct",
+        "password": "password",
         "role": "consumer",
     })
     response = await client.post("/auth/login", json={
@@ -82,7 +82,7 @@ async def test_login_wrong_password_has_error_detail(client):
 async def test_register_invalid_role_returns_422(client):
     response = await client.post("/auth/register", json={
         "email": "hacker@example.com",
-        "password": "pass",
+        "password": "password",
         "role": "superuser",
     })
     assert response.status_code == 422

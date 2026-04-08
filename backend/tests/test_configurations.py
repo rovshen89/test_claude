@@ -14,8 +14,8 @@ _WARDROBE_SCHEMA = {
 async def _setup(client) -> tuple[dict, str, str]:
     """Returns auth headers, project_id, furniture_type_id."""
     email = f"cfg_{_uuid.uuid4().hex[:8]}@example.com"
-    await client.post("/auth/register", json={"email": email, "password": "pass", "role": "manufacturer"})
-    r = await client.post("/auth/login", json={"email": email, "password": "pass"})
+    await client.post("/auth/register", json={"email": email, "password": "password", "role": "manufacturer"})
+    r = await client.post("/auth/login", json={"email": email, "password": "password"})
     headers = {"Authorization": f"Bearer {r.json()['access_token']}"}
 
     r = await client.post("/projects", json={"name": "Project"}, headers=headers)

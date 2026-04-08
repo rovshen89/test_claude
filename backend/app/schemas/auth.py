@@ -2,14 +2,14 @@
 from typing import Literal, Optional
 from uuid import UUID
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 UserRole = Literal["admin", "manufacturer", "designer", "consumer"]
 
 
 class RegisterRequest(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(min_length=8)
     role: UserRole = "consumer"
     tenant_id: Optional[UUID] = None
 

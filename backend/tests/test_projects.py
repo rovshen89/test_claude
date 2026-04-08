@@ -3,8 +3,8 @@ import pytest
 
 
 async def _register_and_login(client, email: str, role: str = "designer") -> dict:
-    await client.post("/auth/register", json={"email": email, "password": "pass", "role": role})
-    r = await client.post("/auth/login", json={"email": email, "password": "pass"})
+    await client.post("/auth/register", json={"email": email, "password": "password", "role": role})
+    r = await client.post("/auth/login", json={"email": email, "password": "password"})
     return {"Authorization": f"Bearer {r.json()['access_token']}"}
 
 

@@ -38,7 +38,7 @@ async def create_furniture_type(
     ft = FurnitureType(
         category=body.category,
         schema=body.schema,
-        tenant_id=body.tenant_id if body.tenant_id else user.tenant_id,
+        tenant_id=body.tenant_id if user.role == "admin" else user.tenant_id,
     )
     db.add(ft)
     await db.commit()
