@@ -1,0 +1,11 @@
+# backend/app/api/router.py
+from fastapi import APIRouter
+
+api_router = APIRouter()
+
+# Routers are registered here as they are implemented in later tasks:
+# from app.api import auth, projects, furniture_types, configurations
+# api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
+# api_router.include_router(projects.router, prefix="/projects", tags=["projects"])
+# api_router.include_router(furniture_types.router, prefix="/furniture-types", tags=["furniture-types"])
+# api_router.include_router(configurations.router, prefix="/configurations", tags=["configurations"])
