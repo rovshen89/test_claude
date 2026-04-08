@@ -2,16 +2,20 @@
 import uuid
 from typing import Optional
 
-from sqlalchemy import JSON, ForeignKey, Text, Uuid
+from sqlalchemy import CheckConstraint, JSON, ForeignKey, Text, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base
 
-VALID_STATUSES = {"draft", "confirmed", "in_production", "completed"}
-
 
 class Configuration(Base):
     __tablename__ = "configurations"
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('draft','confirmed','in_production','completed')",
+            name="ck_configurations_status",
+        ),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
     project_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("projects.id"))

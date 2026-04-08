@@ -1,5 +1,6 @@
 # backend/tests/test_configurations.py
 import pytest
+import uuid as _uuid
 
 _WARDROBE_SCHEMA = {
     "category": "wardrobe",
@@ -10,9 +11,9 @@ _WARDROBE_SCHEMA = {
 }
 
 
-async def _setup(client) -> tuple:
-    """Returns (headers, project_id, furniture_type_id)."""
-    email = "cfg@example.com"
+async def _setup(client) -> tuple[dict, str, str]:
+    """Returns auth headers, project_id, furniture_type_id."""
+    email = f"cfg_{_uuid.uuid4().hex[:8]}@example.com"
     await client.post("/auth/register", json={"email": email, "password": "pass", "role": "manufacturer"})
     r = await client.post("/auth/login", json={"email": email, "password": "pass"})
     headers = {"Authorization": f"Bearer {r.json()['access_token']}"}
@@ -102,4 +103,21 @@ async def test_confirm_already_confirmed_returns_400(client):
     await client.post(f"/configurations/{config_id}/confirm", headers=headers)
 
     response = await client.post(f"/configurations/{config_id}/confirm", headers=headers)
+    assert response.status_code == 400
+
+
+@pytest.mark.asyncio
+async def test_update_confirmed_configuration_returns_400(client):
+    headers, project_id, ft_id = await _setup(client)
+    r = await client.post("/configurations", json={
+        "project_id": project_id,
+        "furniture_type_id": ft_id,
+        "applied_config": {"width": 1200},
+    }, headers=headers)
+    config_id = r.json()["id"]
+    await client.post(f"/configurations/{config_id}/confirm", headers=headers)
+
+    response = await client.put(f"/configurations/{config_id}", json={
+        "applied_config": {"width": 1500},
+    }, headers=headers)
     assert response.status_code == 400

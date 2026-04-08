@@ -55,4 +55,7 @@ async def get_furniture_type(
     ft = await db.get(FurnitureType, ft_id)
     if not ft:
         raise HTTPException(status_code=404, detail="Furniture type not found")
+    # Tenant isolation: only global templates or own tenant's types are accessible
+    if ft.tenant_id is not None and ft.tenant_id != user.tenant_id:
+        raise HTTPException(status_code=404, detail="Furniture type not found")
     return ft
