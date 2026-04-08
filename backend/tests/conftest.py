@@ -4,7 +4,7 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.models.base import Base
-from app.models import Tenant, User  # noqa: F401 — ensures all models are registered with Base
+from app.models import Tenant, User, Project  # noqa: F401 — ensures all models are registered with Base
 from app.main import app
 from app.core.deps import get_db
 
