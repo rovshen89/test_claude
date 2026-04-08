@@ -21,3 +21,27 @@ def test_decode_invalid_token_raises():
     import jwt
     with pytest.raises(jwt.InvalidTokenError):
         decode_token("not.a.valid.token")
+
+
+def test_expired_token_raises():
+    import jwt as pyjwt
+    from datetime import datetime, timedelta, timezone
+    from app.config import settings
+    payload = {
+        "sub": "u1",
+        "role": "designer",
+        "exp": datetime.now(timezone.utc) - timedelta(seconds=1),
+    }
+    expired_token = pyjwt.encode(payload, settings.secret_key, algorithm="HS256")
+    with pytest.raises(pyjwt.InvalidTokenError):
+        decode_token(expired_token)
+
+
+def test_wrong_secret_key_raises():
+    import jwt as pyjwt
+    from app.config import settings
+    payload = {"sub": "u1", "role": "designer"}
+    # Sign with a different key
+    bad_token = pyjwt.encode(payload, "a-completely-different-secret-key-abcdef", algorithm="HS256")
+    with pytest.raises(pyjwt.InvalidTokenError):
+        decode_token(bad_token)
