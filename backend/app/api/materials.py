@@ -1,4 +1,5 @@
 # backend/app/api/materials.py
+import asyncio
 import json
 import uuid as _uuid
 from decimal import Decimal
@@ -71,6 +72,7 @@ async def upload_material(
     thickness_options: str = Form(...),  # JSON string, e.g. "[16, 18, 22]"
     edgebanding_price_per_mm: Optional[float] = Form(None),
     grain_direction: str = Form("none"),
+    tenant_id: Optional[str] = Form(None),  # admin only: None creates global catalog material
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_role("admin", "manufacturer")),
@@ -93,10 +95,25 @@ async def upload_material(
     # Upload each PBR map to S3 under materials/{mat_id}/
     mat_id = _uuid.uuid4()
     s3_urls = {}
-    for map_name, data in pbr_maps.items():
-        key = f"materials/{mat_id}/{map_name}"
-        upload_bytes(key, data, content_type="image/png")
-        s3_urls[map_name] = get_public_url(key)
+    try:
+        for map_name, data in pbr_maps.items():
+            key = f"materials/{mat_id}/{map_name}"
+            await asyncio.to_thread(upload_bytes, key, data, "image/png")
+            s3_urls[map_name] = get_public_url(key)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Storage upload failed: {exc}")
+
+    # Admin can specify tenant_id; None means global catalog
+    effective_tenant_id = user.tenant_id
+    if user.role == "admin":
+        if tenant_id is not None:
+            try:
+                from uuid import UUID as _UUID
+                effective_tenant_id = _UUID(tenant_id)
+            except ValueError:
+                raise HTTPException(status_code=422, detail="Invalid tenant_id UUID format")
+        else:
+            effective_tenant_id = None
 
     mat = Material(
         id=mat_id,
@@ -104,10 +121,10 @@ async def upload_material(
         name=name,
         sku=sku,
         thickness_options=thickness_list,
-        price_per_m2=price_per_m2,
-        edgebanding_price_per_mm=edgebanding_price_per_mm,
+        price_per_m2=Decimal(str(price_per_m2)),
+        edgebanding_price_per_mm=Decimal(str(edgebanding_price_per_mm)) if edgebanding_price_per_mm is not None else None,
         grain_direction=grain_direction,
-        tenant_id=user.tenant_id,
+        tenant_id=effective_tenant_id,
         s3_albedo=s3_urls.get("albedo.png"),
         s3_normal=s3_urls.get("normal.png"),
         s3_roughness=s3_urls.get("roughness.png"),
