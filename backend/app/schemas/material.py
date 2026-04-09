@@ -1,6 +1,6 @@
 # backend/app/schemas/material.py
 from decimal import Decimal
-from typing import Any, List, Optional
+from typing import List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, field_serializer
