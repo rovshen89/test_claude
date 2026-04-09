@@ -58,4 +58,4 @@ def test_get_public_url_strips_leading_slash(monkeypatch):
     monkeypatch.setattr(settings, "s3_bucket", "my-bucket")
     monkeypatch.setattr(settings, "aws_region", "us-east-1")
     url = get_public_url("/materials/abc/albedo.png")  # leading slash
-    assert "//" not in url.replace("https://", "")
+    assert url == "https://my-bucket.s3.us-east-1.amazonaws.com/materials/abc/albedo.png"
