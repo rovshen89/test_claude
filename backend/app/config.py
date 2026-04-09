@@ -1,4 +1,6 @@
 # backend/app/config.py
+from typing import Optional
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -8,6 +10,13 @@ class Settings(BaseSettings):
 
     database_url: str = "postgresql+asyncpg://postgres:postgres@localhost/furniture_constructor"
     secret_key: str = Field(default="change-me-in-production-replace-this-key", min_length=32)
+
+    # S3-compatible storage
+    s3_bucket: str = "furniture-constructor"
+    s3_access_key: str = "test"
+    s3_secret_key: str = "test"
+    s3_endpoint_url: Optional[str] = None  # None = real AWS; set for MinIO/localstack
+    aws_region: str = "us-east-1"
 
 
 settings = Settings()
