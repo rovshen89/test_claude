@@ -1,13 +1,17 @@
 # backend/app/api/materials.py
+import json
+import uuid as _uuid
 from decimal import Decimal
 from typing import List, Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile, status
 from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.deps import get_current_user, get_db, require_role
+from app.core.pbr import validate_and_extract_pbr_zip
+from app.core.storage import get_public_url, upload_bytes
 from app.models.material import Material
 from app.models.user import User
 from app.schemas.material import MaterialCreate, MaterialResponse, MaterialUpdate
@@ -51,6 +55,63 @@ async def create_material(
         edgebanding_price_per_mm=body.edgebanding_price_per_mm,
         grain_direction=body.grain_direction,
         tenant_id=body.tenant_id if user.role == "admin" else user.tenant_id,
+    )
+    db.add(mat)
+    await db.commit()
+    await db.refresh(mat)
+    return mat
+
+
+@router.post("/upload", response_model=MaterialResponse, status_code=status.HTTP_201_CREATED)
+async def upload_material(
+    name: str = Form(...),
+    sku: str = Form(...),
+    category: str = Form(...),
+    price_per_m2: float = Form(...),
+    thickness_options: str = Form(...),  # JSON string, e.g. "[16, 18, 22]"
+    edgebanding_price_per_mm: Optional[float] = Form(None),
+    grain_direction: str = Form("none"),
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(require_role("admin", "manufacturer")),
+):
+    # Parse thickness_options JSON string
+    try:
+        thickness_list = json.loads(thickness_options)
+        if not isinstance(thickness_list, list):
+            raise ValueError("thickness_options must be a JSON array")
+    except (ValueError, TypeError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+
+    # Read and validate the ZIP
+    zip_bytes = await file.read()
+    try:
+        pbr_maps = validate_and_extract_pbr_zip(zip_bytes)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+
+    # Upload each PBR map to S3 under materials/{mat_id}/
+    mat_id = _uuid.uuid4()
+    s3_urls = {}
+    for map_name, data in pbr_maps.items():
+        key = f"materials/{mat_id}/{map_name}"
+        upload_bytes(key, data, content_type="image/png")
+        s3_urls[map_name] = get_public_url(key)
+
+    mat = Material(
+        id=mat_id,
+        category=category,
+        name=name,
+        sku=sku,
+        thickness_options=thickness_list,
+        price_per_m2=price_per_m2,
+        edgebanding_price_per_mm=edgebanding_price_per_mm,
+        grain_direction=grain_direction,
+        tenant_id=user.tenant_id,
+        s3_albedo=s3_urls.get("albedo.png"),
+        s3_normal=s3_urls.get("normal.png"),
+        s3_roughness=s3_urls.get("roughness.png"),
+        s3_ao=s3_urls.get("ao.png"),
     )
     db.add(mat)
     await db.commit()

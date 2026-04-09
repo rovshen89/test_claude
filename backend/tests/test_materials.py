@@ -1,4 +1,10 @@
+import io
+import zipfile
+
 import pytest
+from PIL import Image
+
+from app.config import settings
 
 
 _MATERIAL_BASE = {
@@ -101,3 +107,125 @@ async def test_get_nonexistent_material_returns_404(client):
         "/materials/00000000-0000-0000-0000-000000000000", headers=headers
     )
     assert response.status_code == 404
+
+
+def _make_pbr_zip(width: int = 1024, height: int = 1024) -> bytes:
+    """Create a valid 4-map PBR ZIP with synthetic PNG images."""
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as zf:
+        for name in ["albedo.png", "normal.png", "roughness.png", "ao.png"]:
+            img_buf = io.BytesIO()
+            Image.new("RGB", (width, height), color=(128, 128, 128)).save(img_buf, format="PNG")
+            zf.writestr(name, img_buf.getvalue())
+    return buf.getvalue()
+
+
+@pytest.mark.asyncio
+async def test_upload_material_creates_record(client, s3_mock):
+    headers = await _register_and_login(client, "upl1@example.com")
+    zip_data = _make_pbr_zip()
+
+    response = await client.post(
+        "/materials/upload",
+        headers=headers,
+        data={
+            "name": "Oak Veneer PBR",
+            "sku": "OAK-V-PBR",
+            "category": "veneer",
+            "price_per_m2": 28.00,
+            "thickness_options": "[6, 8, 12]",
+            "grain_direction": "vertical",
+        },
+        files={"file": ("textures.zip", zip_data, "application/zip")},
+    )
+    assert response.status_code == 201
+    data = response.json()
+    assert data["name"] == "Oak Veneer PBR"
+    assert data["s3_albedo"] is not None
+    assert data["s3_normal"] is not None
+    assert data["s3_roughness"] is not None
+    assert data["s3_ao"] is not None
+
+
+@pytest.mark.asyncio
+async def test_upload_material_stores_textures_in_s3(client, s3_mock):
+    headers = await _register_and_login(client, "upl2@example.com")
+    zip_data = _make_pbr_zip()
+
+    r = await client.post(
+        "/materials/upload",
+        headers=headers,
+        data={
+            "name": "Test Mat",
+            "sku": "TST-001",
+            "category": "mdf",
+            "price_per_m2": 10.0,
+            "thickness_options": "[18]",
+        },
+        files={"file": ("textures.zip", zip_data, "application/zip")},
+    )
+    assert r.status_code == 201
+    mat_id = r.json()["id"]
+
+    # Verify all 4 texture objects exist in mocked S3
+    objects = s3_mock.list_objects_v2(Bucket=settings.s3_bucket, Prefix=f"materials/{mat_id}/")
+    keys = [o["Key"] for o in objects.get("Contents", [])]
+    assert any("albedo.png" in k for k in keys)
+    assert any("normal.png" in k for k in keys)
+    assert any("roughness.png" in k for k in keys)
+    assert any("ao.png" in k for k in keys)
+
+
+@pytest.mark.asyncio
+async def test_upload_bad_zip_returns_422(client, s3_mock):
+    headers = await _register_and_login(client, "upl3@example.com")
+    response = await client.post(
+        "/materials/upload",
+        headers=headers,
+        data={
+            "name": "Bad Mat",
+            "sku": "BAD-001",
+            "category": "laminate",
+            "price_per_m2": 10.0,
+            "thickness_options": "[18]",
+        },
+        files={"file": ("bad.zip", b"not-a-zip", "application/zip")},
+    )
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_upload_low_res_zip_returns_422(client, s3_mock):
+    headers = await _register_and_login(client, "upl4@example.com")
+    zip_data = _make_pbr_zip(width=512, height=512)
+    response = await client.post(
+        "/materials/upload",
+        headers=headers,
+        data={
+            "name": "Low Res",
+            "sku": "LOW-001",
+            "category": "laminate",
+            "price_per_m2": 10.0,
+            "thickness_options": "[18]",
+        },
+        files={"file": ("textures.zip", zip_data, "application/zip")},
+    )
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_consumer_cannot_upload_material(client, s3_mock):
+    headers = await _register_and_login(client, "upl5@example.com", role="consumer")
+    response = await client.post(
+        "/materials/upload",
+        headers=headers,
+        data={
+            "name": "X",
+            "sku": "X",
+            "category": "laminate",
+            "price_per_m2": 10.0,
+            "thickness_options": "[18]",
+        },
+        files={"file": ("textures.zip", b"data", "application/zip")},
+    )
+    assert response.status_code == 403
