@@ -83,7 +83,7 @@ async def update_material(
         raise HTTPException(status_code=404, detail="Material not found")
     _check_tenant_access(mat, user)
 
-    for field, value in body.model_dump(exclude_none=True).items():
+    for field, value in body.model_dump(exclude_unset=True).items():
         setattr(mat, field, value)
 
     await db.commit()
