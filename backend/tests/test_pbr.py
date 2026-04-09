@@ -63,12 +63,9 @@ def test_returns_bytes_for_each_map():
 
 def test_mixed_case_filenames_are_normalised():
     """ZIP with uppercase filenames should still work."""
-    img = Image.new("RGB", (1024, 1024), color=(128, 128, 128))
     maps = {
-        "Albedo.PNG": img,
-        "Normal.PNG": img,
-        "Roughness.PNG": img,
-        "AO.PNG": img,
+        name: Image.new("RGB", (1024, 1024), color=(128, 128, 128))
+        for name in ("Albedo.PNG", "Normal.PNG", "Roughness.PNG", "AO.PNG")
     }
     zip_bytes = _make_zip(maps)
     result = validate_and_extract_pbr_zip(zip_bytes)
