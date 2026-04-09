@@ -1,10 +1,13 @@
 # backend/tests/conftest.py
+import boto3
 import pytest
 from httpx import ASGITransport, AsyncClient
+from moto import mock_aws
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
+from app.config import settings
 from app.models.base import Base
-from app.models import Tenant, User, Project, FurnitureType, Configuration  # noqa: F401 — ensures all models are registered with Base
+from app.models import Tenant, User, Project, FurnitureType, Configuration, Material  # noqa: F401
 from app.main import app
 from app.core.deps import get_db
 
@@ -40,3 +43,18 @@ async def client(db_session: AsyncSession):
             yield ac
     finally:
         del app.dependency_overrides[get_db]
+
+
+@pytest.fixture
+def s3_mock():
+    """Provide a moto-mocked S3 environment with the configured bucket created."""
+    with mock_aws():
+        s3 = boto3.client(
+            "s3",
+            endpoint_url=settings.s3_endpoint_url,
+            region_name=settings.aws_region,
+            aws_access_key_id=settings.s3_access_key,
+            aws_secret_access_key=settings.s3_secret_key,
+        )
+        s3.create_bucket(Bucket=settings.s3_bucket)
+        yield s3
