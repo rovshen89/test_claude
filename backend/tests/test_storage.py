@@ -13,9 +13,10 @@ def _s3():
     with mock_aws():
         s3 = boto3.client(
             "s3",
-            region_name="us-east-1",
-            aws_access_key_id="test",
-            aws_secret_access_key="test",
+            endpoint_url=settings.s3_endpoint_url,
+            region_name=settings.aws_region,
+            aws_access_key_id=settings.s3_access_key,
+            aws_secret_access_key=settings.s3_secret_key,
         )
         s3.create_bucket(Bucket=settings.s3_bucket)
         yield s3
@@ -37,8 +38,24 @@ def test_upload_bytes_sets_content_type(_s3):
     assert obj["ContentType"] == "image/png"
 
 
-def test_get_public_url_returns_s3_url():
-    key = "tenant/abc/materials/mat1/albedo.png"
-    url = get_public_url(key)
-    assert key in url
-    assert settings.s3_bucket in url
+def test_get_public_url_real_aws_format(monkeypatch):
+    monkeypatch.setattr(settings, "s3_endpoint_url", None)
+    monkeypatch.setattr(settings, "s3_bucket", "my-bucket")
+    monkeypatch.setattr(settings, "aws_region", "eu-west-1")
+    url = get_public_url("materials/abc/albedo.png")
+    assert url == "https://my-bucket.s3.eu-west-1.amazonaws.com/materials/abc/albedo.png"
+
+
+def test_get_public_url_custom_endpoint_format(monkeypatch):
+    monkeypatch.setattr(settings, "s3_endpoint_url", "http://localhost:9000")
+    monkeypatch.setattr(settings, "s3_bucket", "my-bucket")
+    url = get_public_url("materials/abc/albedo.png")
+    assert url == "http://localhost:9000/my-bucket/materials/abc/albedo.png"
+
+
+def test_get_public_url_strips_leading_slash(monkeypatch):
+    monkeypatch.setattr(settings, "s3_endpoint_url", None)
+    monkeypatch.setattr(settings, "s3_bucket", "my-bucket")
+    monkeypatch.setattr(settings, "aws_region", "us-east-1")
+    url = get_public_url("/materials/abc/albedo.png")  # leading slash
+    assert "//" not in url.replace("https://", "")

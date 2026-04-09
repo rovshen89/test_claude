@@ -11,7 +11,8 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+asyncpg://postgres:postgres@localhost/furniture_constructor"
     secret_key: str = Field(default="change-me-in-production-replace-this-key", min_length=32)
 
-    # S3-compatible storage
+    # S3-compatible storage — override all via env vars in production
+    # s3_access_key / s3_secret_key defaults work only with moto mocks
     s3_bucket: str = "furniture-constructor"
     s3_access_key: str = "test"
     s3_secret_key: str = "test"

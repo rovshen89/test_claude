@@ -28,6 +28,8 @@ def upload_bytes(key: str, data: bytes, content_type: str = "image/png") -> str:
 
 def get_public_url(key: str) -> str:
     """Return the public URL for a stored object."""
+    key = key.lstrip("/")
     if settings.s3_endpoint_url:
-        return f"{settings.s3_endpoint_url}/{settings.s3_bucket}/{key}"
+        base = settings.s3_endpoint_url.rstrip("/")
+        return f"{base}/{settings.s3_bucket}/{key}"
     return f"https://{settings.s3_bucket}.s3.{settings.aws_region}.amazonaws.com/{key}"
