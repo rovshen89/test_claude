@@ -26,6 +26,7 @@ def validate_and_extract_pbr_zip(zip_bytes: bytes) -> dict:
             for map_name in REQUIRED_MAPS:
                 raw = zf.read(name_map[map_name])
                 img = Image.open(io.BytesIO(raw))
+                img.load()  # force full decode — catches corrupt body data
                 if img.width < MIN_RESOLUTION or img.height < MIN_RESOLUTION:
                     raise ValueError(
                         f"{map_name} must be at least {MIN_RESOLUTION}x{MIN_RESOLUTION},"

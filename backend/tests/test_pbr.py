@@ -20,12 +20,9 @@ def _make_zip(maps: dict) -> bytes:
 
 def _valid_maps(width: int = 1024, height: int = 1024) -> dict:
     """Return a dict of all 4 valid PBR maps as PIL Images."""
-    img = Image.new("RGB", (width, height), color=(128, 128, 128))
     return {
-        "albedo.png": img,
-        "normal.png": img,
-        "roughness.png": img,
-        "ao.png": img,
+        name: Image.new("RGB", (width, height), color=(128, 128, 128))
+        for name in ("albedo.png", "normal.png", "roughness.png", "ao.png")
     }
 
 
@@ -62,3 +59,17 @@ def test_returns_bytes_for_each_map():
     # Verify each value is valid PNG bytes (starts with PNG magic bytes)
     for name, data in result.items():
         assert data[:8] == b"\x89PNG\r\n\x1a\n", f"{name} is not a valid PNG"
+
+
+def test_mixed_case_filenames_are_normalised():
+    """ZIP with uppercase filenames should still work."""
+    img = Image.new("RGB", (1024, 1024), color=(128, 128, 128))
+    maps = {
+        "Albedo.PNG": img,
+        "Normal.PNG": img,
+        "Roughness.PNG": img,
+        "AO.PNG": img,
+    }
+    zip_bytes = _make_zip(maps)
+    result = validate_and_extract_pbr_zip(zip_bytes)
+    assert set(result.keys()) == {"albedo.png", "normal.png", "roughness.png", "ao.png"}
