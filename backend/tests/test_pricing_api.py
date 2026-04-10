@@ -134,9 +134,9 @@ async def test_pricing_other_users_config_returns_404(client):
 
 
 @pytest.mark.asyncio
-async def test_pricing_unauthenticated_returns_401(client):
+async def test_pricing_unauthenticated_returns_403(client):
     r = await client.post(
         "/pricing/calculate",
         json={"configuration_id": "00000000-0000-0000-0000-000000000000"},
     )
-    assert r.status_code == 401
+    assert r.status_code == 403
