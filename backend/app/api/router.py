@@ -1,7 +1,7 @@
 # backend/app/api/router.py
 from fastapi import APIRouter
 
-from app.api import auth, configurations, furniture_types, materials, pricing, projects
+from app.api import auth, bom, configurations, furniture_types, materials, pricing, projects
 
 api_router = APIRouter()
 
@@ -11,3 +11,4 @@ api_router.include_router(furniture_types.router, prefix="/furniture-types", tag
 api_router.include_router(configurations.router, prefix="/configurations", tags=["configurations"])
 api_router.include_router(materials.router, prefix="/materials", tags=["materials"])
 api_router.include_router(pricing.router, prefix="/pricing", tags=["pricing"])
+api_router.include_router(bom.router, prefix="/bom", tags=["bom"])
