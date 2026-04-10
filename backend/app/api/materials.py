@@ -108,8 +108,7 @@ async def upload_material(
     if user.role == "admin":
         if tenant_id is not None:
             try:
-                from uuid import UUID as _UUID
-                effective_tenant_id = _UUID(tenant_id)
+                effective_tenant_id = UUID(tenant_id)
             except ValueError:
                 raise HTTPException(status_code=422, detail="Invalid tenant_id UUID format")
         else:
