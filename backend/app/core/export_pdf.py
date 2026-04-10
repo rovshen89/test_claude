@@ -1,4 +1,6 @@
 # backend/app/core/export_pdf.py
+import html
+
 import weasyprint
 
 from app.schemas.bom import BomResponse
@@ -22,8 +24,8 @@ def generate_pdf(bom: BomResponse, pricing: PricingResponse) -> bytes:
         ) or "—"
         panel_rows_html += (
             f"<tr>"
-            f"<td>{p.name}</td>"
-            f"<td>{p.material_sku}</td>"
+            f"<td>{html.escape(p.name)}</td>"
+            f"<td>{html.escape(p.material_sku)}</td>"
             f"<td>{p.thickness_mm}</td>"
             f"<td>{p.width_mm}</td>"
             f"<td>{p.height_mm}</td>"
@@ -38,14 +40,14 @@ def generate_pdf(bom: BomResponse, pricing: PricingResponse) -> bytes:
     for h in bom.hardware:
         hw_rows_html += (
             f"<tr>"
-            f"<td>{h.name}</td>"
+            f"<td>{html.escape(h.name)}</td>"
             f"<td>{h.quantity}</td>"
             f"<td>{float(h.unit_price):.2f}</td>"
             f"<td>{float(h.total_price):.2f}</td>"
             f"</tr>"
         )
 
-    html = f"""<!DOCTYPE html>
+    html_doc = f"""<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -87,4 +89,4 @@ def generate_pdf(bom: BomResponse, pricing: PricingResponse) -> bytes:
 </body>
 </html>"""
 
-    return weasyprint.HTML(string=html).write_pdf()
+    return weasyprint.HTML(string=html_doc).write_pdf()
