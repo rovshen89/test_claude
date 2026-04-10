@@ -27,7 +27,7 @@ class Material(Base):
     sku: Mapped[str] = mapped_column(Text)
     thickness_options: Mapped[list] = mapped_column(JSON)  # e.g. [16, 18, 22]
     price_per_m2: Mapped[Decimal] = mapped_column(Numeric(10, 2))
-    edgebanding_price_per_mm: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 2), nullable=True)
+    edgebanding_price_per_mm: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 4), nullable=True)
     s3_albedo: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     s3_normal: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     s3_roughness: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
