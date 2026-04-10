@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 from app.config import settings
 from app.models.base import Base
-from app.models import Tenant, User, Project, FurnitureType, Configuration, Material  # noqa: F401
+from app.models import Tenant, User, Project, FurnitureType, Configuration, Material, Order  # noqa: F401
 from app.main import app
 from app.core.deps import get_db
 
