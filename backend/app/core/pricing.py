@@ -33,7 +33,7 @@ def calculate_pricing(
 
         banded_mm = panel.edge_banding.banded_perimeter_mm(panel.width_mm, panel.height_mm)
         edge_cost = Decimal("0")
-        if mat.edgebanding_price_per_mm and banded_mm > 0:
+        if mat.edgebanding_price_per_mm is not None and banded_mm > 0:
             edge_cost = Decimal(str(banded_mm)) * mat.edgebanding_price_per_mm * panel.quantity
 
         panel_rows.append(
