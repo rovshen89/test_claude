@@ -1,5 +1,6 @@
 import io
 import zipfile
+from typing import Optional
 
 import pytest
 from PIL import Image
@@ -18,11 +19,13 @@ _MATERIAL_BASE = {
 }
 
 
-async def _register_and_login(client, email: str, role: str = "manufacturer") -> dict:
-    await client.post(
-        "/auth/register",
-        json={"email": email, "password": "password", "role": role},
-    )
+async def _register_and_login(
+    client, email: str, role: str = "manufacturer", tenant_id: Optional[str] = None
+) -> dict:
+    payload: dict = {"email": email, "password": "password", "role": role}
+    if tenant_id is not None:
+        payload["tenant_id"] = tenant_id
+    await client.post("/auth/register", json=payload)
     r = await client.post("/auth/login", json={"email": email, "password": "password"})
     return {"Authorization": f"Bearer {r.json()['access_token']}"}
 
@@ -85,8 +88,10 @@ async def test_get_material_by_id(client):
 
 @pytest.mark.asyncio
 async def test_update_material(client):
-    headers = await _register_and_login(client, "upd1@example.com")
+    tenant_uuid = "11111111-1111-1111-1111-111111111111"
+    headers = await _register_and_login(client, "upd1@example.com", tenant_id=tenant_uuid)
     r = await client.post("/materials", json=_MATERIAL_BASE, headers=headers)
+    assert r.status_code == 201
     mat_id = r.json()["id"]
 
     response = await client.put(
@@ -227,5 +232,26 @@ async def test_consumer_cannot_upload_material(client, s3_mock):
             "thickness_options": "[18]",
         },
         files={"file": ("textures.zip", b"data", "application/zip")},
+    )
+    assert response.status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_manufacturer_cannot_update_global_material(client):
+    """A manufacturer must receive 403 when attempting to update a global (tenant_id=None) material."""
+    # Admin creates a global material (no tenant_id)
+    admin_headers = await _register_and_login(client, "admin_glob@example.com", role="admin")
+    r = await client.post("/materials", json=_MATERIAL_BASE, headers=admin_headers)
+    assert r.status_code == 201
+    mat_id = r.json()["id"]
+    # The material is global: admin doesn't supply tenant_id so it defaults to None for admins
+    assert r.json()["tenant_id"] is None
+
+    # Manufacturer tries to update the global material
+    mfr_headers = await _register_and_login(client, "mfr_glob@example.com", role="manufacturer")
+    response = await client.put(
+        f"/materials/{mat_id}",
+        json={"name": "Hacked Name"},
+        headers=mfr_headers,
     )
     assert response.status_code == 403

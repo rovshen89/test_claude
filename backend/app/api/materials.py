@@ -3,7 +3,7 @@ import asyncio
 import json
 import uuid as _uuid
 from decimal import Decimal
-from typing import List, Optional
+from typing import List, Literal, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile, status
@@ -71,7 +71,7 @@ async def upload_material(
     price_per_m2: float = Form(...),
     thickness_options: str = Form(...),  # JSON string, e.g. "[16, 18, 22]"
     edgebanding_price_per_mm: Optional[float] = Form(None),
-    grain_direction: str = Form("none"),
+    grain_direction: Literal["horizontal", "vertical", "none"] = Form("none"),
     tenant_id: Optional[str] = Form(None),  # admin only: None creates global catalog material
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
@@ -159,6 +159,8 @@ async def update_material(
     if not mat:
         raise HTTPException(status_code=404, detail="Material not found")
     _check_tenant_access(mat, user)
+    if mat.tenant_id is None and user.role != "admin":
+        raise HTTPException(status_code=403, detail="Only admins can modify global materials")
 
     for field, value in body.model_dump(exclude_unset=True).items():
         setattr(mat, field, value)

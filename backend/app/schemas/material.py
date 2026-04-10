@@ -1,6 +1,6 @@
 # backend/app/schemas/material.py
 from decimal import Decimal
-from typing import List, Optional
+from typing import List, Literal, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, field_serializer
@@ -13,7 +13,7 @@ class MaterialCreate(BaseModel):
     thickness_options: List[int]
     price_per_m2: Decimal
     edgebanding_price_per_mm: Optional[Decimal] = None
-    grain_direction: str = "none"
+    grain_direction: Literal["horizontal", "vertical", "none"] = "none"
     tenant_id: Optional[UUID] = None
 
 
@@ -24,7 +24,7 @@ class MaterialUpdate(BaseModel):
     thickness_options: Optional[List[int]] = None
     price_per_m2: Optional[Decimal] = None
     edgebanding_price_per_mm: Optional[Decimal] = None
-    grain_direction: Optional[str] = None
+    grain_direction: Optional[Literal["horizontal", "vertical", "none"]] = None
 
 
 class MaterialResponse(BaseModel):
