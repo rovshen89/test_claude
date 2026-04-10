@@ -34,14 +34,17 @@ def generate_dxf(bom: BomResponse) -> bytes:
             close=True,
         )
 
-        # Text annotation
+        # Text annotation — clamp Y so the label stays inside the panel box
+        _TEXT_HEIGHT = 25
+        _TEXT_MARGIN = 5
+        text_y = row_y + min(h - _TEXT_HEIGHT - _TEXT_MARGIN, h * 0.85)
         label = (
             f"{panel.name} | {panel.width_mm}x{panel.height_mm}mm"
             f" | Qty:{panel.quantity} | T:{panel.thickness_mm}mm"
         )
         msp.add_text(
             label,
-            dxfattribs={"insert": (cursor_x + 10, row_y + h - 40), "height": 25},
+            dxfattribs={"insert": (cursor_x + 10, text_y), "height": _TEXT_HEIGHT},
         )
 
         # Grain direction arrow (open 2-vertex LWPOLYLINE)
