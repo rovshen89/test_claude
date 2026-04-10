@@ -32,7 +32,7 @@ async def calculate_price(
         raise HTTPException(status_code=404, detail="Configuration not found")
 
     project = await db.get(Project, cfg.project_id)
-    if not project or (project.user_id != user.id and user.role != "admin"):
+    if not project or project.user_id != user.id:
         raise HTTPException(status_code=404, detail="Configuration not found")
 
     margin_pct = Decimal("0")
