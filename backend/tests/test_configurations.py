@@ -92,7 +92,7 @@ async def test_confirm_configuration(client):
 
 
 @pytest.mark.asyncio
-async def test_confirm_already_confirmed_returns_400(client):
+async def test_confirm_already_confirmed_returns_409(client):
     headers, project_id, ft_id = await _setup(client)
     r = await client.post("/configurations", json={
         "project_id": project_id,
@@ -103,7 +103,7 @@ async def test_confirm_already_confirmed_returns_400(client):
     await client.post(f"/configurations/{config_id}/confirm", headers=headers)
 
     response = await client.post(f"/configurations/{config_id}/confirm", headers=headers)
-    assert response.status_code == 400
+    assert response.status_code == 409
 
 
 @pytest.mark.asyncio

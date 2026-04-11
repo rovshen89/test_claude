@@ -98,7 +98,7 @@ async def confirm_configuration(
 
     if config.status != "draft":
         raise HTTPException(
-            status_code=400, detail="Only draft configurations can be confirmed"
+            status_code=409, detail="Configuration is already confirmed"
         )
 
     config.status = "confirmed"
