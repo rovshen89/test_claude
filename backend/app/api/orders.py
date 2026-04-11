@@ -1,8 +1,11 @@
 # backend/app/api/orders.py
 import asyncio
+import logging
 from decimal import Decimal
 from typing import Dict, List
 from uuid import UUID, uuid4
+
+logger = logging.getLogger(__name__)
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import ValidationError
@@ -65,6 +68,8 @@ async def create_order(
 
     # Load labor rate from furniture type schema
     ft = await db.get(FurnitureType, cfg.furniture_type_id)
+    if not ft:
+        raise HTTPException(status_code=422, detail="Furniture type not found")
     labor_rate = Decimal(str(ft.schema.get("labor_rate", "0")))
 
     # Parse applied config
@@ -100,8 +105,11 @@ async def create_order(
         pdf_key = f"orders/{order_id}/output.pdf"
         await asyncio.to_thread(upload_bytes, dxf_key, dxf_bytes, "application/dxf")
         await asyncio.to_thread(upload_bytes, pdf_key, pdf_bytes, "application/pdf")
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Export upload failed: {exc}")
+        # Note: if the DB commit below fails, these S3 objects become orphaned.
+        # A lifecycle rule or cleanup job should handle stale uploads.
+    except Exception:
+        logger.exception("Export/upload failed for order %s", order_id)
+        raise HTTPException(status_code=500, detail="Export generation failed")
 
     export_urls = {
         "dxf": get_public_url(dxf_key),
@@ -147,6 +155,8 @@ async def get_order(
         raise HTTPException(status_code=404, detail="Order not found")
 
     cfg = await db.get(Configuration, order.configuration_id)
+    if not cfg:
+        raise HTTPException(status_code=404, detail="Order not found")
     project = await db.get(Project, cfg.project_id)
     if not project or project.user_id != user.id:
         raise HTTPException(status_code=404, detail="Order not found")
