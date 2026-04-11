@@ -15,6 +15,9 @@ depends_on = None
 
 
 def upgrade() -> None:
+    # sa.JSON() is used consistently with all other JSON columns in this project
+    # (pricing_snapshot, bom_snapshot, export_urls, crm_config).
+    # Upgrade to JSONB if PostgreSQL-specific operators or indexing are needed.
     op.add_column("orders", sa.Column("last_dispatch", sa.JSON(), nullable=True))
 
 

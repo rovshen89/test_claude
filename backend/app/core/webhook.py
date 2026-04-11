@@ -36,6 +36,9 @@ def build_payload(order: Order, crm_config: Optional[dict]) -> dict:
 def extract_crm_ref(response_json: dict, crm_config: Optional[dict]) -> Optional[str]:
     """Extract crm_ref from the CRM JSON response using crm_ref_path.
 
+    crm_ref_path is a single top-level key name (e.g. "id"), not a dot-notation
+    path expression. Nested keys are not supported in this version.
+
     Returns None if crm_ref_path is not configured or the key is absent.
     """
     path = (crm_config or {}).get("crm_ref_path")

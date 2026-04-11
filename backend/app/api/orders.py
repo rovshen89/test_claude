@@ -236,6 +236,8 @@ async def dispatch_order(
                 http_status,
                 exc_info=True,
             )
+        # crm_ref is intentionally overwritten on each dispatch — the latest
+        # successful CRM acknowledgement is always authoritative.
         if crm_ref:
             order.crm_ref = crm_ref
 
