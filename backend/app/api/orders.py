@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import ValidationError
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.bom import MaterialInfo, generate_bom
@@ -123,9 +124,13 @@ async def create_order(
         bom_snapshot=bom.model_dump(mode="json"),
         export_urls=export_urls,
     )
-    db.add(order)
-    await db.commit()
-    await db.refresh(order)
+    try:
+        db.add(order)
+        await db.commit()
+        await db.refresh(order)
+    except IntegrityError:
+        await db.rollback()
+        raise HTTPException(status_code=409, detail="Order already exists for this configuration")
     return order
 
 
