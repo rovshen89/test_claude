@@ -1,5 +1,8 @@
 # backend/tests/test_orders.py
 import pytest
+from sqlalchemy import select as _select
+from app.models.tenant import Tenant
+from app.models.user import User
 
 
 async def _register_and_login(client, email: str, role: str = "manufacturer") -> dict:
@@ -314,3 +317,161 @@ async def test_get_order_wrong_owner_returns_404(client, s3_mock):
 
     r = await client.get(f"/orders/{order_id}", headers=headers2)
     assert r.status_code == 404
+
+
+# ── Dispatch endpoint tests ─────────────────────────────────────────────────
+
+async def _setup_order_with_webhook(
+    client, db_session, email: str, webhook_url: str, crm_config: dict
+):
+    """Create user, link to a tenant with webhook_url, confirm config, create order.
+
+    The test must request both `client` and `db_session` fixtures (they share the same
+    underlying session). The `s3_mock` fixture must be active in the calling test.
+
+    Returns (headers, order_id).
+    """
+    headers, cfg_id = await _setup_confirmed_config(client, email)
+
+    # Create tenant with webhook configuration
+    tenant = Tenant(
+        name="Test Tenant",
+        webhook_url=webhook_url,
+        crm_config=crm_config,
+    )
+    db_session.add(tenant)
+    await db_session.flush()  # populate tenant.id without committing yet
+
+    # Associate the registered user with the tenant
+    result = await db_session.execute(_select(User).where(User.email == email))
+    user = result.scalar_one()
+    user.tenant_id = tenant.id
+    await db_session.commit()
+
+    # Create the order (s3_mock must be active in the calling test)
+    order_r = await client.post(
+        "/orders", json={"configuration_id": cfg_id}, headers=headers
+    )
+    assert order_r.status_code == 201, order_r.text
+    return headers, order_r.json()["id"]
+
+
+@pytest.mark.asyncio
+async def test_dispatch_happy_path(client, db_session, s3_mock, httpx_mock):
+    """CRM returns 200 with crm_ref — order is updated and result returned."""
+    headers, order_id = await _setup_order_with_webhook(
+        client,
+        db_session,
+        "disp1@example.com",
+        webhook_url="https://crm.example.com/webhook",
+        crm_config={"payload_fields": ["order_id"], "crm_ref_path": "id"},
+    )
+    httpx_mock.add_response(
+        url="https://crm.example.com/webhook",
+        json={"id": "CRM-123"},
+        status_code=200,
+    )
+    r = await client.post(f"/orders/{order_id}/dispatch", headers=headers)
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert data["http_status"] == 200
+    assert data["crm_ref"] == "CRM-123"
+    assert data["order_id"] == order_id
+
+    # Verify order was updated in the DB
+    order_r = await client.get(f"/orders/{order_id}", headers=headers)
+    assert order_r.json()["crm_ref"] == "CRM-123"
+    assert order_r.json()["last_dispatch"]["http_status"] == 200
+
+
+@pytest.mark.asyncio
+async def test_dispatch_records_non_2xx(client, db_session, s3_mock, httpx_mock):
+    """CRM returns 500 — attempt is recorded, crm_ref is NOT set."""
+    headers, order_id = await _setup_order_with_webhook(
+        client,
+        db_session,
+        "disp2@example.com",
+        webhook_url="https://crm.example.com/webhook",
+        crm_config={"crm_ref_path": "id"},
+    )
+    httpx_mock.add_response(
+        url="https://crm.example.com/webhook",
+        status_code=500,
+        text="Internal Server Error",
+    )
+    r = await client.post(f"/orders/{order_id}/dispatch", headers=headers)
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert data["http_status"] == 500
+    assert data["crm_ref"] is None
+
+    # Verify last_dispatch recorded but crm_ref not set
+    order_r = await client.get(f"/orders/{order_id}", headers=headers)
+    assert order_r.json()["crm_ref"] is None
+    assert order_r.json()["last_dispatch"]["http_status"] == 500
+
+
+@pytest.mark.asyncio
+async def test_dispatch_no_webhook_url_returns_422(client, s3_mock):
+    """User has no tenant → 422 before any HTTP call is made."""
+    # _setup_confirmed_config creates a user with no tenant
+    headers, cfg_id = await _setup_confirmed_config(client, "disp3@example.com")
+    order_r = await client.post(
+        "/orders", json={"configuration_id": cfg_id}, headers=headers
+    )
+    assert order_r.status_code == 201, order_r.text
+    order_id = order_r.json()["id"]
+
+    r = await client.post(f"/orders/{order_id}/dispatch", headers=headers)
+    assert r.status_code == 422
+    assert "webhook" in r.json()["detail"].lower()
+
+
+@pytest.mark.asyncio
+async def test_dispatch_wrong_owner_returns_404(client, db_session, s3_mock):
+    """User2 cannot dispatch User1's order."""
+    headers1, order_id = await _setup_order_with_webhook(
+        client,
+        db_session,
+        "disp4a@example.com",
+        webhook_url="https://crm.example.com/webhook",
+        crm_config={},
+    )
+    headers2 = await _register_and_login(client, "disp4b@example.com")
+    r = await client.post(f"/orders/{order_id}/dispatch", headers=headers2)
+    assert r.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_dispatch_overwrites_last_dispatch(client, db_session, s3_mock, httpx_mock):
+    """Dispatching twice — second call's result is stored in last_dispatch."""
+    headers, order_id = await _setup_order_with_webhook(
+        client,
+        db_session,
+        "disp5@example.com",
+        webhook_url="https://crm.example.com/webhook",
+        crm_config={"crm_ref_path": "id"},
+    )
+    httpx_mock.add_response(
+        url="https://crm.example.com/webhook",
+        json={"id": "CRM-FIRST"},
+        status_code=200,
+    )
+    httpx_mock.add_response(
+        url="https://crm.example.com/webhook",
+        json={"id": "CRM-SECOND"},
+        status_code=200,
+    )
+    await client.post(f"/orders/{order_id}/dispatch", headers=headers)
+    r2 = await client.post(f"/orders/{order_id}/dispatch", headers=headers)
+    assert r2.status_code == 200
+    assert r2.json()["crm_ref"] == "CRM-SECOND"
+
+    order_r = await client.get(f"/orders/{order_id}", headers=headers)
+    assert order_r.json()["crm_ref"] == "CRM-SECOND"
+
+
+@pytest.mark.asyncio
+async def test_dispatch_unauthenticated_returns_403(client):
+    r = await client.post("/orders/00000000-0000-0000-0000-000000000001/dispatch")
+    assert r.status_code == 403

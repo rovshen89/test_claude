@@ -26,8 +26,11 @@ from app.models.order import Order
 from app.models.project import Project
 from app.models.tenant import Tenant
 from app.models.user import User
+import httpx
+from datetime import datetime, timezone
+from app.core.webhook import build_payload, extract_crm_ref
 from app.schemas.applied_config import AppliedConfig
-from app.schemas.order import OrderCreate, OrderResponse
+from app.schemas.order import OrderCreate, OrderResponse, DispatchResponse
 
 router = APIRouter()
 
@@ -167,3 +170,75 @@ async def get_order(
         raise HTTPException(status_code=404, detail="Order not found")
 
     return order
+
+
+@router.post("/{order_id}/dispatch", response_model=DispatchResponse)
+async def dispatch_order(
+    order_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    # Load order and check ownership
+    order = await db.get(Order, order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    cfg = await db.get(Configuration, order.configuration_id)
+    if not cfg:
+        raise HTTPException(status_code=404, detail="Order not found")
+    project = await db.get(Project, cfg.project_id)
+    if not project or project.user_id != user.id:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    # Validate tenant has a webhook URL configured
+    if not user.tenant_id:
+        raise HTTPException(
+            status_code=422, detail="No webhook URL configured for this tenant"
+        )
+    tenant = await db.get(Tenant, user.tenant_id)
+    if not tenant or not tenant.webhook_url:
+        raise HTTPException(
+            status_code=422, detail="No webhook URL configured for this tenant"
+        )
+
+    # Build payload and fire the webhook
+    payload = build_payload(order, tenant.crm_config)
+    extra_headers = (tenant.crm_config or {}).get("headers", {})
+    dispatched_at = datetime.now(timezone.utc)
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as hc:
+            resp = await hc.post(
+                tenant.webhook_url, json=payload, headers=extra_headers
+            )
+        http_status = resp.status_code
+        response_body = resp.text
+    except httpx.RequestError as exc:
+        raise HTTPException(
+            status_code=502, detail=f"Webhook delivery failed: {exc}"
+        )
+
+    # Extract crm_ref from 2xx responses only
+    crm_ref = None
+    if 200 <= http_status < 300:
+        try:
+            crm_ref = extract_crm_ref(resp.json(), tenant.crm_config)
+        except Exception:
+            pass
+        if crm_ref:
+            order.crm_ref = crm_ref
+
+    # Record the dispatch attempt (overwrites previous)
+    order.last_dispatch = {
+        "dispatched_at": dispatched_at.isoformat(),
+        "http_status": http_status,
+        "response_body": response_body,
+    }
+    await db.commit()
+    await db.refresh(order)
+
+    return DispatchResponse(
+        order_id=order.id,
+        dispatched_at=dispatched_at,
+        http_status=http_status,
+        response_body=response_body,
+        crm_ref=crm_ref,
+    )
