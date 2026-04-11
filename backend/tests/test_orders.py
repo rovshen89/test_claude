@@ -462,13 +462,38 @@ async def test_dispatch_overwrites_last_dispatch(client, db_session, s3_mock, ht
         json={"id": "CRM-SECOND"},
         status_code=200,
     )
-    await client.post(f"/orders/{order_id}/dispatch", headers=headers)
+    r1 = await client.post(f"/orders/{order_id}/dispatch", headers=headers)
     r2 = await client.post(f"/orders/{order_id}/dispatch", headers=headers)
     assert r2.status_code == 200
     assert r2.json()["crm_ref"] == "CRM-SECOND"
+    assert r2.json()["dispatched_at"] >= r1.json()["dispatched_at"]
 
     order_r = await client.get(f"/orders/{order_id}", headers=headers)
     assert order_r.json()["crm_ref"] == "CRM-SECOND"
+    assert order_r.json()["last_dispatch"]["http_status"] == 200
+
+
+@pytest.mark.asyncio
+async def test_dispatch_crm_ref_absent_in_response_is_non_fatal(
+    client, db_session, s3_mock, httpx_mock
+):
+    """CRM returns 200 but response JSON doesn't contain crm_ref_path key — crm_ref stays None."""
+    headers, order_id = await _setup_order_with_webhook(
+        client,
+        db_session,
+        "disp6@example.com",
+        webhook_url="https://crm.example.com/webhook",
+        crm_config={"crm_ref_path": "id"},
+    )
+    httpx_mock.add_response(
+        url="https://crm.example.com/webhook",
+        json={"unexpected_key": "value"},
+        status_code=200,
+    )
+    r = await client.post(f"/orders/{order_id}/dispatch", headers=headers)
+    assert r.status_code == 200
+    assert r.json()["crm_ref"] is None
+    assert r.json()["http_status"] == 200
 
 
 @pytest.mark.asyncio

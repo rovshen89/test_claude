@@ -202,7 +202,13 @@ async def dispatch_order(
 
     # Build payload and fire the webhook
     payload = build_payload(order, tenant.crm_config)
-    extra_headers = (tenant.crm_config or {}).get("headers", {})
+    raw_headers = (tenant.crm_config or {}).get("headers", {})
+    if not isinstance(raw_headers, dict) or not all(
+        isinstance(k, str) and isinstance(v, str)
+        for k, v in raw_headers.items()
+    ):
+        raise HTTPException(status_code=422, detail="Invalid crm_config headers")
+    extra_headers = raw_headers
     dispatched_at = datetime.now(timezone.utc)
     try:
         async with httpx.AsyncClient(timeout=10.0) as hc:
@@ -210,7 +216,9 @@ async def dispatch_order(
                 tenant.webhook_url, json=payload, headers=extra_headers
             )
         http_status = resp.status_code
-        response_body = resp.text
+        MAX_RESPONSE_BODY = 4096
+        raw_bytes = resp.content[:MAX_RESPONSE_BODY]
+        response_body = raw_bytes.decode("utf-8", errors="replace")
     except httpx.RequestError as exc:
         raise HTTPException(
             status_code=502, detail=f"Webhook delivery failed: {exc}"
@@ -222,7 +230,12 @@ async def dispatch_order(
         try:
             crm_ref = extract_crm_ref(resp.json(), tenant.crm_config)
         except Exception:
-            pass
+            logger.warning(
+                "extract_crm_ref failed for order %s (http_status=%s)",
+                order_id,
+                http_status,
+                exc_info=True,
+            )
         if crm_ref:
             order.crm_ref = crm_ref
 
@@ -232,8 +245,13 @@ async def dispatch_order(
         "http_status": http_status,
         "response_body": response_body,
     }
-    await db.commit()
-    await db.refresh(order)
+    try:
+        await db.commit()
+        await db.refresh(order)
+    except Exception:
+        await db.rollback()
+        logger.exception("Failed to persist dispatch result for order %s", order_id)
+        raise HTTPException(status_code=500, detail="Failed to record dispatch result")
 
     return DispatchResponse(
         order_id=order.id,
