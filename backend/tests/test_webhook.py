@@ -61,3 +61,15 @@ def test_extract_crm_ref_returns_none_when_key_absent():
 def test_extract_crm_ref_returns_none_when_no_path_configured():
     result = extract_crm_ref({"id": "CRM-123"}, None)
     assert result is None
+
+
+def test_extract_crm_ref_coerces_integer_to_string():
+    crm_config = {"crm_ref_path": "id"}
+    result = extract_crm_ref({"id": 123}, crm_config)
+    assert result == "123"
+
+
+def test_extract_crm_ref_returns_none_for_empty_string_path():
+    crm_config = {"crm_ref_path": ""}
+    result = extract_crm_ref({"id": "CRM-123"}, crm_config)
+    assert result is None

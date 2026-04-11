@@ -19,7 +19,8 @@ def build_payload(order: Order, crm_config: Optional[dict]) -> dict:
     If crm_config is None or payload_fields is absent, all supported fields are included.
     Unrecognised field names in payload_fields are silently ignored.
     """
-    configured = (crm_config or {}).get("payload_fields", list(SUPPORTED_FIELDS))
+    raw_fields = (crm_config or {}).get("payload_fields")
+    configured = raw_fields if raw_fields else list(SUPPORTED_FIELDS)
     fields = set(configured) & SUPPORTED_FIELDS
     mapping = {
         "order_id": str(order.id),
