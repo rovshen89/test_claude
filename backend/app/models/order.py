@@ -23,6 +23,7 @@ class Order(Base):
     bom_snapshot: Mapped[dict] = mapped_column(JSON)
     export_urls: Mapped[dict] = mapped_column(JSON, default=dict)
     crm_ref: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    last_dispatch: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),

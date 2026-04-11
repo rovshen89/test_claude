@@ -17,6 +17,15 @@ class OrderResponse(BaseModel):
     bom_snapshot: dict
     export_urls: dict
     crm_ref: Optional[str]
+    last_dispatch: Optional[dict] = None
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class DispatchResponse(BaseModel):
+    order_id: UUID
+    dispatched_at: datetime
+    http_status: int
+    response_body: str
+    crm_ref: Optional[str]
