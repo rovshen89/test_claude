@@ -16,7 +16,7 @@ class OrderResponse(BaseModel):
     pricing_snapshot: dict
     bom_snapshot: dict
     export_urls: dict
-    crm_ref: Optional[str]
+    crm_ref: Optional[str] = None
     last_dispatch: Optional[dict] = None
     created_at: datetime
 
@@ -28,4 +28,4 @@ class DispatchResponse(BaseModel):
     dispatched_at: datetime
     http_status: int
     response_body: str
-    crm_ref: Optional[str]
+    crm_ref: Optional[str] = None
