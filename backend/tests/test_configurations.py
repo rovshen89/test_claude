@@ -121,3 +121,47 @@ async def test_update_confirmed_configuration_returns_400(client):
         "applied_config": {"width": 1500},
     }, headers=headers)
     assert response.status_code == 400
+
+
+@pytest.mark.asyncio
+async def test_list_configurations_by_project(client):
+    """GET /configurations?project_id= returns only configs for that project."""
+    headers, project_id, ft_id = await _setup(client)
+
+    # Create a second project
+    r = await client.post("/projects", json={"name": "Other Project"}, headers=headers)
+    other_project_id = r.json()["id"]
+
+    # Create one config in each project
+    c1 = await client.post("/configurations", json={
+        "project_id": project_id,
+        "furniture_type_id": ft_id,
+        "applied_config": {"width": 1200},
+    }, headers=headers)
+    c2 = await client.post("/configurations", json={
+        "project_id": other_project_id,
+        "furniture_type_id": ft_id,
+        "applied_config": {"width": 900},
+    }, headers=headers)
+    assert c1.status_code == 201
+    assert c2.status_code == 201
+
+    r = await client.get(f"/configurations?project_id={project_id}", headers=headers)
+    assert r.status_code == 200
+    ids = [c["id"] for c in r.json()]
+    assert c1.json()["id"] in ids
+    assert c2.json()["id"] not in ids
+
+
+@pytest.mark.asyncio
+async def test_list_configurations_wrong_owner_returns_404(client):
+    """GET /configurations?project_id= returns 404 for another user's project."""
+    headers_a, project_id, _ = await _setup(client)
+
+    email_b = f"cfg_b_{_uuid.uuid4().hex[:8]}@example.com"
+    await client.post("/auth/register", json={"email": email_b, "password": "password", "role": "manufacturer"})
+    r = await client.post("/auth/login", json={"email": email_b, "password": "password"})
+    headers_b = {"Authorization": f"Bearer {r.json()['access_token']}"}
+
+    r = await client.get(f"/configurations?project_id={project_id}", headers=headers_b)
+    assert r.status_code == 404

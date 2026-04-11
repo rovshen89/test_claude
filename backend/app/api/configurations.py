@@ -1,7 +1,8 @@
 # backend/app/api/configurations.py
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.deps import get_current_user, get_db
@@ -45,6 +46,19 @@ async def create_configuration(
     await db.commit()
     await db.refresh(config)
     return config
+
+
+@router.get("", response_model=list[ConfigurationResponse])
+async def list_configurations(
+    project_id: UUID = Query(...),
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    await _get_owned_project(db, project_id, user)
+    result = await db.execute(
+        select(Configuration).where(Configuration.project_id == project_id)
+    )
+    return result.scalars().all()
 
 
 @router.get("/{config_id}", response_model=ConfigurationResponse)
