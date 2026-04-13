@@ -4,7 +4,7 @@ import Link from "next/link"
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const session = await auth()
-  if (!session) redirect("/login")
+  if (!session?.user) redirect("/login")
 
   async function signOutAction() {
     "use server"
@@ -19,7 +19,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         </Link>
         <div className="flex items-center gap-4">
           <span className="text-xs text-slate-500">{session.user.email}</span>
-          <form action={signOutAction}>
+          <form action={signOutAction} aria-label="Sign out">
             <button type="submit" className="text-xs text-indigo-400 hover:text-indigo-300">
               Sign out
             </button>

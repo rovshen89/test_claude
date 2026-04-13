@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth"
-import { getProjects } from "@/lib/api"
+import { getProjects, ApiError } from "@/lib/api"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 
@@ -7,7 +7,13 @@ export default async function DashboardPage() {
   const session = await auth()
   if (!session?.user?.access_token) redirect("/login")
 
-  const projects = await getProjects(session.user.access_token)
+  let projects
+  try {
+    projects = await getProjects(session.user.access_token)
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 401) redirect("/login")
+    throw e
+  }
 
   return (
     <div>
@@ -37,7 +43,7 @@ export default async function DashboardPage() {
             >
               <p className="text-sm font-medium text-slate-100">{project.name}</p>
               <p className="text-xs text-slate-500 mt-1">
-                Created {new Date(project.created_at).toLocaleDateString()}
+                Created {new Date(project.created_at).toLocaleDateString("en-US")}
               </p>
             </Link>
           ))}
