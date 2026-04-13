@@ -21,6 +21,7 @@ describe("ApiError", () => {
     expect(e.status).toBe(404)
     expect(e.message).toBe("not found")
     expect(e).toBeInstanceOf(Error)
+    expect(e.name).toBe("ApiError")
   })
 })
 
@@ -55,7 +56,9 @@ describe("getProject", () => {
 
     expect(mockFetch).toHaveBeenCalledWith(
       "http://localhost:8000/projects/p1",
-      expect.anything()
+      expect.objectContaining({
+        headers: expect.objectContaining({ Authorization: "Bearer tok" }),
+      })
     )
     expect(result.id).toBe("p1")
   })
@@ -95,6 +98,11 @@ describe("listConfigurations", () => {
       expect.anything()
     )
   })
+
+  it("throws ApiError on non-ok response", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 500, text: async () => "Server Error" })
+    await expect(listConfigurations("tok", "proj-123")).rejects.toMatchObject({ status: 500 })
+  })
 })
 
 describe("getFurnitureType", () => {
@@ -109,5 +117,10 @@ describe("getFurnitureType", () => {
       expect.anything()
     )
     expect(result.category).toBe("wardrobe")
+  })
+
+  it("throws ApiError on non-ok response", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 404, text: async () => "not found" })
+    await expect(getFurnitureType("tok", "missing")).rejects.toMatchObject({ status: 404 })
   })
 })
