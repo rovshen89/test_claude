@@ -1,0 +1,113 @@
+import {
+  ApiError,
+  getProjects,
+  getProject,
+  createProject,
+  listConfigurations,
+  getFurnitureType,
+} from "@/lib/api"
+
+const mockFetch = jest.fn()
+global.fetch = mockFetch
+
+beforeEach(() => {
+  mockFetch.mockReset()
+  process.env.BACKEND_URL = "http://localhost:8000"
+})
+
+describe("ApiError", () => {
+  it("stores status and message", () => {
+    const e = new ApiError(404, "not found")
+    expect(e.status).toBe(404)
+    expect(e.message).toBe("not found")
+    expect(e).toBeInstanceOf(Error)
+  })
+})
+
+describe("getProjects", () => {
+  it("calls GET /projects with Authorization header and returns array", async () => {
+    const fixture = [{ id: "p1", name: "A", user_id: "u1", room_schema: null, created_at: "", updated_at: "" }]
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => fixture })
+
+    const result = await getProjects("tok")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/projects",
+      expect.objectContaining({
+        headers: expect.objectContaining({ Authorization: "Bearer tok" }),
+      })
+    )
+    expect(result).toEqual(fixture)
+  })
+
+  it("throws ApiError on non-ok response", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 401, text: async () => "Unauthorized" })
+    await expect(getProjects("bad")).rejects.toMatchObject({ status: 401 })
+  })
+})
+
+describe("getProject", () => {
+  it("calls GET /projects/{id}", async () => {
+    const fixture = { id: "p1", name: "A", user_id: "u1", room_schema: null, created_at: "", updated_at: "" }
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => fixture })
+
+    const result = await getProject("tok", "p1")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/projects/p1",
+      expect.anything()
+    )
+    expect(result.id).toBe("p1")
+  })
+
+  it("throws ApiError(404) on 404", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 404, text: async () => "not found" })
+    await expect(getProject("tok", "x")).rejects.toMatchObject({ status: 404 })
+  })
+})
+
+describe("createProject", () => {
+  it("calls POST /projects with name in body", async () => {
+    const fixture = { id: "p2", name: "New", user_id: "u1", room_schema: null, created_at: "", updated_at: "" }
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => fixture })
+
+    const result = await createProject("tok", "New")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/projects",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ name: "New" }),
+      })
+    )
+    expect(result.name).toBe("New")
+  })
+})
+
+describe("listConfigurations", () => {
+  it("includes project_id query param", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => [] })
+
+    await listConfigurations("tok", "proj-123")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/configurations?project_id=proj-123",
+      expect.anything()
+    )
+  })
+})
+
+describe("getFurnitureType", () => {
+  it("calls GET /furniture-types/{id}", async () => {
+    const fixture = { id: "ft1", category: "wardrobe", schema: {}, tenant_id: null }
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => fixture })
+
+    const result = await getFurnitureType("tok", "ft1")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/furniture-types/ft1",
+      expect.anything()
+    )
+    expect(result.category).toBe("wardrobe")
+  })
+})
