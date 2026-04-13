@@ -12,12 +12,13 @@ export default async function LoginPage({
 
   async function loginAction(formData: FormData) {
     "use server"
+    const email = formData.get("email")
+    const password = formData.get("password")
+    if (typeof email !== "string" || typeof password !== "string") {
+      redirect("/login?error=1")
+    }
     try {
-      await signIn("credentials", {
-        email: formData.get("email") as string,
-        password: formData.get("password") as string,
-        redirectTo: "/dashboard",
-      })
+      await signIn("credentials", { email, password, redirectTo: "/dashboard" })
     } catch (e) {
       if (e instanceof AuthError) redirect("/login?error=1")
       throw e

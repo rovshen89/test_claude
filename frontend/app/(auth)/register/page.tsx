@@ -12,8 +12,11 @@ export default async function RegisterPage({
 
   async function registerAction(formData: FormData) {
     "use server"
-    const email = formData.get("email") as string
-    const password = formData.get("password") as string
+    const email = formData.get("email")
+    const password = formData.get("password")
+    if (typeof email !== "string" || typeof password !== "string") {
+      redirect("/register?error=error")
+    }
 
     const res = await fetch(`${process.env.BACKEND_URL}/auth/register`, {
       method: "POST",
@@ -22,8 +25,13 @@ export default async function RegisterPage({
     })
 
     if (!res.ok) {
-      const body = (await res.json()) as { detail?: string }
-      const code = body.detail?.toLowerCase().includes("already") ? "taken" : "error"
+      let code = "error"
+      try {
+        const body = (await res.json()) as { detail?: string }
+        if (body.detail?.toLowerCase().includes("already")) code = "taken"
+      } catch {
+        // non-JSON error body — use generic code
+      }
       redirect(`/register?error=${code}`)
     }
 
