@@ -60,7 +60,7 @@ export async function createProject(token: string, name: string): Promise<Projec
 }
 
 export async function listConfigurations(token: string, projectId: string): Promise<Configuration[]> {
-  return apiFetch<Configuration[]>(`/configurations?project_id=${projectId}`, token)
+  return apiFetch<Configuration[]>(`/configurations?project_id=${encodeURIComponent(projectId)}`, token)
 }
 
 export async function getFurnitureType(token: string, id: string): Promise<FurnitureType> {

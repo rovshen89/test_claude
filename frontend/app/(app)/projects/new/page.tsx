@@ -9,6 +9,8 @@ export default async function NewProjectPage({
   searchParams: Promise<{ error?: string }>
 }) {
   const { error } = await searchParams
+  const session = await auth()
+  if (!session?.user?.access_token) redirect("/login")
 
   async function createAction(formData: FormData) {
     "use server"

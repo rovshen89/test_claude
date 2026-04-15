@@ -39,6 +39,7 @@ export default async function ProjectDetailPage({
     ])
   } catch (e) {
     if (e instanceof ApiError && e.status === 404) notFound()
+    if (e instanceof ApiError && e.status === 401) redirect("/login")
     throw e
   }
 
