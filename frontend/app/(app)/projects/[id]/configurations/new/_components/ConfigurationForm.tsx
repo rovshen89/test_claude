@@ -58,7 +58,7 @@ export function ConfigurationForm({
     const newErrors: Record<string, string> = {}
     for (const [key, spec] of Object.entries(dims)) {
       const val = dimensions[key] ?? spec.default
-      if (val < spec.min || val > spec.max) {
+      if (val < spec.min || val > spec.max || (spec.step > 0 && (val - spec.min) % spec.step !== 0)) {
         newErrors[key] = `Must be between ${spec.min} and ${spec.max} mm (step ${spec.step})`
       }
     }
