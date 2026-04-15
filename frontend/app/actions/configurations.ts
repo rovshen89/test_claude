@@ -9,10 +9,11 @@ export async function createConfigurationAction(
   projectId: string,
   furnitureTypeId: string,
   appliedConfig: Record<string, number>
-): Promise<{ error: string } | null> {
+): Promise<{ error: string }> {
   const session = await auth()
   if (!session?.user?.access_token) redirect("/login")
   const token = session.user.access_token
+  if (!projectId || !furnitureTypeId) return { error: "Invalid request" }
   try {
     await createConfiguration(token, projectId, furnitureTypeId, appliedConfig)
   } catch (e) {
@@ -30,6 +31,7 @@ export async function confirmConfigurationAction(
   const session = await auth()
   if (!session?.user?.access_token) redirect("/login")
   const token = session.user.access_token
+  if (!configId || !projectId) return { error: "Invalid request" }
   try {
     await confirmConfiguration(token, configId)
   } catch (e) {
