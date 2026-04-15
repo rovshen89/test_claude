@@ -1,0 +1,43 @@
+"use server"
+
+import { auth } from "@/lib/auth"
+import { createConfiguration, confirmConfiguration, ApiError } from "@/lib/api"
+import { redirect } from "next/navigation"
+import { revalidatePath } from "next/cache"
+
+export async function createConfigurationAction(
+  projectId: string,
+  furnitureTypeId: string,
+  appliedConfig: Record<string, number>
+): Promise<{ error: string } | null> {
+  const session = await auth()
+  if (!session?.user?.access_token) redirect("/login")
+  const token = session.user.access_token
+  try {
+    await createConfiguration(token, projectId, furnitureTypeId, appliedConfig)
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 401) redirect("/login")
+    if (e instanceof ApiError) return { error: e.message }
+    throw e
+  }
+  redirect(`/projects/${projectId}`)
+}
+
+export async function confirmConfigurationAction(
+  configId: string,
+  projectId: string
+): Promise<{ error: string } | null> {
+  const session = await auth()
+  if (!session?.user?.access_token) redirect("/login")
+  const token = session.user.access_token
+  try {
+    await confirmConfiguration(token, configId)
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 401) redirect("/login")
+    if (e instanceof ApiError && e.status === 409) return { error: "already_confirmed" }
+    if (e instanceof ApiError) return { error: e.message }
+    throw e
+  }
+  revalidatePath(`/projects/${projectId}`)
+  return null
+}
