@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth"
-import { getProject, listConfigurations, getFurnitureType, ApiError, type Project, type Configuration } from "@/lib/api"
+import { getProject, listConfigurations, getFurnitureType, ApiError, type Project, type Configuration, type FurnitureType } from "@/lib/api"
 import { redirect, notFound } from "next/navigation"
 import Link from "next/link"
 
@@ -44,7 +44,13 @@ export default async function ProjectDetailPage({
 
   // Fetch furniture type names for all unique IDs in parallel
   const uniqueFtIds = [...new Set(configs.map((c) => c.furniture_type_id))]
-  const ftList = await Promise.all(uniqueFtIds.map((ftId) => getFurnitureType(token, ftId)))
+  let ftList: FurnitureType[] = []
+  try {
+    ftList = await Promise.all(uniqueFtIds.map((ftId) => getFurnitureType(token, ftId)))
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 401) redirect("/login")
+    throw e
+  }
   const ftMap = Object.fromEntries(ftList.map((ft) => [ft.id, ft.category]))
 
   return (
@@ -78,7 +84,7 @@ export default async function ProjectDetailPage({
                   <p className="text-sm font-medium text-slate-100">
                     {ftMap[cfg.furniture_type_id] ?? "Unknown type"}
                   </p>
-                  <p className="text-xs text-slate-500 mt-1 font-mono">
+                  <p className="text-xs text-slate-500 mt-1 font-mono" title={cfg.id}>
                     {cfg.id.slice(0, 8)}…
                   </p>
                 </div>
