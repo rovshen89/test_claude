@@ -66,3 +66,29 @@ export async function listConfigurations(token: string, projectId: string): Prom
 export async function getFurnitureType(token: string, id: string): Promise<FurnitureType> {
   return apiFetch<FurnitureType>(`/furniture-types/${id}`, token)
 }
+
+export async function getFurnitureTypes(token: string): Promise<FurnitureType[]> {
+  return apiFetch<FurnitureType[]>("/furniture-types", token)
+}
+
+export async function createConfiguration(
+  token: string,
+  projectId: string,
+  furnitureTypeId: string,
+  appliedConfig: Record<string, number>
+): Promise<Configuration> {
+  return apiFetch<Configuration>("/configurations", token, {
+    method: "POST",
+    body: JSON.stringify({
+      project_id: projectId,
+      furniture_type_id: furnitureTypeId,
+      applied_config: appliedConfig,
+    }),
+  })
+}
+
+export async function confirmConfiguration(token: string, configId: string): Promise<Configuration> {
+  return apiFetch<Configuration>(`/configurations/${configId}/confirm`, token, {
+    method: "POST",
+  })
+}

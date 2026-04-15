@@ -5,6 +5,9 @@ import {
   createProject,
   listConfigurations,
   getFurnitureType,
+  getFurnitureTypes,
+  createConfiguration,
+  confirmConfiguration,
 } from "@/lib/api"
 
 const mockFetch = jest.fn()
@@ -122,5 +125,83 @@ describe("getFurnitureType", () => {
   it("throws ApiError on non-ok response", async () => {
     mockFetch.mockResolvedValueOnce({ ok: false, status: 404, text: async () => "not found" })
     await expect(getFurnitureType("tok", "missing")).rejects.toMatchObject({ status: 404 })
+  })
+})
+
+describe("getFurnitureTypes", () => {
+  it("calls GET /furniture-types with Authorization header and returns array", async () => {
+    const fixture = [{ id: "ft1", category: "wardrobe", schema: {}, tenant_id: null }]
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => fixture })
+
+    const result = await getFurnitureTypes("tok")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/furniture-types",
+      expect.objectContaining({
+        headers: expect.objectContaining({ Authorization: "Bearer tok" }),
+      })
+    )
+    expect(result).toEqual(fixture)
+  })
+})
+
+describe("createConfiguration", () => {
+  it("posts to /configurations with project_id, furniture_type_id, applied_config", async () => {
+    const fixture = {
+      id: "c1",
+      project_id: "p1",
+      furniture_type_id: "ft1",
+      applied_config: { width: 900 },
+      placement: null,
+      status: "draft",
+    }
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => fixture })
+
+    const result = await createConfiguration("tok", "p1", "ft1", { width: 900 })
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/configurations",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({
+          project_id: "p1",
+          furniture_type_id: "ft1",
+          applied_config: { width: 900 },
+        }),
+        headers: expect.objectContaining({ Authorization: "Bearer tok" }),
+      })
+    )
+    expect(result.id).toBe("c1")
+    expect(result.status).toBe("draft")
+  })
+})
+
+describe("confirmConfiguration", () => {
+  it("posts to /configurations/{id}/confirm and returns updated config", async () => {
+    const fixture = {
+      id: "c1",
+      project_id: "p1",
+      furniture_type_id: "ft1",
+      applied_config: {},
+      placement: null,
+      status: "confirmed",
+    }
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => fixture })
+
+    const result = await confirmConfiguration("tok", "c1")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/configurations/c1/confirm",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({ Authorization: "Bearer tok" }),
+      })
+    )
+    expect(result.status).toBe("confirmed")
+  })
+
+  it("throws ApiError(409) on 409 response", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 409, text: async () => "already confirmed" })
+    await expect(confirmConfiguration("tok", "c1")).rejects.toMatchObject({ status: 409 })
   })
 })
