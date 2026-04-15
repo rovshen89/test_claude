@@ -143,6 +143,11 @@ describe("getFurnitureTypes", () => {
     )
     expect(result).toEqual(fixture)
   })
+
+  it("throws ApiError on non-ok response", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 500, text: async () => "error" })
+    await expect(getFurnitureTypes("tok")).rejects.toMatchObject({ status: 500 })
+  })
 })
 
 describe("createConfiguration", () => {
@@ -173,6 +178,11 @@ describe("createConfiguration", () => {
     )
     expect(result.id).toBe("c1")
     expect(result.status).toBe("draft")
+  })
+
+  it("throws ApiError on non-ok response", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 422, text: async () => "bad request" })
+    await expect(createConfiguration("tok", "p1", "ft1", { width: 900 })).rejects.toMatchObject({ status: 422 })
   })
 })
 
