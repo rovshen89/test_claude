@@ -26,17 +26,18 @@ export function ConfirmButton({
     }
   }
 
-  if (state === "error") {
-    return <span className="text-xs text-red-400">{errorMsg}</span>
-  }
-
   return (
-    <button
-      onClick={handleClick}
-      disabled={state === "loading"}
-      className="text-xs text-indigo-400 hover:text-indigo-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-    >
-      {state === "loading" ? "Confirming…" : "Confirm"}
-    </button>
+    <div className="flex items-center gap-2">
+      {state === "error" && (
+        <span className="text-xs text-red-400">{errorMsg}</span>
+      )}
+      <button
+        onClick={handleClick}
+        disabled={state === "loading"}
+        className="text-xs text-indigo-400 hover:text-indigo-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        {state === "loading" ? "Confirming…" : "Confirm"}
+      </button>
+    </div>
   )
 }
