@@ -41,5 +41,8 @@ export async function confirmConfigurationAction(
     throw e
   }
   revalidatePath(`/projects/${projectId}`)
+  // Return null to signal success to the caller. Unlike createConfigurationAction,
+  // this action revalidates the current page rather than redirecting, so the caller
+  // (ConfirmButton) needs an explicit success signal.
   return null
 }
