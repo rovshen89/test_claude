@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth"
 import { getProject, listConfigurations, getFurnitureType, ApiError, type Project, type Configuration, type FurnitureType } from "@/lib/api"
 import { redirect, notFound } from "next/navigation"
 import Link from "next/link"
+import { ConfirmButton } from "./_components/ConfirmButton"
 
 function statusColors(status: string): string {
   switch (status) {
@@ -63,13 +64,12 @@ export default async function ProjectDetailPage({
       </div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-lg font-semibold text-slate-50">{project.name}</h1>
-        <button
-          disabled
-          title="Configuration builder coming in Sub-plan 2"
-          className="border border-slate-700 text-slate-600 rounded-md px-4 py-2 text-sm font-medium cursor-not-allowed"
+        <Link
+          href={`/projects/${id}/configurations/new`}
+          className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-md px-4 py-2 text-sm font-medium transition-colors"
         >
           + New Configuration
-        </button>
+        </Link>
       </div>
       {configs.length === 0 ? (
         <p className="text-slate-500 text-sm">No configurations yet.</p>
@@ -95,6 +95,11 @@ export default async function ProjectDetailPage({
                   {cfg.status}
                 </span>
               </div>
+              {cfg.status === "draft" && (
+                <div className="mt-3 flex justify-end">
+                  <ConfirmButton configId={cfg.id} projectId={id} />
+                </div>
+              )}
             </div>
           ))}
         </div>
