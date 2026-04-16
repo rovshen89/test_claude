@@ -90,7 +90,7 @@ Also: `ConfigurationForm.tsx` (Sub-plan 2) — remove step validation, keep only
 1. User adjusts slider or number input → `ConfigurationViewer` local state updates → passed as prop `dimensions` to `<BabylonScene>` → mesh rebuilds in real time
 2. User clicks "Save as draft" → calls `updateConfigurationAction(cfgId, projectId, dimensions)`
 3. Server Action: `auth()` → `PUT /configurations/{cfgId}` with body `{ applied_config: dimensions }` → on success `revalidatePath("/projects/${projectId}")` + `redirect("/projects/${projectId}")`
-4. Backend resets status to `draft` on any PUT — user re-confirms from the project detail page
+4. Backend resets status to `draft` on any PUT — this is a backend contract assumption. If the backend does not reset status automatically, the frontend does not need to handle it differently; the project detail page re-fetches on navigation regardless.
 
 ### Read-only
 
@@ -115,7 +115,7 @@ Passes to `<ConfigurationViewer>`:
 
 ### `<ConfigurationViewer>` (Client Component)
 
-Owns dimension state: `Record<string, number>` initialised from `configuration.applied_config`. Renders:
+Owns dimension state: `Record<string, number>` initialised from `configuration.applied_config` cast as `Record<string, number>` (all values in `applied_config` are numbers by the domain invariant — cast with `as Record<string, number>`). Renders:
 - Header breadcrumb back to `/projects/${projectId}`
 - Sidebar: one slider + one number input per key in `schema.dimensions`, each with min/max hint and inline error on invalid value
 - If `isReadOnly`: all inputs disabled, Save/Reset hidden, locked status notice shown
@@ -153,7 +153,14 @@ Receives `dimensions: Record<string, number>` and `schema: Record<string, unknow
 ```ts
 export async function getConfiguration(token: string, configId: string): Promise<Configuration>
 // GET /configurations/{configId}
+// Note: if this endpoint does not exist on the backend, implement as:
+//   listConfigurations(token, projectId) then find by id — the Server Component
+//   already has projectId available, so this is always an option.
+```
 
+The implementer should verify `GET /configurations/{id}` exists in the backend before writing the helper. If absent, use `listConfigurations` + filter and skip adding a separate `getConfiguration` helper.
+
+```ts
 export async function updateConfiguration(
   token: string,
   configId: string,
