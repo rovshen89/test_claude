@@ -95,11 +95,19 @@ export default async function ProjectDetailPage({
                   {cfg.status}
                 </span>
               </div>
-              {cfg.status === "draft" && (
-                <div className="mt-3 flex justify-end">
+              <div className="mt-3 flex justify-end gap-3">
+                {cfg.status === "draft" && (
                   <ConfirmButton configId={cfg.id} projectId={id} />
-                </div>
-              )}
+                )}
+                {cfg.status !== "draft" && (
+                  <Link
+                    href={`/projects/${id}/configurations/${cfg.id}`}
+                    className="text-xs text-indigo-400 hover:text-indigo-300 font-medium"
+                  >
+                    View in 3D →
+                  </Link>
+                )}
+              </div>
             </div>
           ))}
         </div>

@@ -58,8 +58,8 @@ export function ConfigurationForm({
     const newErrors: Record<string, string> = {}
     for (const [key, spec] of Object.entries(dims)) {
       const val = dimensions[key] ?? spec.default
-      if (val < spec.min || val > spec.max || (spec.step > 0 && (val - spec.min) % spec.step !== 0)) {
-        newErrors[key] = `Must be between ${spec.min} and ${spec.max} mm (step ${spec.step})`
+      if (val < spec.min || val > spec.max) {
+        newErrors[key] = `Must be between ${spec.min} and ${spec.max} mm`
       }
     }
     setErrors(newErrors)
@@ -125,13 +125,13 @@ export function ConfigurationForm({
                     type="number"
                     min={spec.min}
                     max={spec.max}
-                    step={spec.step}
+                    step={1}
                     value={dimensions[key] ?? spec.default}
                     onChange={(e) => handleDimensionChange(key, e.target.value)}
                     className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                   />
                   <p className="text-xs text-slate-600 mt-1">
-                    {spec.min} – {spec.max}, step {spec.step}
+                    {spec.min} – {spec.max} mm
                   </p>
                   {errors[key] && (
                     <p className="text-xs text-red-400 mt-1">{errors[key]}</p>
