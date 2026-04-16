@@ -30,7 +30,9 @@ function statusColors(status: string): string {
 
 export function ConfigurationViewer({ configuration, furnitureType, projectId, isReadOnly }: Props) {
   const savedDimensions = configuration.applied_config as Record<string, number>
-  const [dimensions, setDimensions] = useState<Record<string, number>>(savedDimensions)
+  const [dimensions, setDimensions] = useState<Record<string, number>>(
+    () => configuration.applied_config as Record<string, number>
+  )
   const [inputErrors, setInputErrors] = useState<Record<string, string>>({})
   const [saveError, setSaveError] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
@@ -168,7 +170,7 @@ export function ConfigurationViewer({ configuration, furnitureType, projectId, i
               </div>
               <div className="bg-blue-950 border border-blue-900 rounded-md px-3 py-2 text-xs text-blue-300">
                 <strong>Editing confirmed config</strong> — saving resets status to draft.
-                Re-confirm from the project page.
+                Re-confirm from the project page when ready.
               </div>
             </>
           )}
