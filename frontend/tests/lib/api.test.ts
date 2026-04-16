@@ -8,6 +8,8 @@ import {
   getFurnitureTypes,
   createConfiguration,
   confirmConfiguration,
+  getConfiguration,
+  updateConfiguration,
 } from "@/lib/api"
 
 const mockFetch = jest.fn()
@@ -213,5 +215,72 @@ describe("confirmConfiguration", () => {
   it("throws ApiError(409) on 409 response", async () => {
     mockFetch.mockResolvedValueOnce({ ok: false, status: 409, text: async () => "already confirmed" })
     await expect(confirmConfiguration("tok", "c1")).rejects.toMatchObject({ status: 409 })
+  })
+})
+
+describe("getConfiguration", () => {
+  it("calls GET /configurations/{id} with Authorization header and returns Configuration", async () => {
+    const fixture = {
+      id: "cfg1",
+      project_id: "p1",
+      furniture_type_id: "ft1",
+      applied_config: { width: 900 },
+      placement: null,
+      status: "confirmed",
+    }
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => fixture })
+
+    const result = await getConfiguration("tok", "cfg1")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/configurations/cfg1",
+      expect.objectContaining({
+        headers: expect.objectContaining({ Authorization: "Bearer tok" }),
+      })
+    )
+    expect(result.id).toBe("cfg1")
+    expect(result.status).toBe("confirmed")
+  })
+
+  it("throws ApiError on non-ok response", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 404, text: async () => "not found" })
+    await expect(getConfiguration("tok", "missing")).rejects.toMatchObject({ status: 404 })
+  })
+})
+
+describe("updateConfiguration", () => {
+  it("calls PUT /configurations/{id} with applied_config body and Authorization header", async () => {
+    const fixture = {
+      id: "cfg1",
+      project_id: "p1",
+      furniture_type_id: "ft1",
+      applied_config: { width: 1000, height: 720, depth: 300 },
+      placement: null,
+      status: "draft",
+    }
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => fixture })
+
+    const result = await updateConfiguration("tok", "cfg1", { width: 1000, height: 720, depth: 300 })
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/configurations/cfg1",
+      expect.objectContaining({
+        method: "PUT",
+        body: JSON.stringify({ applied_config: { width: 1000, height: 720, depth: 300 } }),
+        headers: expect.objectContaining({ Authorization: "Bearer tok" }),
+      })
+    )
+    expect(result.id).toBe("cfg1")
+  })
+
+  it("throws ApiError on non-ok response", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+      text: async () => "Only draft configurations can be modified",
+    })
+    await expect(
+      updateConfiguration("tok", "cfg1", { width: 900 })
+    ).rejects.toMatchObject({ status: 400 })
   })
 })

@@ -92,3 +92,18 @@ export async function confirmConfiguration(token: string, configId: string): Pro
     method: "POST",
   })
 }
+
+export async function getConfiguration(token: string, configId: string): Promise<Configuration> {
+  return apiFetch<Configuration>(`/configurations/${configId}`, token)
+}
+
+export async function updateConfiguration(
+  token: string,
+  configId: string,
+  appliedConfig: Record<string, number>
+): Promise<Configuration> {
+  return apiFetch<Configuration>(`/configurations/${configId}`, token, {
+    method: "PUT",
+    body: JSON.stringify({ applied_config: appliedConfig }),
+  })
+}
