@@ -110,7 +110,11 @@ export default function BabylonScene({ dimensions, schema }: Props) {
     const camera = cameraRef.current
     const woodMat = woodMatRef.current
     const edgeMat = edgeMatRef.current
-    if (!scene || !shadowGen || !camera || !woodMat || !edgeMat) return
+    if (!scene || scene.isDisposed || !shadowGen || !camera || !woodMat || !edgeMat) return
+
+    const sceneNN = scene
+    const shadowGenNN = shadowGen
+    const woodMatNN = woodMat
 
     meshesRef.current.forEach((m) => m.dispose())
     meshesRef.current = []
@@ -138,11 +142,11 @@ export default function BabylonScene({ dimensions, schema }: Props) {
       pz: number,
       mat?: PBRMaterial
     ) {
-      const box = MeshBuilder.CreateBox(name, { width: sx, height: sy, depth: sz }, scene!)
+      const box = MeshBuilder.CreateBox(name, { width: sx, height: sy, depth: sz }, sceneNN)
       box.position.set(px, py, pz)
-      box.material = mat ?? woodMat!
+      box.material = mat ?? woodMatNN
       box.receiveShadows = true
-      shadowGen!.addShadowCaster(box)
+      shadowGenNN.addShadowCaster(box)
       meshesRef.current.push(box)
     }
 
@@ -156,7 +160,7 @@ export default function BabylonScene({ dimensions, schema }: Props) {
       addPanel("shelf", sw - pt*2, pt, sd - pt, 0, sh * 0.55, pt * 0.4)
     }
 
-    camera.target = new Vector3(0, sh / 2, 0)
+    camera.setTarget(new Vector3(0, sh / 2, 0))
   }, [dimensions, schema])
 
   if (webGLUnsupported) {
