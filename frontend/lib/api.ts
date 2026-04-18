@@ -177,6 +177,7 @@ export async function getOrder(token: string, orderId: string): Promise<Order> {
   return apiFetch<Order>(`/orders/${orderId}`, token)
 }
 
+// GET /orders — backend scopes results to the authenticated user via JWT; no project/config filter needed
 export async function listOrders(token: string): Promise<Order[]> {
   return apiFetch<Order[]>("/orders", token)
 }
