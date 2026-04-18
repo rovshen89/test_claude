@@ -78,7 +78,11 @@ export function ConfigurationViewer({ configuration, furnitureType, projectId, i
   }
 
   function handleReset() {
-    setDimensions(savedDimensions)
+    setDimensions(
+      Object.fromEntries(
+        Object.entries(dimSpecs).map(([k, s]) => [k, savedDimensions[k] ?? s.default])
+      )
+    )
     setInputErrors({})
     setSaveError(null)
   }
