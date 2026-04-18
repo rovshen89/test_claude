@@ -29,16 +29,18 @@ function statusColors(status: string): string {
 }
 
 export function ConfigurationViewer({ configuration, furnitureType, projectId, isReadOnly }: Props) {
+  const schema = furnitureType.schema as Schema
+  const dimSpecs = schema.dimensions ?? {}
+
   const savedDimensions = configuration.applied_config as Record<string, number>
-  const [dimensions, setDimensions] = useState<Record<string, number>>(
-    () => configuration.applied_config as Record<string, number>
+  const [dimensions, setDimensions] = useState<Record<string, number>>(() =>
+    Object.fromEntries(
+      Object.entries(dimSpecs).map(([k, s]) => [k, savedDimensions[k] ?? s.default])
+    )
   )
   const [inputErrors, setInputErrors] = useState<Record<string, string>>({})
   const [saveError, setSaveError] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
-
-  const schema = furnitureType.schema as Schema
-  const dimSpecs = schema.dimensions ?? {}
 
   const hasUnsavedChanges = Object.keys(dimSpecs).some(
     (key) => dimensions[key] !== savedDimensions[key]
@@ -55,6 +57,10 @@ export function ConfigurationViewer({ configuration, furnitureType, projectId, i
   }
 
   function handleInputChange(key: string, raw: string, spec: DimensionSpec) {
+    if (raw.trim() === "") {
+      setInputErrors((prev) => ({ ...prev, [key]: `Must be between ${spec.min} and ${spec.max} mm` }))
+      return
+    }
     const num = Number(raw)
     if (!Number.isFinite(num) || num < spec.min || num > spec.max) {
       setInputErrors((prev) => ({
@@ -163,16 +169,16 @@ export function ConfigurationViewer({ configuration, furnitureType, projectId, i
           )}
 
           {!isReadOnly && hasUnsavedChanges && (
-            <>
-              <div className="bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-xs text-slate-400">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-400 mr-1.5 align-middle" />
-                Unsaved changes
-              </div>
-              <div className="bg-blue-950 border border-blue-900 rounded-md px-3 py-2 text-xs text-blue-300">
-                <strong>Editing confirmed config</strong> — saving resets status to draft.
-                Re-confirm from the project page when ready.
-              </div>
-            </>
+            <div className="bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-xs text-slate-400">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-400 mr-1.5 align-middle" />
+              Unsaved changes
+            </div>
+          )}
+          {!isReadOnly && hasUnsavedChanges && configuration.status === "confirmed" && (
+            <div className="bg-blue-950 border border-blue-900 rounded-md px-3 py-2 text-xs text-blue-300">
+              <strong>Editing confirmed config</strong> — saving resets status to draft.
+              Re-confirm from the project page when ready.
+            </div>
           )}
 
           {saveError && (
