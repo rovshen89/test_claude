@@ -10,6 +10,10 @@ import {
   confirmConfiguration,
   getConfiguration,
   updateConfiguration,
+  createOrder,
+  getOrder,
+  listOrders,
+  type Order,
 } from "@/lib/api"
 
 const mockFetch = jest.fn()
@@ -282,5 +286,91 @@ describe("updateConfiguration", () => {
     await expect(
       updateConfiguration("tok", "cfg1", { width: 900 })
     ).rejects.toMatchObject({ status: 400 })
+  })
+})
+
+const orderFixture: Order = {
+  id: "ord1",
+  configuration_id: "cfg1",
+  pricing_snapshot: {
+    panel_cost: 100,
+    edge_cost: 20,
+    hardware_cost: 30,
+    labor_cost: 10,
+    subtotal: 160,
+    total: 192,
+    breakdown: [],
+  },
+  bom_snapshot: { panels: [], hardware: [], total_panels: 0, total_area_m2: 0 },
+  export_urls: { dxf: "http://s3/order.dxf", pdf: "http://s3/order.pdf" },
+  crm_ref: null,
+  last_dispatch: null,
+  created_at: "2026-04-15T10:00:00Z",
+}
+
+describe("createOrder", () => {
+  it("posts to /orders with configuration_id and returns Order", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => orderFixture })
+
+    const result = await createOrder("tok", "cfg1")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/orders",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ configuration_id: "cfg1" }),
+        headers: expect.objectContaining({ Authorization: "Bearer tok" }),
+      })
+    )
+    expect(result.id).toBe("ord1")
+    expect(result.pricing_snapshot.total).toBe(192)
+  })
+
+  it("throws ApiError on non-ok response", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 409, text: async () => "Order already exists" })
+    await expect(createOrder("tok", "cfg1")).rejects.toMatchObject({ status: 409 })
+  })
+})
+
+describe("getOrder", () => {
+  it("calls GET /orders/{id} with Authorization header and returns Order", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => orderFixture })
+
+    const result = await getOrder("tok", "ord1")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/orders/ord1",
+      expect.objectContaining({
+        headers: expect.objectContaining({ Authorization: "Bearer tok" }),
+      })
+    )
+    expect(result.id).toBe("ord1")
+  })
+
+  it("throws ApiError on non-ok response", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 404, text: async () => "not found" })
+    await expect(getOrder("tok", "missing")).rejects.toMatchObject({ status: 404 })
+  })
+})
+
+describe("listOrders", () => {
+  it("calls GET /orders with Authorization header and returns Order[]", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => [orderFixture] })
+
+    const result = await listOrders("tok")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/orders",
+      expect.objectContaining({
+        headers: expect.objectContaining({ Authorization: "Bearer tok" }),
+      })
+    )
+    expect(result).toHaveLength(1)
+    expect(result[0].id).toBe("ord1")
+  })
+
+  it("throws ApiError on non-ok response", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 401, text: async () => "Unauthorized" })
+    await expect(listOrders("tok")).rejects.toMatchObject({ status: 401 })
   })
 })

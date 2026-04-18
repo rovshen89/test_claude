@@ -107,3 +107,76 @@ export async function updateConfiguration(
     body: JSON.stringify({ applied_config: appliedConfig }),
   })
 }
+
+export type PanelPricingRow = {
+  name: string
+  area_m2: number
+  panel_cost: number
+  edge_cost: number
+}
+
+export type PricingSnapshot = {
+  panel_cost: number
+  edge_cost: number
+  hardware_cost: number
+  labor_cost: number
+  subtotal: number
+  total: number
+  breakdown: PanelPricingRow[]
+}
+
+export type BomPanelRow = {
+  name: string
+  material_name: string
+  material_sku: string
+  thickness_mm: number
+  width_mm: number
+  height_mm: number
+  quantity: number
+  grain_direction: string
+  edge_left: boolean
+  edge_right: boolean
+  edge_top: boolean
+  edge_bottom: boolean
+  area_m2: number
+}
+
+export type BomHardwareRow = {
+  name: string
+  quantity: number
+  unit_price: number
+  total_price: number
+}
+
+export type BomSnapshot = {
+  panels: BomPanelRow[]
+  hardware: BomHardwareRow[]
+  total_panels: number
+  total_area_m2: number
+}
+
+export type Order = {
+  id: string
+  configuration_id: string
+  pricing_snapshot: PricingSnapshot
+  bom_snapshot: BomSnapshot
+  export_urls: { dxf: string; pdf: string }
+  crm_ref: string | null
+  last_dispatch: Record<string, unknown> | null
+  created_at: string
+}
+
+export async function createOrder(token: string, configurationId: string): Promise<Order> {
+  return apiFetch<Order>("/orders", token, {
+    method: "POST",
+    body: JSON.stringify({ configuration_id: configurationId }),
+  })
+}
+
+export async function getOrder(token: string, orderId: string): Promise<Order> {
+  return apiFetch<Order>(`/orders/${orderId}`, token)
+}
+
+export async function listOrders(token: string): Promise<Order[]> {
+  return apiFetch<Order[]>("/orders", token)
+}
