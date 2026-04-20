@@ -21,7 +21,10 @@ export default async function ConfigurationViewerPage({
   if (!session?.user?.access_token) redirect("/login")
   const token = session.user.access_token
 
-  // Fetch project and configuration in parallel
+  // Fetch project and configuration in parallel.
+  // `project` is fetched for authorization: the backend returns 404 for any
+  // configuration whose project is owned by a different user, so this call
+  // validates ownership without the frontend needing to compare IDs.
   let project!: Project
   let configuration!: Configuration
   try {
