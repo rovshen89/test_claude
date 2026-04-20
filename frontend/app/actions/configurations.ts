@@ -1,14 +1,14 @@
 "use server"
 
 import { auth } from "@/lib/auth"
-import { createConfiguration, confirmConfiguration, updateConfiguration, ApiError } from "@/lib/api"
+import { createConfiguration, confirmConfiguration, updateConfiguration, ApiError, type AppliedConfig } from "@/lib/api"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 
 export async function createConfigurationAction(
   projectId: string,
   furnitureTypeId: string,
-  appliedConfig: Record<string, number>
+  appliedConfig: AppliedConfig
 ): Promise<{ error: string }> {
   const session = await auth()
   if (!session?.user?.access_token) redirect("/login")
@@ -50,7 +50,7 @@ export async function confirmConfigurationAction(
 export async function updateConfigurationAction(
   configId: string,
   projectId: string,
-  appliedConfig: Record<string, number>
+  appliedConfig: AppliedConfig
 ): Promise<{ error: string }> {
   const session = await auth()
   if (!session?.user?.access_token) redirect("/login")
