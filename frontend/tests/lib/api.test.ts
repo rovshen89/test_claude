@@ -13,7 +13,10 @@ import {
   createOrder,
   getOrder,
   listOrders,
+  listMaterials,
   type Order,
+  type AppliedConfig,
+  type Material,
 } from "@/lib/api"
 
 const mockFetch = jest.fn()
@@ -162,13 +165,18 @@ describe("createConfiguration", () => {
       id: "c1",
       project_id: "p1",
       furniture_type_id: "ft1",
-      applied_config: { width: 900 },
+      applied_config: { dimensions: { width: 900 }, panels: [], hardware_list: [] },
       placement: null,
       status: "draft",
     }
     mockFetch.mockResolvedValueOnce({ ok: true, json: async () => fixture })
 
-    const result = await createConfiguration("tok", "p1", "ft1", { width: 900 })
+    const appliedConfig: AppliedConfig = {
+      dimensions: { width: 900 },
+      panels: [],
+      hardware_list: [],
+    }
+    const result = await createConfiguration("tok", "p1", "ft1", appliedConfig)
 
     expect(mockFetch).toHaveBeenCalledWith(
       "http://localhost:8000/configurations",
@@ -177,7 +185,7 @@ describe("createConfiguration", () => {
         body: JSON.stringify({
           project_id: "p1",
           furniture_type_id: "ft1",
-          applied_config: { width: 900 },
+          applied_config: appliedConfig,
         }),
         headers: expect.objectContaining({ Authorization: "Bearer tok" }),
       })
@@ -188,7 +196,8 @@ describe("createConfiguration", () => {
 
   it("throws ApiError on non-ok response", async () => {
     mockFetch.mockResolvedValueOnce({ ok: false, status: 422, text: async () => "bad request" })
-    await expect(createConfiguration("tok", "p1", "ft1", { width: 900 })).rejects.toMatchObject({ status: 422 })
+    const appliedConfig: AppliedConfig = { dimensions: { width: 900 }, panels: [], hardware_list: [] }
+    await expect(createConfiguration("tok", "p1", "ft1", appliedConfig)).rejects.toMatchObject({ status: 422 })
   })
 })
 
@@ -258,19 +267,24 @@ describe("updateConfiguration", () => {
       id: "cfg1",
       project_id: "p1",
       furniture_type_id: "ft1",
-      applied_config: { width: 1000, height: 720, depth: 300 },
+      applied_config: { dimensions: { width: 1000, height: 720, depth: 300 }, panels: [], hardware_list: [] },
       placement: null,
       status: "draft",
     }
     mockFetch.mockResolvedValueOnce({ ok: true, json: async () => fixture })
 
-    const result = await updateConfiguration("tok", "cfg1", { width: 1000, height: 720, depth: 300 })
+    const appliedConfig: AppliedConfig = {
+      dimensions: { width: 1000, height: 720, depth: 300 },
+      panels: [],
+      hardware_list: [],
+    }
+    const result = await updateConfiguration("tok", "cfg1", appliedConfig)
 
     expect(mockFetch).toHaveBeenCalledWith(
       "http://localhost:8000/configurations/cfg1",
       expect.objectContaining({
         method: "PUT",
-        body: JSON.stringify({ applied_config: { width: 1000, height: 720, depth: 300 } }),
+        body: JSON.stringify({ applied_config: appliedConfig }),
         headers: expect.objectContaining({ Authorization: "Bearer tok" }),
       })
     )
@@ -283,8 +297,9 @@ describe("updateConfiguration", () => {
       status: 400,
       text: async () => "Only draft configurations can be modified",
     })
+    const appliedConfig: AppliedConfig = { dimensions: { width: 900 }, panels: [], hardware_list: [] }
     await expect(
-      updateConfiguration("tok", "cfg1", { width: 900 })
+      updateConfiguration("tok", "cfg1", appliedConfig)
     ).rejects.toMatchObject({ status: 400 })
   })
 })
@@ -372,5 +387,44 @@ describe("listOrders", () => {
   it("throws ApiError on non-ok response", async () => {
     mockFetch.mockResolvedValueOnce({ ok: false, status: 401, text: async () => "Unauthorized" })
     await expect(listOrders("tok")).rejects.toMatchObject({ status: 401 })
+  })
+})
+
+const materialFixture: Material = {
+  id: "mat1",
+  tenant_id: null,
+  category: "laminate",
+  name: "Oak Laminate",
+  sku: "OAK-18",
+  thickness_options: [16, 18, 22],
+  price_per_m2: 12.5,
+  edgebanding_price_per_mm: 0.002,
+  s3_albedo: "http://s3/mat1/albedo.png",
+  s3_normal: null,
+  s3_roughness: null,
+  s3_ao: null,
+  grain_direction: "horizontal",
+}
+
+describe("listMaterials", () => {
+  it("calls GET /materials with Authorization header and returns Material[]", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => [materialFixture] })
+
+    const result = await listMaterials("tok")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/materials",
+      expect.objectContaining({
+        headers: expect.objectContaining({ Authorization: "Bearer tok" }),
+      })
+    )
+    expect(result).toHaveLength(1)
+    expect(result[0].id).toBe("mat1")
+    expect(result[0].thickness_options).toEqual([16, 18, 22])
+  })
+
+  it("throws ApiError on non-ok response", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 401, text: async () => "Unauthorized" })
+    await expect(listMaterials("tok")).rejects.toMatchObject({ status: 401 })
   })
 })

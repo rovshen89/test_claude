@@ -23,6 +23,52 @@ export type FurnitureType = {
   schema: Record<string, unknown>
 }
 
+export type EdgeBanding = {
+  left: boolean
+  right: boolean
+  top: boolean
+  bottom: boolean
+}
+
+export type PanelSpec = {
+  name: string
+  material_id: string
+  thickness_mm: number
+  width_mm: number
+  height_mm: number
+  quantity: number
+  grain_direction: string
+  edge_banding: EdgeBanding
+}
+
+export type HardwareItem = {
+  name: string
+  unit_price: number
+  quantity: number
+}
+
+export type AppliedConfig = {
+  dimensions: Record<string, number>
+  panels: PanelSpec[]
+  hardware_list: HardwareItem[]
+}
+
+export type Material = {
+  id: string
+  tenant_id: string | null
+  category: string
+  name: string
+  sku: string
+  thickness_options: number[]
+  price_per_m2: number
+  edgebanding_price_per_mm: number | null
+  s3_albedo: string | null
+  s3_normal: string | null
+  s3_roughness: string | null
+  s3_ao: string | null
+  grain_direction: string
+}
+
 export class ApiError extends Error {
   constructor(public status: number, message: string) {
     super(message)
@@ -75,7 +121,7 @@ export async function createConfiguration(
   token: string,
   projectId: string,
   furnitureTypeId: string,
-  appliedConfig: Record<string, number>
+  appliedConfig: AppliedConfig
 ): Promise<Configuration> {
   return apiFetch<Configuration>("/configurations", token, {
     method: "POST",
@@ -100,7 +146,7 @@ export async function getConfiguration(token: string, configId: string): Promise
 export async function updateConfiguration(
   token: string,
   configId: string,
-  appliedConfig: Record<string, number>
+  appliedConfig: AppliedConfig
 ): Promise<Configuration> {
   return apiFetch<Configuration>(`/configurations/${configId}`, token, {
     method: "PUT",
@@ -180,4 +226,8 @@ export async function getOrder(token: string, orderId: string): Promise<Order> {
 // GET /orders — backend scopes results to the authenticated user via JWT; no project/config filter needed
 export async function listOrders(token: string): Promise<Order[]> {
   return apiFetch<Order[]>("/orders", token)
+}
+
+export async function listMaterials(token: string): Promise<Material[]> {
+  return apiFetch<Material[]>("/materials", token)
 }
