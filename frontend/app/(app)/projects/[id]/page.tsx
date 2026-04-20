@@ -1,5 +1,15 @@
 import { auth } from "@/lib/auth"
-import { getProject, listConfigurations, getFurnitureType, ApiError, type Project, type Configuration, type FurnitureType } from "@/lib/api"
+import {
+  getProject,
+  listConfigurations,
+  getFurnitureType,
+  listOrders,
+  ApiError,
+  type Project,
+  type Configuration,
+  type FurnitureType,
+  type Order,
+} from "@/lib/api"
 import { redirect, notFound } from "next/navigation"
 import Link from "next/link"
 import { ConfirmButton } from "./_components/ConfirmButton"
@@ -55,6 +65,16 @@ export default async function ProjectDetailPage({
   }
   const ftMap = Object.fromEntries(ftList.map((ft) => [ft.id, ft.category]))
 
+  // Fetch orders to build configId → orderId map for "View Order" links.
+  // Failure is non-critical: page renders without "View Order" links.
+  let orders: Order[] = []
+  try {
+    orders = await listOrders(token)
+  } catch {
+    // intentionally ignored
+  }
+  const orderMap = Object.fromEntries(orders.map((o) => [o.configuration_id, o.id]))
+
   return (
     <div>
       <div className="mb-2">
@@ -107,6 +127,15 @@ export default async function ProjectDetailPage({
                     View in 3D →
                   </Link>
                 )}
+                {(cfg.status === "in_production" || cfg.status === "completed") &&
+                  orderMap[cfg.id] && (
+                    <Link
+                      href={`/projects/${id}/orders/${orderMap[cfg.id]}`}
+                      className="text-xs text-emerald-400 hover:text-emerald-300 font-medium"
+                    >
+                      View Order →
+                    </Link>
+                  )}
               </div>
             </div>
           ))}
