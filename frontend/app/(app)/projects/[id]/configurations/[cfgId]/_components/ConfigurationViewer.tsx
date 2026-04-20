@@ -4,6 +4,7 @@ import { useState } from "react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import { updateConfigurationAction } from "@/app/actions/configurations"
+import { createOrderAction } from "@/app/actions/orders"
 import type { Configuration, FurnitureType } from "@/lib/api"
 
 const BabylonSceneDynamic = dynamic(() => import("./BabylonScene"), { ssr: false })
@@ -41,6 +42,8 @@ export function ConfigurationViewer({ configuration, furnitureType, projectId, i
   const [inputErrors, setInputErrors] = useState<Record<string, string>>({})
   const [saveError, setSaveError] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false)
+  const [orderError, setOrderError] = useState<string | null>(null)
 
   const hasUnsavedChanges = Object.keys(dimSpecs).some(
     (key) => dimensions[key] !== savedDimensions[key]
@@ -97,6 +100,17 @@ export function ConfigurationViewer({ configuration, furnitureType, projectId, i
       setIsSaving(false)
     }
     // On success, updateConfigurationAction calls redirect() — no further state update needed
+  }
+
+  async function handlePlaceOrder() {
+    setIsPlacingOrder(true)
+    setOrderError(null)
+    const result = await createOrderAction(configuration.id, projectId)
+    if (result?.error) {
+      setOrderError(result.error)
+      setIsPlacingOrder(false)
+    }
+    // On success, createOrderAction calls redirect() — no further state update needed
   }
 
   return (
@@ -206,6 +220,24 @@ export function ConfigurationViewer({ configuration, furnitureType, projectId, i
                 className="w-full py-2 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-slate-300 text-sm font-medium transition-colors"
               >
                 Reset to saved
+              </button>
+            </>
+          )}
+
+          {!isReadOnly && configuration.status === "confirmed" && !hasUnsavedChanges && (
+            <>
+              <hr className="border-slate-800" />
+              {orderError && (
+                <div className="bg-red-950 border border-red-900 rounded-md px-3 py-2 text-xs text-red-400">
+                  {orderError}
+                </div>
+              )}
+              <button
+                onClick={handlePlaceOrder}
+                disabled={isPlacingOrder}
+                className="w-full py-2 rounded-md bg-emerald-700 hover:bg-emerald-600 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors"
+              >
+                {isPlacingOrder ? "Placing order…" : "Place Order"}
               </button>
             </>
           )}
