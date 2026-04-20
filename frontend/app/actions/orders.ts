@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth"
 import { createOrder, ApiError, type Order } from "@/lib/api"
 import { redirect } from "next/navigation"
+import { revalidatePath } from "next/cache"
 
 export async function createOrderAction(
   configId: string,
@@ -20,5 +21,6 @@ export async function createOrderAction(
     if (e instanceof ApiError) return { error: e.message }
     throw e
   }
+  revalidatePath(`/projects/${projectId}`)
   redirect(`/projects/${projectId}/orders/${order.id}`)
 }
