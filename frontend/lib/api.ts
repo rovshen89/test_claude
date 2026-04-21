@@ -231,3 +231,15 @@ export async function listOrders(token: string): Promise<Order[]> {
 export async function listMaterials(token: string): Promise<Material[]> {
   return apiFetch<Material[]>("/materials", token)
 }
+
+export type DispatchResponse = {
+  order_id: string
+  dispatched_at: string
+  http_status: number
+  response_body: string
+  crm_ref: string | null
+}
+
+export async function dispatchOrder(token: string, orderId: string): Promise<DispatchResponse> {
+  return apiFetch<DispatchResponse>(`/orders/${orderId}/dispatch`, token, { method: "POST" })
+}

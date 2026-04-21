@@ -14,9 +14,11 @@ import {
   getOrder,
   listOrders,
   listMaterials,
+  dispatchOrder,
   type Order,
   type AppliedConfig,
   type Material,
+  type DispatchResponse,
 } from "@/lib/api"
 
 const mockFetch = jest.fn()
@@ -426,5 +428,41 @@ describe("listMaterials", () => {
   it("throws ApiError on non-ok response", async () => {
     mockFetch.mockResolvedValueOnce({ ok: false, status: 401, text: async () => "Unauthorized" })
     await expect(listMaterials("tok")).rejects.toMatchObject({ status: 401 })
+  })
+})
+
+const dispatchFixture: DispatchResponse = {
+  order_id: "ord1",
+  dispatched_at: "2026-04-21T12:00:00Z",
+  http_status: 201,
+  response_body: '{"id": "crm-789"}',
+  crm_ref: "crm-789",
+}
+
+describe("dispatchOrder", () => {
+  it("POSTs to /orders/{id}/dispatch with Authorization header and returns DispatchResponse", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => dispatchFixture })
+
+    const result = await dispatchOrder("tok", "ord1")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/orders/ord1/dispatch",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({ Authorization: "Bearer tok" }),
+      })
+    )
+    expect(result.order_id).toBe("ord1")
+    expect(result.http_status).toBe(201)
+    expect(result.crm_ref).toBe("crm-789")
+  })
+
+  it("throws ApiError on non-ok response", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 422,
+      text: async () => "No webhook URL configured for this tenant",
+    })
+    await expect(dispatchOrder("tok", "ord1")).rejects.toMatchObject({ status: 422 })
   })
 })
