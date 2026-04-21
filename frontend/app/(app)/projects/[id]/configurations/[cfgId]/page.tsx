@@ -3,10 +3,12 @@ import {
   getProject,
   getConfiguration,
   getFurnitureType,
+  listMaterials,
   ApiError,
   type Project,
   type Configuration,
   type FurnitureType,
+  type Material,
 } from "@/lib/api"
 import { redirect, notFound } from "next/navigation"
 import { ConfigurationViewer } from "./_components/ConfigurationViewer"
@@ -51,6 +53,16 @@ export default async function ConfigurationViewerPage({
     throw e
   }
 
+  // Fetch materials for the panel assignment UI.
+  // Non-critical: viewer renders without material pickers if this fails.
+  let materials: Material[] = []
+  try {
+    materials = await listMaterials(token)
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 401) redirect("/login")
+    // Other errors: silently fall back to empty list
+  }
+
   const isReadOnly =
     configuration.status === "in_production" || configuration.status === "completed"
 
@@ -62,6 +74,7 @@ export default async function ConfigurationViewerPage({
         furnitureType={furnitureType}
         projectId={id}
         isReadOnly={isReadOnly}
+        materials={materials}
       />
     </div>
   )
