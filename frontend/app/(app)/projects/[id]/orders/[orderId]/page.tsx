@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth"
 import { getOrder, ApiError, type Order } from "@/lib/api"
 import { redirect, notFound } from "next/navigation"
 import Link from "next/link"
+import { DispatchButton } from "./_components/DispatchButton"
 
 function fmt(n: number): string {
   return n.toFixed(2)
@@ -28,6 +29,15 @@ export default async function OrderDetailPage({
 
   const pricing = order.pricing_snapshot
   const bom = order.bom_snapshot
+
+  const rawDispatch = order.last_dispatch as {
+    dispatched_at?: string
+    http_status?: number
+  } | null
+  const lastDispatch =
+    rawDispatch?.dispatched_at != null && rawDispatch?.http_status != null
+      ? { dispatched_at: rawDispatch.dispatched_at, http_status: rawDispatch.http_status }
+      : null
 
   return (
     <div className="max-w-4xl">
@@ -193,6 +203,17 @@ export default async function OrderDetailPage({
             Download PDF
           </a>
         </div>
+      </section>
+
+      {/* CRM Dispatch */}
+      <section className="bg-slate-800 border border-slate-700 rounded-lg p-5 mt-6">
+        <h2 className="text-sm font-semibold text-slate-300 mb-4">CRM Dispatch</h2>
+        <DispatchButton
+          orderId={orderId}
+          projectId={id}
+          initialCrmRef={order.crm_ref}
+          initialLastDispatch={lastDispatch}
+        />
       </section>
     </div>
   )
