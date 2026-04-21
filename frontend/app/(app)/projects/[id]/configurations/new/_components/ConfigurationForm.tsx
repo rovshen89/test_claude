@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { createConfigurationAction } from "@/app/actions/configurations"
-import type { FurnitureType } from "@/lib/api"
+import type { FurnitureType, AppliedConfig } from "@/lib/api"
 
 type DimensionSpec = { min: number; max: number; step: number; default: number }
 type FurnitureSchema = { dimensions?: Record<string, DimensionSpec> }
@@ -71,7 +71,12 @@ export function ConfigurationForm({
     if (!validate()) return
     setSubmitting(true)
     setSubmitError(null)
-    const result = await createConfigurationAction(projectId, selectedTypeId, dimensions)
+    const appliedConfig: AppliedConfig = {
+      dimensions,
+      panels: [],
+      hardware_list: [],
+    }
+    const result = await createConfigurationAction(projectId, selectedTypeId, appliedConfig)
     if (result?.error) {
       setSubmitError(result.error)
       setSubmitting(false)
