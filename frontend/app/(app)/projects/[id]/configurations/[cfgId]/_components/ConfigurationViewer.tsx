@@ -5,18 +5,29 @@ import dynamic from "next/dynamic"
 import Link from "next/link"
 import { updateConfigurationAction } from "@/app/actions/configurations"
 import { createOrderAction } from "@/app/actions/orders"
-import type { Configuration, FurnitureType } from "@/lib/api"
+import type { Configuration, FurnitureType, AppliedConfig, Material } from "@/lib/api"
 
 const BabylonSceneDynamic = dynamic(() => import("./BabylonScene"), { ssr: false })
 
 type DimensionSpec = { min: number; max: number; step: number; default: number }
-type Schema = { dimensions?: Record<string, DimensionSpec> }
+type PanelTemplate = {
+  name: string
+  width_key: string
+  height_key: string
+  quantity?: number
+  grain_direction?: string
+  edge_banding?: { left?: boolean; right?: boolean; top?: boolean; bottom?: boolean }
+}
+type Schema = { dimensions?: Record<string, DimensionSpec>; panels?: PanelTemplate[] }
+
+type PanelAssignment = { materialId: string | null; thickness_mm: number | null }
 
 type Props = {
   configuration: Configuration
   furnitureType: FurnitureType
   projectId: string
   isReadOnly: boolean
+  materials: Material[]
 }
 
 function statusColors(status: string): string {
@@ -29,15 +40,32 @@ function statusColors(status: string): string {
   }
 }
 
-export function ConfigurationViewer({ configuration, furnitureType, projectId, isReadOnly }: Props) {
+export function ConfigurationViewer({ configuration, furnitureType, projectId, isReadOnly, materials }: Props) {
   const schema = furnitureType.schema as Schema
   const dimSpecs = schema.dimensions ?? {}
+  const panelTemplates: PanelTemplate[] = schema.panels ?? []
 
-  const savedDimensions = configuration.applied_config as Record<string, number>
+  // Support old applied_config format ({ width: 900, ... }) and new format
+  // ({ dimensions: { width: 900 }, panels: [...], hardware_list: [] })
+  const rawConfig = configuration.applied_config as Record<string, unknown>
+  const isNewFormat = "dimensions" in rawConfig
+  const savedDimensions: Record<string, number> = isNewFormat
+    ? (rawConfig.dimensions as Record<string, number>)
+    : (rawConfig as Record<string, number>)
+  const savedPanels = isNewFormat && Array.isArray(rawConfig.panels)
+    ? (rawConfig.panels as Array<{ material_id: string; thickness_mm: number }>)
+    : []
+
   const [dimensions, setDimensions] = useState<Record<string, number>>(() =>
     Object.fromEntries(
       Object.entries(dimSpecs).map(([k, s]) => [k, savedDimensions[k] ?? s.default])
     )
+  )
+  const [panelAssignments, setPanelAssignments] = useState<PanelAssignment[]>(() =>
+    panelTemplates.map((_, i) => ({
+      materialId: savedPanels[i]?.material_id ?? null,
+      thickness_mm: savedPanels[i]?.thickness_mm ?? null,
+    }))
   )
   const [inputErrors, setInputErrors] = useState<Record<string, string>>({})
   const [saveError, setSaveError] = useState<string | null>(null)
@@ -45,10 +73,25 @@ export function ConfigurationViewer({ configuration, furnitureType, projectId, i
   const [isPlacingOrder, setIsPlacingOrder] = useState(false)
   const [orderError, setOrderError] = useState<string | null>(null)
 
-  const hasUnsavedChanges = Object.keys(dimSpecs).some(
+  const hasDimChanges = Object.keys(dimSpecs).some(
     (key) => dimensions[key] !== savedDimensions[key]
   )
+  const hasPanelChanges = panelTemplates.some((_, i) => {
+    const cur = panelAssignments[i]
+    const sav = savedPanels[i]
+    return (
+      cur?.materialId !== (sav?.material_id ?? null) ||
+      cur?.thickness_mm !== (sav?.thickness_mm ?? null)
+    )
+  })
+  const hasUnsavedChanges = hasDimChanges || hasPanelChanges
   const hasInputErrors = Object.keys(inputErrors).length > 0
+
+  const allPanelsAssigned =
+    panelTemplates.length === 0 ||
+    panelTemplates.every(
+      (_, i) => !!panelAssignments[i]?.materialId && !!panelAssignments[i]?.thickness_mm
+    )
 
   function handleSliderChange(key: string, value: number) {
     setDimensions((prev) => ({ ...prev, [key]: value }))
@@ -86,6 +129,12 @@ export function ConfigurationViewer({ configuration, furnitureType, projectId, i
         Object.entries(dimSpecs).map(([k, s]) => [k, savedDimensions[k] ?? s.default])
       )
     )
+    setPanelAssignments(
+      panelTemplates.map((_, i) => ({
+        materialId: savedPanels[i]?.material_id ?? null,
+        thickness_mm: savedPanels[i]?.thickness_mm ?? null,
+      }))
+    )
     setInputErrors({})
     setSaveError(null)
   }
@@ -94,7 +143,29 @@ export function ConfigurationViewer({ configuration, furnitureType, projectId, i
     if (hasInputErrors) return
     setIsSaving(true)
     setSaveError(null)
-    const result = await updateConfigurationAction(configuration.id, projectId, dimensions)
+    const appliedConfig: AppliedConfig = {
+      dimensions,
+      panels: panelTemplates.map((tpl, i) => {
+        const a = panelAssignments[i]
+        return {
+          name: tpl.name,
+          material_id: a?.materialId ?? "",
+          thickness_mm: a?.thickness_mm ?? 0,
+          width_mm: dimensions[tpl.width_key] ?? 0,
+          height_mm: dimensions[tpl.height_key] ?? 0,
+          quantity: tpl.quantity ?? 1,
+          grain_direction: tpl.grain_direction ?? "none",
+          edge_banding: {
+            left:   tpl.edge_banding?.left   ?? false,
+            right:  tpl.edge_banding?.right  ?? false,
+            top:    tpl.edge_banding?.top    ?? false,
+            bottom: tpl.edge_banding?.bottom ?? false,
+          },
+        }
+      }),
+      hardware_list: [],
+    }
+    const result = await updateConfigurationAction(configuration.id, projectId, appliedConfig)
     if (result?.error) {
       setSaveError(result.error)
       setIsSaving(false)
@@ -177,6 +248,71 @@ export function ConfigurationViewer({ configuration, furnitureType, projectId, i
             </div>
           ))}
 
+          {/* Materials section — shown when the furniture type schema defines panel templates */}
+          {panelTemplates.length > 0 && (
+            <>
+              <hr className="border-slate-800" />
+              <p className="text-xs uppercase tracking-widest text-slate-500">Materials</p>
+              {panelTemplates.map((tpl, i) => {
+                const widthMm = dimensions[tpl.width_key] ?? 0
+                const heightMm = dimensions[tpl.height_key] ?? 0
+                const assignment = panelAssignments[i]
+                const selectedMaterial = materials.find((m) => m.id === assignment?.materialId)
+                return (
+                  <div key={tpl.name} className="mb-1">
+                    <span className="block text-xs text-slate-400 mb-1">
+                      {tpl.name}
+                      {tpl.quantity && tpl.quantity > 1 ? ` ×${tpl.quantity}` : ""}{" "}
+                      <span className="text-slate-600">{widthMm} × {heightMm} mm</span>
+                    </span>
+                    <select
+                      value={assignment?.materialId ?? ""}
+                      disabled={isReadOnly}
+                      onChange={(e) => {
+                        const matId = e.target.value || null
+                        setPanelAssignments((prev) =>
+                          prev.map((a, idx) =>
+                            idx === i ? { ...a, materialId: matId, thickness_mm: null } : a
+                          )
+                        )
+                      }}
+                      className="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1.5 text-xs text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed mb-1"
+                    >
+                      <option value="">— select material —</option>
+                      {materials.map((mat) => (
+                        <option key={mat.id} value={mat.id}>
+                          {mat.name} ({mat.sku})
+                        </option>
+                      ))}
+                    </select>
+                    {selectedMaterial && (
+                      <select
+                        value={assignment?.thickness_mm ?? ""}
+                        disabled={isReadOnly}
+                        onChange={(e) => {
+                          const t = e.target.value ? Number(e.target.value) : null
+                          setPanelAssignments((prev) =>
+                            prev.map((a, idx) =>
+                              idx === i ? { ...a, thickness_mm: t } : a
+                            )
+                          )
+                        }}
+                        className="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1.5 text-xs text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <option value="">— select thickness —</option>
+                        {selectedMaterial.thickness_options.map((t) => (
+                          <option key={t} value={t}>
+                            {t} mm
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                )
+              })}
+            </>
+          )}
+
           <hr className="border-slate-800" />
 
           {isReadOnly && (
@@ -224,7 +360,7 @@ export function ConfigurationViewer({ configuration, furnitureType, projectId, i
             </>
           )}
 
-          {!isReadOnly && configuration.status === "confirmed" && !hasUnsavedChanges && (
+          {!isReadOnly && configuration.status === "confirmed" && !hasUnsavedChanges && allPanelsAssigned && (
             <>
               <hr className="border-slate-800" />
               {orderError && (
