@@ -90,7 +90,9 @@ export function ConfigurationViewer({ configuration, furnitureType, projectId, i
   const allPanelsAssigned =
     panelTemplates.length === 0 ||
     panelTemplates.every(
-      (_, i) => !!panelAssignments[i]?.materialId && !!panelAssignments[i]?.thickness_mm
+      (_, i) =>
+        !!panelAssignments[i]?.materialId &&
+        panelAssignments[i]?.thickness_mm != null
     )
 
   function handleSliderChange(key: string, value: number) {
