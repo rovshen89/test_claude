@@ -21,6 +21,7 @@ export function DispatchButton({
   const [error, setError] = useState<string | null>(null)
 
   async function handleDispatch() {
+    if (isDispatching) return
     setIsDispatching(true)
     setError(null)
     setResult(null)
@@ -29,6 +30,8 @@ export function DispatchButton({
       setError(res.error)
     } else if (res.result) {
       setResult(res.result)
+    } else {
+      setError("Dispatch failed — no response from server")
     }
     setIsDispatching(false)
   }
