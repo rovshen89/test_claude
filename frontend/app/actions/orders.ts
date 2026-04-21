@@ -32,13 +32,15 @@ export async function dispatchOrderAction(
   const session = await auth()
   if (!session?.user?.access_token) redirect("/login")
   const token = session.user.access_token
+  if (!orderId || !projectId) return { error: "Invalid request" }
+  let res: DispatchResponse
   try {
-    const res: DispatchResponse = await dispatchOrder(token, orderId)
-    revalidatePath(`/projects/${projectId}/orders/${orderId}`)
-    return { result: { http_status: res.http_status, crm_ref: res.crm_ref } }
+    res = await dispatchOrder(token, orderId)
   } catch (e) {
     if (e instanceof ApiError && e.status === 401) redirect("/login")
     if (e instanceof ApiError) return { error: e.message }
     throw e
   }
+  revalidatePath(`/projects/${projectId}/orders/${orderId}`)
+  return { result: { http_status: res.http_status, crm_ref: res.crm_ref } }
 }
