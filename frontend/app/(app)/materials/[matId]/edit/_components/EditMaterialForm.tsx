@@ -41,12 +41,19 @@ export function EditMaterialForm({ material }: Props) {
       return
     }
 
+    const parsedPrice = parseFloat(pricePerM2)
+    if (!Number.isFinite(parsedPrice)) {
+      setError("Please enter a valid price per m²")
+      setIsSubmitting(false)
+      return
+    }
+
     const result = await updateMaterialAction(material.id, {
       name,
       sku,
       category,
       thickness_options: thicknessOptions,
-      price_per_m2: parseFloat(pricePerM2),
+      price_per_m2: parsedPrice,
       edgebanding_price_per_mm: edgebandingPrice ? parseFloat(edgebandingPrice) : null,
       grain_direction: grainDirection,
     })

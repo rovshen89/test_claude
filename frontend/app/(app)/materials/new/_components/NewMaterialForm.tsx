@@ -31,6 +31,13 @@ export function NewMaterialForm() {
       return
     }
 
+    const parsedPrice = parseFloat(pricePerM2)
+    if (!Number.isFinite(parsedPrice)) {
+      setError("Please enter a valid price per m²")
+      setIsSubmitting(false)
+      return
+    }
+
     const file = fileRef.current?.files?.[0]
 
     let result: { error?: string }
@@ -51,7 +58,7 @@ export function NewMaterialForm() {
         sku,
         category,
         thickness_options: thicknessOptions,
-        price_per_m2: parseFloat(pricePerM2),
+        price_per_m2: parsedPrice,
         edgebanding_price_per_mm: edgebandingPrice ? parseFloat(edgebandingPrice) : null,
         grain_direction: grainDirection,
       })

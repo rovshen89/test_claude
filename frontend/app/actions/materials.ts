@@ -18,6 +18,8 @@ export async function createMaterialAction(
   const session = await auth()
   if (!session?.user?.access_token) redirect("/login")
   const token = session.user.access_token
+  const canManage = session.user.role === "admin" || session.user.role === "manufacturer"
+  if (!canManage) return { error: "Forbidden" }
   try {
     await createMaterial(token, data)
   } catch (e) {
@@ -35,6 +37,8 @@ export async function uploadMaterialAction(
   const session = await auth()
   if (!session?.user?.access_token) redirect("/login")
   const token = session.user.access_token
+  const canManage = session.user.role === "admin" || session.user.role === "manufacturer"
+  if (!canManage) return { error: "Forbidden" }
   try {
     await uploadMaterial(token, formData)
   } catch (e) {
@@ -53,6 +57,8 @@ export async function updateMaterialAction(
   const session = await auth()
   if (!session?.user?.access_token) redirect("/login")
   const token = session.user.access_token
+  const canManage = session.user.role === "admin" || session.user.role === "manufacturer"
+  if (!canManage) return { error: "Forbidden" }
   if (!matId) return { error: "Invalid request" }
   try {
     await updateMaterial(token, matId, data)
