@@ -297,3 +297,18 @@ export async function updateMaterial(
     body: JSON.stringify(data),
   })
 }
+
+export type FurnitureTypeCreate = {
+  category: string
+  schema: Record<string, unknown>
+}
+
+export async function createFurnitureType(
+  token: string,
+  data: FurnitureTypeCreate
+): Promise<FurnitureType> {
+  return apiFetch<FurnitureType>("/furniture-types", token, {
+    method: "POST",
+    body: JSON.stringify(data),
+  })
+}

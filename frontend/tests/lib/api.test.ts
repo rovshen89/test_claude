@@ -6,6 +6,7 @@ import {
   listConfigurations,
   getFurnitureType,
   getFurnitureTypes,
+  createFurnitureType,
   createConfiguration,
   confirmConfiguration,
   getConfiguration,
@@ -25,6 +26,7 @@ import {
   type MaterialCreate,
   type MaterialUpdate,
   type DispatchResponse,
+  type FurnitureTypeCreate,
 } from "@/lib/api"
 
 const mockFetch = jest.fn()
@@ -587,5 +589,39 @@ describe("updateMaterial", () => {
   it("throws ApiError on 404", async () => {
     mockFetch.mockResolvedValueOnce({ ok: false, status: 404, text: async () => "Material not found" })
     await expect(updateMaterial("tok", "mat1", { name: "X" })).rejects.toMatchObject({ status: 404 })
+  })
+})
+
+describe("createFurnitureType", () => {
+  it("POSTs to /furniture-types with JSON body and Authorization header, returns FurnitureType", async () => {
+    const fixture = { id: "ft1", category: "wardrobe", schema: { dimensions: {} }, tenant_id: null }
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => fixture })
+
+    const data: FurnitureTypeCreate = {
+      category: "wardrobe",
+      schema: { dimensions: { width: { min: 300, max: 1200, step: 10, default: 600 } } },
+    }
+    const result = await createFurnitureType("tok", data)
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/furniture-types",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({
+          Authorization: "Bearer tok",
+          "Content-Type": "application/json",
+        }),
+        body: JSON.stringify(data),
+      })
+    )
+    expect(result.id).toBe("ft1")
+    expect(result.category).toBe("wardrobe")
+  })
+
+  it("throws ApiError on 403", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 403, text: async () => "Forbidden" })
+    await expect(
+      createFurnitureType("tok", { category: "wardrobe", schema: {} })
+    ).rejects.toMatchObject({ status: 403 })
   })
 })
