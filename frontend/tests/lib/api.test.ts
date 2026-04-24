@@ -616,6 +616,8 @@ describe("createFurnitureType", () => {
     )
     expect(result.id).toBe("ft1")
     expect(result.category).toBe("wardrobe")
+    expect(result.schema).toEqual({ dimensions: {} })
+    expect(result.tenant_id).toBeNull()
   })
 
   it("throws ApiError on 403", async () => {
