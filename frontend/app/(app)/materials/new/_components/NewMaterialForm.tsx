@@ -25,6 +25,12 @@ export function NewMaterialForm() {
       .map((s) => parseInt(s.trim(), 10))
       .filter((n) => Number.isFinite(n))
 
+    if (thicknessOptions.length === 0) {
+      setError("Please enter at least one valid thickness value (e.g. 16, 18, 22)")
+      setIsSubmitting(false)
+      return
+    }
+
     const file = fileRef.current?.files?.[0]
 
     let result: { error?: string }
@@ -67,8 +73,9 @@ export function NewMaterialForm() {
       )}
 
       <div>
-        <label className="block text-xs text-slate-400 mb-1">Name</label>
+        <label htmlFor="name" className="block text-xs text-slate-400 mb-1">Name</label>
         <input
+          id="name"
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -77,8 +84,9 @@ export function NewMaterialForm() {
       </div>
 
       <div>
-        <label className="block text-xs text-slate-400 mb-1">SKU</label>
+        <label htmlFor="sku" className="block text-xs text-slate-400 mb-1">SKU</label>
         <input
+          id="sku"
           required
           value={sku}
           onChange={(e) => setSku(e.target.value)}
@@ -87,8 +95,9 @@ export function NewMaterialForm() {
       </div>
 
       <div>
-        <label className="block text-xs text-slate-400 mb-1">Category</label>
+        <label htmlFor="category" className="block text-xs text-slate-400 mb-1">Category</label>
         <input
+          id="category"
           required
           value={category}
           onChange={(e) => setCategory(e.target.value)}
@@ -97,10 +106,11 @@ export function NewMaterialForm() {
       </div>
 
       <div>
-        <label className="block text-xs text-slate-400 mb-1">
+        <label htmlFor="thicknessInput" className="block text-xs text-slate-400 mb-1">
           Thickness options (mm, comma-separated)
         </label>
         <input
+          id="thicknessInput"
           required
           placeholder="16, 18, 22"
           value={thicknessInput}
@@ -110,8 +120,9 @@ export function NewMaterialForm() {
       </div>
 
       <div>
-        <label className="block text-xs text-slate-400 mb-1">Price per m²</label>
+        <label htmlFor="pricePerM2" className="block text-xs text-slate-400 mb-1">Price per m²</label>
         <input
+          id="pricePerM2"
           required
           type="number"
           step="0.01"
@@ -123,10 +134,11 @@ export function NewMaterialForm() {
       </div>
 
       <div>
-        <label className="block text-xs text-slate-400 mb-1">
+        <label htmlFor="edgebandingPrice" className="block text-xs text-slate-400 mb-1">
           Edgebanding price per mm (optional)
         </label>
         <input
+          id="edgebandingPrice"
           type="number"
           step="0.001"
           min="0"
@@ -137,8 +149,9 @@ export function NewMaterialForm() {
       </div>
 
       <div>
-        <label className="block text-xs text-slate-400 mb-1">Grain direction</label>
+        <label htmlFor="grainDirection" className="block text-xs text-slate-400 mb-1">Grain direction</label>
         <select
+          id="grainDirection"
           value={grainDirection}
           onChange={(e) =>
             setGrainDirection(e.target.value as "horizontal" | "vertical" | "none")
@@ -152,11 +165,12 @@ export function NewMaterialForm() {
       </div>
 
       <div>
-        <label className="block text-xs text-slate-400 mb-1">
+        <label htmlFor="pbrFile" className="block text-xs text-slate-400 mb-1">
           PBR texture ZIP (optional)
         </label>
         <input
           ref={fileRef}
+          id="pbrFile"
           type="file"
           accept=".zip"
           className="w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:bg-slate-700 file:text-slate-200 file:text-xs hover:file:bg-slate-600"
