@@ -45,8 +45,8 @@ export default async function MaterialsPage() {
                 <td className="py-3 px-4 text-slate-200">{mat.name}</td>
                 <td className="py-3 px-4 font-mono text-xs">{mat.sku}</td>
                 <td className="py-3 px-4">{mat.category}</td>
-                <td className="py-3 px-4 text-right">{mat.thickness_options.join(", ")}</td>
-                <td className="py-3 px-4 text-right">${mat.price_per_m2.toFixed(2)}</td>
+                <td className="py-3 px-4 text-right">{(mat.thickness_options ?? []).join(", ")}</td>
+                <td className="py-3 px-4 text-right">{mat.price_per_m2 != null ? `$${mat.price_per_m2.toFixed(2)}` : "—"}</td>
                 <td className="py-3 px-4">{mat.grain_direction}</td>
                 <td className="py-3 px-4 text-center">{mat.s3_albedo ? "✓" : "—"}</td>
                 {canManage && (
