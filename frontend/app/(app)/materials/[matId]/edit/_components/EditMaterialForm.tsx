@@ -10,13 +10,17 @@ export function EditMaterialForm({ material }: Props) {
   const [name, setName] = useState(material.name)
   const [sku, setSku] = useState(material.sku)
   const [category, setCategory] = useState(material.category)
-  const [thicknessInput, setThicknessInput] = useState(material.thickness_options.join(", "))
-  const [pricePerM2, setPricePerM2] = useState(String(material.price_per_m2))
+  const [thicknessInput, setThicknessInput] = useState((material.thickness_options ?? []).join(", "))
+  const [pricePerM2, setPricePerM2] = useState(
+    material.price_per_m2 != null ? String(material.price_per_m2) : ""
+  )
   const [edgebandingPrice, setEdgebandingPrice] = useState(
     material.edgebanding_price_per_mm != null ? String(material.edgebanding_price_per_mm) : ""
   )
   const [grainDirection, setGrainDirection] = useState<"horizontal" | "vertical" | "none">(
-    material.grain_direction as "horizontal" | "vertical" | "none"
+    (["horizontal", "vertical", "none"] as const).includes(material.grain_direction as "horizontal" | "vertical" | "none")
+      ? (material.grain_direction as "horizontal" | "vertical" | "none")
+      : "none"
   )
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
