@@ -14,10 +14,16 @@ import {
   getOrder,
   listOrders,
   listMaterials,
+  getMaterial,
+  createMaterial,
+  uploadMaterial,
+  updateMaterial,
   dispatchOrder,
   type Order,
   type AppliedConfig,
   type Material,
+  type MaterialCreate,
+  type MaterialUpdate,
   type DispatchResponse,
 } from "@/lib/api"
 
@@ -464,5 +470,122 @@ describe("dispatchOrder", () => {
       text: async () => "No webhook URL configured for this tenant",
     })
     await expect(dispatchOrder("tok", "ord1")).rejects.toMatchObject({ status: 422 })
+  })
+})
+
+describe("getMaterial", () => {
+  it("calls GET /materials/{id} with Authorization header and returns Material", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => materialFixture })
+
+    const result = await getMaterial("tok", "mat1")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/materials/mat1",
+      expect.objectContaining({
+        headers: expect.objectContaining({ Authorization: "Bearer tok" }),
+      })
+    )
+    expect(result.id).toBe("mat1")
+    expect(result.name).toBe("Oak Laminate")
+  })
+
+  it("throws ApiError on 404", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 404, text: async () => "Material not found" })
+    await expect(getMaterial("tok", "mat1")).rejects.toMatchObject({ status: 404 })
+  })
+})
+
+describe("createMaterial", () => {
+  it("POSTs to /materials with JSON body and Authorization header, returns Material", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => materialFixture })
+
+    const data: MaterialCreate = {
+      category: "sheet",
+      name: "Oak Veneer",
+      sku: "OAK-001",
+      thickness_options: [16, 18],
+      price_per_m2: 45,
+      grain_direction: "vertical",
+    }
+    const result = await createMaterial("tok", data)
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/materials",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({
+          Authorization: "Bearer tok",
+          "Content-Type": "application/json",
+        }),
+        body: JSON.stringify(data),
+      })
+    )
+    expect(result.id).toBe("mat1")
+  })
+
+  it("throws ApiError on 403", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 403, text: async () => "Forbidden" })
+    await expect(createMaterial("tok", {
+      category: "sheet",
+      name: "X",
+      sku: "X",
+      thickness_options: [18],
+      price_per_m2: 10,
+      grain_direction: "none",
+    })).rejects.toMatchObject({ status: 403 })
+  })
+})
+
+describe("uploadMaterial", () => {
+  it("POSTs to /materials/upload with Authorization header but no Content-Type, returns Material", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => materialFixture })
+
+    const fd = new FormData()
+    fd.append("name", "Oak Veneer")
+    const result = await uploadMaterial("tok", fd)
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/materials/upload",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({ Authorization: "Bearer tok" }),
+        body: fd,
+      })
+    )
+    const callHeaders = (mockFetch.mock.calls[0][1] as RequestInit).headers as Record<string, string>
+    expect(callHeaders["Content-Type"]).toBeUndefined()
+    expect(result.id).toBe("mat1")
+  })
+
+  it("throws ApiError on 422", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 422, text: async () => "Invalid ZIP" })
+    await expect(uploadMaterial("tok", new FormData())).rejects.toMatchObject({ status: 422 })
+  })
+})
+
+describe("updateMaterial", () => {
+  it("PUTs to /materials/{id} with JSON body and Authorization header, returns Material", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => materialFixture })
+
+    const data: MaterialUpdate = { name: "Oak Veneer Updated", price_per_m2: 50 }
+    const result = await updateMaterial("tok", "mat1", data)
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/materials/mat1",
+      expect.objectContaining({
+        method: "PUT",
+        headers: expect.objectContaining({
+          Authorization: "Bearer tok",
+          "Content-Type": "application/json",
+        }),
+        body: JSON.stringify(data),
+      })
+    )
+    expect(result.id).toBe("mat1")
+  })
+
+  it("throws ApiError on 404", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 404, text: async () => "Material not found" })
+    await expect(updateMaterial("tok", "mat1", { name: "X" })).rejects.toMatchObject({ status: 404 })
   })
 })

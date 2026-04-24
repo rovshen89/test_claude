@@ -243,3 +243,57 @@ export type DispatchResponse = {
 export async function dispatchOrder(token: string, orderId: string): Promise<DispatchResponse> {
   return apiFetch<DispatchResponse>(`/orders/${orderId}/dispatch`, token, { method: "POST" })
 }
+
+export type MaterialCreate = {
+  category: string
+  name: string
+  sku: string
+  thickness_options: number[]
+  price_per_m2: number
+  edgebanding_price_per_mm?: number | null
+  grain_direction: "horizontal" | "vertical" | "none"
+}
+
+export type MaterialUpdate = {
+  name?: string
+  sku?: string
+  category?: string
+  thickness_options?: number[]
+  price_per_m2?: number
+  edgebanding_price_per_mm?: number | null
+  grain_direction?: "horizontal" | "vertical" | "none"
+}
+
+export async function getMaterial(token: string, matId: string): Promise<Material> {
+  return apiFetch<Material>(`/materials/${matId}`, token)
+}
+
+export async function createMaterial(token: string, data: MaterialCreate): Promise<Material> {
+  return apiFetch<Material>("/materials", token, {
+    method: "POST",
+    body: JSON.stringify(data),
+  })
+}
+
+// uploadMaterial does NOT use apiFetch — must NOT set Content-Type so fetch auto-adds multipart boundary
+export async function uploadMaterial(token: string, formData: FormData): Promise<Material> {
+  const res = await fetch(`${process.env.BACKEND_URL}/materials/upload`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+    cache: "no-store",
+  })
+  if (!res.ok) throw new ApiError(res.status, await res.text())
+  return res.json() as Promise<Material>
+}
+
+export async function updateMaterial(
+  token: string,
+  matId: string,
+  data: MaterialUpdate
+): Promise<Material> {
+  return apiFetch<Material>(`/materials/${matId}`, token, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  })
+}
