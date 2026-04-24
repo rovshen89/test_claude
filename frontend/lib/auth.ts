@@ -40,10 +40,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user?.access_token) {
         token.access_token = user.access_token
-        const payload = JSON.parse(
-          Buffer.from(user.access_token.split(".")[1], "base64").toString()
-        )
-        token.role = payload.role as string
+        const parts = user.access_token.split(".")
+        if (parts.length === 3) {
+          try {
+            const payload = JSON.parse(Buffer.from(parts[1], "base64").toString()) as Record<string, unknown>
+            token.role = typeof payload.role === "string" ? payload.role : ""
+          } catch {
+            token.role = ""
+          }
+        } else {
+          token.role = ""
+        }
       }
       return token
     },
