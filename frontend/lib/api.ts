@@ -312,3 +312,23 @@ export async function createFurnitureType(
     body: JSON.stringify(data),
   })
 }
+
+export async function calculatePricing(
+  token: string,
+  configId: string
+): Promise<PricingSnapshot> {
+  return apiFetch<PricingSnapshot>("/pricing/calculate", token, {
+    method: "POST",
+    body: JSON.stringify({ configuration_id: configId }),
+  })
+}
+
+export async function generateBom(
+  token: string,
+  configId: string
+): Promise<BomSnapshot> {
+  return apiFetch<BomSnapshot>("/bom/generate", token, {
+    method: "POST",
+    body: JSON.stringify({ configuration_id: configId }),
+  })
+}

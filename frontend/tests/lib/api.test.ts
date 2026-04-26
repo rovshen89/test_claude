@@ -7,6 +7,8 @@ import {
   getFurnitureType,
   getFurnitureTypes,
   createFurnitureType,
+  calculatePricing,
+  generateBom,
   createConfiguration,
   confirmConfiguration,
   getConfiguration,
@@ -27,6 +29,8 @@ import {
   type MaterialUpdate,
   type DispatchResponse,
   type FurnitureTypeCreate,
+  type PricingSnapshot,
+  type BomSnapshot,
 } from "@/lib/api"
 
 const mockFetch = jest.fn()
@@ -625,5 +629,93 @@ describe("createFurnitureType", () => {
     await expect(
       createFurnitureType("tok", { category: "wardrobe", schema: {} })
     ).rejects.toMatchObject({ status: 403 })
+  })
+})
+
+describe("calculatePricing", () => {
+  it("POSTs to /pricing/calculate with configuration_id and Authorization header, returns PricingSnapshot", async () => {
+    const fixture: PricingSnapshot = {
+      panel_cost: 120.5,
+      edge_cost: 8.4,
+      hardware_cost: 15.0,
+      labor_cost: 22.0,
+      subtotal: 165.9,
+      total: 165.9,
+      breakdown: [{ name: "Top Panel", area_m2: 0.72, panel_cost: 32.4, edge_cost: 2.1 }],
+    }
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => fixture })
+
+    const result = await calculatePricing("tok", "cfg1")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/pricing/calculate",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({
+          Authorization: "Bearer tok",
+          "Content-Type": "application/json",
+        }),
+        body: JSON.stringify({ configuration_id: "cfg1" }),
+      })
+    )
+    expect(result.total).toBe(165.9)
+    expect(result.breakdown).toHaveLength(1)
+    expect(result.breakdown[0].name).toBe("Top Panel")
+  })
+
+  it("throws ApiError on 422", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 422, text: async () => "Material not assigned" })
+    await expect(calculatePricing("tok", "cfg1")).rejects.toMatchObject({ status: 422 })
+  })
+})
+
+describe("generateBom", () => {
+  it("POSTs to /bom/generate with configuration_id and Authorization header, returns BomSnapshot", async () => {
+    const fixture: BomSnapshot = {
+      panels: [
+        {
+          name: "Top Panel",
+          material_name: "Oak Veneer",
+          material_sku: "OAK-001",
+          thickness_mm: 18,
+          width_mm: 900,
+          height_mm: 800,
+          quantity: 1,
+          grain_direction: "horizontal",
+          edge_left: true,
+          edge_right: true,
+          edge_top: false,
+          edge_bottom: false,
+          area_m2: 0.72,
+        },
+      ],
+      hardware: [],
+      total_panels: 1,
+      total_area_m2: 0.72,
+    }
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => fixture })
+
+    const result = await generateBom("tok", "cfg1")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/bom/generate",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({
+          Authorization: "Bearer tok",
+          "Content-Type": "application/json",
+        }),
+        body: JSON.stringify({ configuration_id: "cfg1" }),
+      })
+    )
+    expect(result.total_panels).toBe(1)
+    expect(result.panels).toHaveLength(1)
+    expect(result.panels[0].material_name).toBe("Oak Veneer")
+    expect(result.total_area_m2).toBe(0.72)
+  })
+
+  it("throws ApiError on 422", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 422, text: async () => "Material not assigned" })
+    await expect(generateBom("tok", "cfg1")).rejects.toMatchObject({ status: 422 })
   })
 })
