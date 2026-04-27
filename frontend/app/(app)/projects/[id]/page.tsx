@@ -91,6 +91,30 @@ export default async function ProjectDetailPage({
           + New Configuration
         </Link>
       </div>
+      {/* Room Schema */}
+      <section className="bg-slate-800 border border-slate-700 rounded-lg p-4 mb-6">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-sm font-medium text-slate-300">Room Schema</h2>
+          <Link
+            href={`/projects/${id}/room-schema/edit`}
+            className="text-xs text-indigo-400 hover:text-indigo-300"
+          >
+            Edit →
+          </Link>
+        </div>
+        {project.room_schema ? (
+          <div className="text-xs text-slate-400 space-y-0.5">
+            {Object.entries(project.room_schema).map(([k, v]) => (
+              <div key={k}>
+                <span className="text-slate-500">{k}:</span>{" "}
+                <span>{String(v)}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-xs text-slate-500">Not configured</p>
+        )}
+      </section>
       {configs.length === 0 ? (
         <p className="text-slate-500 text-sm">No configurations yet.</p>
       ) : (
