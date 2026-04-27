@@ -44,8 +44,8 @@ export function RoomSchemaForm({
           {error}
         </div>
       )}
-      <div className="flex flex-col gap-1">
-        <label htmlFor="schema" className="text-xs font-medium text-slate-400">
+      <div>
+        <label htmlFor="schema" className="block mb-1 text-xs font-medium text-slate-400">
           Room Schema (JSON)
         </label>
         <textarea
@@ -55,13 +55,13 @@ export function RoomSchemaForm({
           value={schemaText}
           onChange={(e) => setSchemaText(e.target.value)}
           placeholder={'{\n  "width": 3000,\n  "height": 2400,\n  "depth": 4000\n}'}
-          className="bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 font-mono focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y"
+          className="w-full bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 font-mono outline-none focus:border-indigo-500 resize-y"
         />
       </div>
       <button
         type="submit"
         disabled={isSubmitting}
-        className="self-start px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-sm text-white font-medium transition-colors"
+        className="w-fit px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-sm text-white font-medium transition-colors"
       >
         {isSubmitting ? "Saving…" : "Save"}
       </button>

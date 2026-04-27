@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth"
 import { getProject, ApiError } from "@/lib/api"
 import { redirect, notFound } from "next/navigation"
+import Link from "next/link"
 import { RoomSchemaForm } from "./_components/RoomSchemaForm"
 
 export default async function RoomSchemaEditPage({
@@ -24,6 +25,11 @@ export default async function RoomSchemaEditPage({
 
   return (
     <div className="max-w-lg">
+      <div className="mb-2">
+        <Link href={`/projects/${id}`} className="text-xs text-indigo-400 hover:text-indigo-300">
+          ← Project
+        </Link>
+      </div>
       <h1 className="text-lg font-semibold text-slate-50 mb-6">Edit Room Schema</h1>
       <RoomSchemaForm projectId={id} currentSchema={project.room_schema} />
     </div>
