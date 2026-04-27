@@ -365,6 +365,12 @@ export function ConfigurationViewer({ configuration, furnitureType, projectId, i
           {!isReadOnly && configuration.status === "confirmed" && !hasUnsavedChanges && allPanelsAssigned && (
             <>
               <hr className="border-slate-800" />
+              <Link
+                href={`/projects/${projectId}/configurations/${configuration.id}/preview`}
+                className="w-full py-2 rounded-md bg-slate-700 hover:bg-slate-600 border border-slate-600 text-slate-200 text-sm font-medium transition-colors text-center block"
+              >
+                Preview Pricing & BOM
+              </Link>
               {orderError && (
                 <div className="bg-red-950 border border-red-900 rounded-md px-3 py-2 text-xs text-red-400">
                   {orderError}
