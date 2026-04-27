@@ -332,3 +332,14 @@ export async function generateBom(
     body: JSON.stringify({ configuration_id: configId }),
   })
 }
+
+export async function updateRoomSchema(
+  token: string,
+  projectId: string,
+  schema: Record<string, unknown>
+): Promise<Project> {
+  return apiFetch<Project>(`/projects/${projectId}/room-schema`, token, {
+    method: "PUT",
+    body: JSON.stringify({ room_schema: schema }),
+  })
+}

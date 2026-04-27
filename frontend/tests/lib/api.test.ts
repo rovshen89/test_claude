@@ -21,6 +21,7 @@ import {
   createMaterial,
   uploadMaterial,
   updateMaterial,
+  updateRoomSchema,
   dispatchOrder,
   type Order,
   type AppliedConfig,
@@ -717,5 +718,45 @@ describe("generateBom", () => {
   it("throws ApiError on 422", async () => {
     mockFetch.mockResolvedValueOnce({ ok: false, status: 422, text: async () => "Material not assigned" })
     await expect(generateBom("tok", "cfg1")).rejects.toMatchObject({ status: 422 })
+  })
+})
+
+describe("updateRoomSchema", () => {
+  it("PUTs room_schema with Authorization header and returns Project", async () => {
+    const schema = { width: 3000, height: 2400, depth: 4000 }
+    const fixture = {
+      id: "proj-1",
+      user_id: "u1",
+      name: "My Project",
+      room_schema: schema,
+      created_at: "2024-01-01T00:00:00Z",
+      updated_at: "2024-01-01T00:00:00Z",
+    }
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => fixture })
+
+    const result = await updateRoomSchema("tok", "proj-1", schema)
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/projects/proj-1/room-schema",
+      expect.objectContaining({
+        method: "PUT",
+        headers: expect.objectContaining({ Authorization: "Bearer tok" }),
+        body: JSON.stringify({ room_schema: schema }),
+      })
+    )
+    expect(result.id).toBe("proj-1")
+    expect(result.room_schema).toEqual(schema)
+  })
+
+  it("throws ApiError with status 404 when project not found", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 404,
+      text: async () => "Not found",
+    })
+
+    await expect(updateRoomSchema("tok", "bad-id", {})).rejects.toMatchObject({
+      status: 404,
+    })
   })
 })
