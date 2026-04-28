@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth"
-import { getFurnitureType, ApiError } from "@/lib/api"
+import { getFurnitureType, ApiError, type FurnitureType } from "@/lib/api"
 import { redirect, notFound } from "next/navigation"
 import Link from "next/link"
 
@@ -13,7 +13,7 @@ export default async function FurnitureTypeDetailPage({
   if (!session?.user?.access_token) redirect("/login")
   const token = session.user.access_token
 
-  let ft
+  let ft!: FurnitureType
   try {
     ft = await getFurnitureType(token, ftId)
   } catch (e) {
