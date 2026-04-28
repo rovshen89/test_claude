@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.deps import get_current_user, get_db
 from app.models.configuration import Configuration
 from app.models.furniture_type import FurnitureType
+from app.models.order import Order
 from app.models.project import Project
 from app.models.user import User
 from app.schemas.configuration import (
@@ -119,3 +120,19 @@ async def confirm_configuration(
     await db.commit()
     await db.refresh(config)
     return config
+
+
+@router.delete("/{config_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_configuration(
+    config_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    config = await db.get(Configuration, config_id)
+    if not config:
+        raise HTTPException(status_code=404, detail="Configuration not found")
+    await _get_owned_project(db, config.project_id, user)
+    if config.status != "draft":
+        raise HTTPException(status_code=409, detail="Only draft configurations can be deleted")
+    await db.delete(config)
+    await db.commit()

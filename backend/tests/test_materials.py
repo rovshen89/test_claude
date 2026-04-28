@@ -237,6 +237,30 @@ async def test_consumer_cannot_upload_material(client, s3_mock):
 
 
 @pytest.mark.asyncio
+async def test_delete_material(client):
+    headers = await _register_and_login(client, "del_mat@example.com")
+    r = await client.post("/materials", json=_MATERIAL_BASE, headers=headers)
+    mat_id = r.json()["id"]
+
+    response = await client.delete(f"/materials/{mat_id}", headers=headers)
+    assert response.status_code == 204
+
+    get_response = await client.get(f"/materials/{mat_id}", headers=headers)
+    assert get_response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_delete_material_wrong_tenant(client):
+    headers_a = await _register_and_login(client, "del_mat_a@example.com")
+    headers_b = await _register_and_login(client, "del_mat_b@example.com")
+    r = await client.post("/materials", json=_MATERIAL_BASE, headers=headers_a)
+    mat_id = r.json()["id"]
+
+    response = await client.delete(f"/materials/{mat_id}", headers=headers_b)
+    assert response.status_code == 404
+
+
+@pytest.mark.asyncio
 async def test_manufacturer_cannot_update_global_material(client):
     """A manufacturer must receive 403 when attempting to update a global (tenant_id=None) material."""
     # Admin creates a global material (no tenant_id)

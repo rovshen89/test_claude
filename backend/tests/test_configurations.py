@@ -154,6 +154,38 @@ async def test_list_configurations_by_project(client):
 
 
 @pytest.mark.asyncio
+async def test_delete_draft_configuration(client):
+    headers, project_id, ft_id = await _setup(client)
+    r = await client.post("/configurations", json={
+        "project_id": project_id,
+        "furniture_type_id": ft_id,
+        "applied_config": {},
+    }, headers=headers)
+    config_id = r.json()["id"]
+
+    response = await client.delete(f"/configurations/{config_id}", headers=headers)
+    assert response.status_code == 204
+
+    get_response = await client.get(f"/configurations/{config_id}", headers=headers)
+    assert get_response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_delete_confirmed_configuration_rejected(client):
+    headers, project_id, ft_id = await _setup(client)
+    r = await client.post("/configurations", json={
+        "project_id": project_id,
+        "furniture_type_id": ft_id,
+        "applied_config": {},
+    }, headers=headers)
+    config_id = r.json()["id"]
+    await client.post(f"/configurations/{config_id}/confirm", headers=headers)
+
+    response = await client.delete(f"/configurations/{config_id}", headers=headers)
+    assert response.status_code == 409
+
+
+@pytest.mark.asyncio
 async def test_list_configurations_wrong_owner_returns_404(client):
     """GET /configurations?project_id= returns 404 for another user's project."""
     headers_a, project_id, _ = await _setup(client)

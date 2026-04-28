@@ -168,3 +168,19 @@ async def update_material(
     await db.commit()
     await db.refresh(mat)
     return mat
+
+
+@router.delete("/{mat_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_material(
+    mat_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(require_role("admin", "manufacturer")),
+):
+    mat = await db.get(Material, mat_id)
+    if not mat:
+        raise HTTPException(status_code=404, detail="Material not found")
+    _check_tenant_access(mat, user)
+    if mat.tenant_id is None and user.role != "admin":
+        raise HTTPException(status_code=403, detail="Only admins can delete global materials")
+    await db.delete(mat)
+    await db.commit()

@@ -6,6 +6,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.deps import get_current_user, get_db
+from app.models.configuration import Configuration
+from app.models.order import Order
 from app.models.project import Project
 from app.models.user import User
 from app.schemas.project import ProjectCreate, ProjectResponse, RoomSchemaUpdate
@@ -61,3 +63,27 @@ async def update_room_schema(
     await db.commit()
     await db.refresh(project)
     return project
+
+
+@router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_project(
+    project_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    project = await db.get(Project, project_id)
+    if not project or project.user_id != user.id:
+        raise HTTPException(status_code=404, detail="Project not found")
+    configs_result = await db.execute(
+        select(Configuration).where(Configuration.project_id == project_id)
+    )
+    for config in configs_result.scalars().all():
+        order_result = await db.execute(
+            select(Order).where(Order.configuration_id == config.id)
+        )
+        order = order_result.scalar_one_or_none()
+        if order:
+            await db.delete(order)
+        await db.delete(config)
+    await db.delete(project)
+    await db.commit()

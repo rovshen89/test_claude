@@ -75,6 +75,44 @@ async def test_get_other_users_project_returns_404(client):
 
 
 @pytest.mark.asyncio
+async def test_delete_project_cascades(client):
+    headers = await _register_and_login(client, "del_proj@example.com", role="manufacturer")
+    r = await client.post("/projects", json={"name": "To Delete"}, headers=headers)
+    project_id = r.json()["id"]
+
+    # Create a configuration in the project
+    r_ft = await client.post(
+        "/furniture-types",
+        json={"category": "wardrobe", "schema": {"x": 1}},
+        headers=headers,
+    )
+    ft_id = r_ft.json()["id"]
+    r_cfg = await client.post("/configurations", json={
+        "project_id": project_id,
+        "furniture_type_id": ft_id,
+        "applied_config": {},
+    }, headers=headers)
+    config_id = r_cfg.json()["id"]
+
+    response = await client.delete(f"/projects/{project_id}", headers=headers)
+    assert response.status_code == 204
+
+    assert (await client.get(f"/projects/{project_id}", headers=headers)).status_code == 404
+    assert (await client.get(f"/configurations/{config_id}", headers=headers)).status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_delete_other_users_project_returns_404(client):
+    headers_a = await _register_and_login(client, "del_own@example.com")
+    headers_b = await _register_and_login(client, "del_other@example.com")
+    r = await client.post("/projects", json={"name": "Mine"}, headers=headers_a)
+    project_id = r.json()["id"]
+
+    response = await client.delete(f"/projects/{project_id}", headers=headers_b)
+    assert response.status_code == 404
+
+
+@pytest.mark.asyncio
 async def test_unauthenticated_request_returns_403(client):
     response = await client.get("/projects")
     assert response.status_code in (401, 403)
