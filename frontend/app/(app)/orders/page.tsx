@@ -58,7 +58,7 @@ export default async function OrdersPage() {
               {orders.map((order) => {
                 const projectId = projectMap[order.configuration_id]
                 return (
-                  <tr key={order.id} className="hover:bg-slate-750">
+                  <tr key={order.id} className="hover:bg-slate-700">
                     <td className="px-4 py-3">
                       <span
                         className="text-xs font-mono text-slate-400"
