@@ -1,7 +1,7 @@
 "use server"
 
 import { auth } from "@/lib/auth"
-import { createConfiguration, confirmConfiguration, updateConfiguration, ApiError, type AppliedConfig } from "@/lib/api"
+import { createConfiguration, confirmConfiguration, updateConfiguration, deleteConfiguration, ApiError, type AppliedConfig } from "@/lib/api"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 
@@ -58,6 +58,24 @@ export async function updateConfigurationAction(
   if (!configId || !projectId) return { error: "Invalid request" }
   try {
     await updateConfiguration(token, configId, appliedConfig)
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 401) redirect("/login")
+    if (e instanceof ApiError) return { error: e.message }
+    throw e
+  }
+  revalidatePath(`/projects/${projectId}`)
+  redirect(`/projects/${projectId}`)
+}
+
+export async function deleteConfigurationAction(
+  configId: string,
+  projectId: string
+): Promise<{ error?: string }> {
+  const session = await auth()
+  if (!session?.user?.access_token) redirect("/login")
+  const token = session.user.access_token
+  try {
+    await deleteConfiguration(token, configId)
   } catch (e) {
     if (e instanceof ApiError && e.status === 401) redirect("/login")
     if (e instanceof ApiError) return { error: e.message }
