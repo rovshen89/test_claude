@@ -2,6 +2,8 @@ import { auth } from "@/lib/auth"
 import { getFurnitureType, ApiError, type FurnitureType } from "@/lib/api"
 import { redirect, notFound } from "next/navigation"
 import Link from "next/link"
+import { DeleteButton } from "@/app/(app)/_components/DeleteButton"
+import { deleteFurnitureTypeAction } from "@/app/actions/furniture-types"
 
 export default async function FurnitureTypeDetailPage({
   params,
@@ -30,6 +32,20 @@ export default async function FurnitureTypeDetailPage({
         </Link>
       </div>
       <h1 className="text-lg font-semibold text-slate-50 mb-6">{ft.category}</h1>
+      {session.user.role === "admin" || session.user.role === "manufacturer" ? (
+        <div className="flex gap-4 mb-6">
+          <Link
+            href={`/furniture-types/${ftId}/edit`}
+            className="text-xs text-indigo-400 hover:text-indigo-300 font-medium"
+          >
+            Edit →
+          </Link>
+          <DeleteButton
+            action={() => deleteFurnitureTypeAction(ftId)}
+            confirmMessage="Delete this furniture type? This cannot be undone."
+          />
+        </div>
+      ) : null}
 
       <section className="bg-slate-800 border border-slate-700 rounded-lg p-4 mb-4">
         <dl className="space-y-2 text-xs">
