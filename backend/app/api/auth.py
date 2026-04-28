@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth import create_access_token, hash_password, verify_password
 from app.core.deps import get_db
+from app.models.tenant import Tenant
 from app.models.user import User
 from app.schemas.auth import LoginRequest, RegisterRequest, TokenResponse
 
@@ -17,10 +18,18 @@ async def register(body: RegisterRequest, db: AsyncSession = Depends(get_db)):
     if result.scalar_one_or_none():
         raise HTTPException(status_code=400, detail="Email already registered")
 
+    # Resolve tenant_id: non-admin users without an explicit tenant get an auto-created tenant
+    tenant_id = body.tenant_id
+    if body.role != "admin" and tenant_id is None:
+        tenant = Tenant(name=body.email)
+        db.add(tenant)
+        await db.flush()
+        tenant_id = tenant.id
+
     user = User(
         email=body.email,
         role=body.role,
-        tenant_id=body.tenant_id,
+        tenant_id=tenant_id,
         password_hash=hash_password(body.password),
     )
     db.add(user)

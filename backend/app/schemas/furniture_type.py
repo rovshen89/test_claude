@@ -11,6 +11,11 @@ class FurnitureTypeCreate(BaseModel):
     tenant_id: Optional[UUID] = None
 
 
+class FurnitureTypeUpdate(BaseModel):
+    category: Optional[str] = None
+    schema: Optional[Dict[str, Any]] = None
+
+
 class FurnitureTypeResponse(BaseModel):
     model_config = {"from_attributes": True}
 
