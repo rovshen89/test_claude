@@ -23,6 +23,11 @@ import {
   updateMaterial,
   updateRoomSchema,
   dispatchOrder,
+  updateFurnitureType,
+  deleteFurnitureType,
+  deleteMaterial,
+  deleteConfiguration,
+  deleteProject,
   type Order,
   type AppliedConfig,
   type Material,
@@ -30,6 +35,7 @@ import {
   type MaterialUpdate,
   type DispatchResponse,
   type FurnitureTypeCreate,
+  type FurnitureTypeUpdate,
   type PricingSnapshot,
   type BomSnapshot,
 } from "@/lib/api"
@@ -758,5 +764,80 @@ describe("updateRoomSchema", () => {
     await expect(updateRoomSchema("tok", "bad-id", {})).rejects.toMatchObject({
       status: 404,
     })
+  })
+})
+
+describe("updateFurnitureType", () => {
+  it("PUTs with Authorization header and returns FurnitureType", async () => {
+    const fixture = { id: "ft-1", tenant_id: null, category: "cabinet", schema: { columns: 3 } }
+    mockFetch.mockResolvedValueOnce({ ok: true, status: 200, json: async () => fixture })
+
+    const result = await updateFurnitureType("tok", "ft-1", { category: "cabinet", schema: { columns: 3 } })
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/furniture-types/ft-1",
+      expect.objectContaining({
+        method: "PUT",
+        headers: expect.objectContaining({ Authorization: "Bearer tok" }),
+        body: JSON.stringify({ category: "cabinet", schema: { columns: 3 } }),
+      })
+    )
+    expect(result.category).toBe("cabinet")
+  })
+})
+
+describe("deleteFurnitureType", () => {
+  it("DELETEs and returns undefined for 204", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, status: 204 })
+
+    const result = await deleteFurnitureType("tok", "ft-1")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/furniture-types/ft-1",
+      expect.objectContaining({ method: "DELETE" })
+    )
+    expect(result).toBeUndefined()
+  })
+})
+
+describe("deleteMaterial", () => {
+  it("DELETEs and returns undefined for 204", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, status: 204 })
+
+    const result = await deleteMaterial("tok", "mat-1")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/materials/mat-1",
+      expect.objectContaining({ method: "DELETE" })
+    )
+    expect(result).toBeUndefined()
+  })
+})
+
+describe("deleteConfiguration", () => {
+  it("DELETEs and returns undefined for 204", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, status: 204 })
+
+    const result = await deleteConfiguration("tok", "cfg-1")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/configurations/cfg-1",
+      expect.objectContaining({ method: "DELETE" })
+    )
+    expect(result).toBeUndefined()
+  })
+})
+
+describe("deleteProject", () => {
+  it("DELETEs and returns undefined for 204", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, status: 204 })
+
+    const result = await deleteProject("tok", "proj-1")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/projects/proj-1",
+      expect.objectContaining({ method: "DELETE" })
+    )
+    expect(result).toBeUndefined()
   })
 })

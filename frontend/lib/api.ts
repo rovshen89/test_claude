@@ -87,6 +87,7 @@ async function apiFetch<T>(path: string, token: string, init?: RequestInit): Pro
     cache: "no-store",
   })
   if (!res.ok) throw new ApiError(res.status, await res.text())
+  if (res.status === 204) return undefined as T
   return res.json() as Promise<T>
 }
 
@@ -342,4 +343,36 @@ export async function updateRoomSchema(
     method: "PUT",
     body: JSON.stringify({ room_schema: schema }),
   })
+}
+
+export type FurnitureTypeUpdate = {
+  category?: string
+  schema?: Record<string, unknown>
+}
+
+export async function updateFurnitureType(
+  token: string,
+  ftId: string,
+  data: FurnitureTypeUpdate
+): Promise<FurnitureType> {
+  return apiFetch<FurnitureType>(`/furniture-types/${ftId}`, token, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  })
+}
+
+export async function deleteFurnitureType(token: string, ftId: string): Promise<void> {
+  return apiFetch<void>(`/furniture-types/${ftId}`, token, { method: "DELETE" })
+}
+
+export async function deleteMaterial(token: string, matId: string): Promise<void> {
+  return apiFetch<void>(`/materials/${matId}`, token, { method: "DELETE" })
+}
+
+export async function deleteConfiguration(token: string, configId: string): Promise<void> {
+  return apiFetch<void>(`/configurations/${configId}`, token, { method: "DELETE" })
+}
+
+export async function deleteProject(token: string, projectId: string): Promise<void> {
+  return apiFetch<void>(`/projects/${projectId}`, token, { method: "DELETE" })
 }
