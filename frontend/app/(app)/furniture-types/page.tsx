@@ -33,6 +33,7 @@ export default async function FurnitureTypesPage() {
               <th className="text-left py-3 px-4">ID</th>
               <th className="text-left py-3 px-4">Tenant</th>
               <th className="text-left py-3 px-4">Schema keys</th>
+              <th className="py-3 px-4"></th>
             </tr>
           </thead>
           <tbody>
@@ -43,6 +44,14 @@ export default async function FurnitureTypesPage() {
                 <td className="py-3 px-4">{ft.tenant_id ?? "Global"}</td>
                 <td className="py-3 px-4 text-xs">
                   {Object.keys(ft.schema).join(", ") || "—"}
+                </td>
+                <td className="py-3 px-4 text-right">
+                  <Link
+                    href={`/furniture-types/${ft.id}`}
+                    className="text-xs text-indigo-400 hover:text-indigo-300 font-medium"
+                  >
+                    View →
+                  </Link>
                 </td>
               </tr>
             ))}
