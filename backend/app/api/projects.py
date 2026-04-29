@@ -10,7 +10,7 @@ from app.models.configuration import Configuration
 from app.models.order import Order
 from app.models.project import Project
 from app.models.user import User
-from app.schemas.project import ProjectCreate, ProjectResponse, RoomSchemaUpdate
+from app.schemas.project import ProjectCreate, ProjectResponse, ProjectUpdate, RoomSchemaUpdate
 
 router = APIRouter()
 
@@ -46,6 +46,23 @@ async def get_project(
     project = await db.get(Project, project_id)
     if not project or project.user_id != user.id:
         raise HTTPException(status_code=404, detail="Project not found")
+    return project
+
+
+@router.put("/{project_id}", response_model=ProjectResponse)
+async def update_project(
+    project_id: UUID,
+    body: ProjectUpdate,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    project = await db.get(Project, project_id)
+    if not project or project.user_id != user.id:
+        raise HTTPException(status_code=404, detail="Project not found")
+    for field, value in body.model_dump(exclude_unset=True).items():
+        setattr(project, field, value)
+    await db.commit()
+    await db.refresh(project)
     return project
 
 

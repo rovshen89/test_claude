@@ -10,6 +10,10 @@ class ProjectCreate(BaseModel):
     name: str
 
 
+class ProjectUpdate(BaseModel):
+    name: Optional[str] = None
+
+
 class RoomSchemaUpdate(BaseModel):
     room_schema: dict[str, Any]
 

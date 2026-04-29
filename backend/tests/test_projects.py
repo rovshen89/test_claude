@@ -116,3 +116,33 @@ async def test_delete_other_users_project_returns_404(client):
 async def test_unauthenticated_request_returns_403(client):
     response = await client.get("/projects")
     assert response.status_code in (401, 403)
+
+
+@pytest.mark.asyncio
+async def test_update_project(client):
+    headers = await _register_and_login(client, "upd_proj@example.com")
+    r = await client.post("/projects", json={"name": "Original"}, headers=headers)
+    project_id = r.json()["id"]
+
+    response = await client.put(
+        f"/projects/{project_id}",
+        json={"name": "Renamed"},
+        headers=headers,
+    )
+    assert response.status_code == 200
+    assert response.json()["name"] == "Renamed"
+
+
+@pytest.mark.asyncio
+async def test_update_project_wrong_owner(client):
+    headers_a = await _register_and_login(client, "upd_own@example.com")
+    headers_b = await _register_and_login(client, "upd_other@example.com")
+    r = await client.post("/projects", json={"name": "Mine"}, headers=headers_a)
+    project_id = r.json()["id"]
+
+    response = await client.put(
+        f"/projects/{project_id}",
+        json={"name": "Stolen"},
+        headers=headers_b,
+    )
+    assert response.status_code == 404
