@@ -30,6 +30,7 @@ import {
   deleteProject,
   getTenant,
   updateTenant,
+  updateProject,
   type Order,
   type AppliedConfig,
   type Material,
@@ -42,6 +43,7 @@ import {
   type BomSnapshot,
   type TenantSettings,
   type TenantUpdate,
+  type ProjectUpdate,
 } from "@/lib/api"
 
 const mockFetch = jest.fn()
@@ -913,5 +915,31 @@ describe("updateTenant", () => {
     })
 
     await expect(updateTenant("tok", { name: "x" })).rejects.toThrow(ApiError)
+  })
+})
+
+describe("updateProject", () => {
+  it("PUTs /projects/:id with Authorization header and returns Project", async () => {
+    const fixture = {
+      id: "p-1",
+      user_id: "u-1",
+      name: "Renamed",
+      room_schema: null,
+      created_at: "2026-01-01T00:00:00Z",
+      updated_at: "2026-01-01T00:00:00Z",
+    }
+    mockFetch.mockResolvedValueOnce({ ok: true, status: 200, json: async () => fixture })
+
+    const result = await updateProject("tok", "p-1", { name: "Renamed" })
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/projects/p-1",
+      expect.objectContaining({
+        method: "PUT",
+        headers: expect.objectContaining({ Authorization: "Bearer tok" }),
+        body: JSON.stringify({ name: "Renamed" }),
+      })
+    )
+    expect(result.name).toBe("Renamed")
   })
 })

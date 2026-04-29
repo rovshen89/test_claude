@@ -405,3 +405,18 @@ export async function updateTenant(
     body: JSON.stringify(data),
   })
 }
+
+export type ProjectUpdate = {
+  name?: string
+}
+
+export async function updateProject(
+  token: string,
+  projectId: string,
+  data: ProjectUpdate
+): Promise<Project> {
+  return apiFetch<Project>(`/projects/${projectId}`, token, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  })
+}
