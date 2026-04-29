@@ -27,6 +27,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <Link href="/furniture-types" className="text-xs text-slate-400 hover:text-slate-200">
             Furniture Types
           </Link>
+          <Link href="/settings" className="text-xs text-slate-400 hover:text-slate-200">
+            Settings
+          </Link>
         </div>
         <div className="flex items-center gap-4">
           <span className="text-xs text-slate-500">{session.user.email}</span>
