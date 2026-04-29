@@ -7,6 +7,7 @@ from unittest.mock import MagicMock
 # Stub out weasyprint and its sub-modules that fail to import on this machine
 # due to missing native libraries (libgobject-2.0-0, libpango, etc.)
 _weasyprint_mock = MagicMock()
+_weasyprint_mock.HTML.return_value.write_pdf.return_value = b"%PDF-1.4 stub"
 sys.modules.setdefault("weasyprint", _weasyprint_mock)
 sys.modules.setdefault("weasyprint.css", _weasyprint_mock)
 sys.modules.setdefault("weasyprint.css.computed_values", _weasyprint_mock)
