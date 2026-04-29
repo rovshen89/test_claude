@@ -85,7 +85,15 @@ export default async function ProjectDetailPage({
         </Link>
       </div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-lg font-semibold text-slate-50">{project.name}</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-lg font-semibold text-slate-50">{project.name}</h1>
+          <Link
+            href={`/projects/${id}/edit`}
+            className="text-xs text-slate-500 hover:text-slate-300"
+          >
+            Edit name
+          </Link>
+        </div>
         <Link
           href={`/projects/${id}/configurations/new`}
           className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-md px-4 py-2 text-sm font-medium transition-colors"
