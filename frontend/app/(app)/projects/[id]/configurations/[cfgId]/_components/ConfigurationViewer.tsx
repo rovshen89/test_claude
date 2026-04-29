@@ -3,8 +3,9 @@
 import { useState } from "react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
-import { updateConfigurationAction } from "@/app/actions/configurations"
+import { updateConfigurationAction, deleteConfigurationAction } from "@/app/actions/configurations"
 import { createOrderAction } from "@/app/actions/orders"
+import { DeleteButton } from "@/app/(app)/_components/DeleteButton"
 import type { Configuration, FurnitureType, AppliedConfig, Material } from "@/lib/api"
 
 const BabylonSceneDynamic = dynamic(() => import("./BabylonScene"), { ssr: false })
@@ -359,6 +360,12 @@ export function ConfigurationViewer({ configuration, furnitureType, projectId, i
               >
                 Reset to saved
               </button>
+              {configuration.status === "draft" && (
+                <DeleteButton
+                  action={() => deleteConfigurationAction(configuration.id, projectId)}
+                  confirmMessage="Delete this draft configuration? This cannot be undone."
+                />
+              )}
             </>
           )}
 

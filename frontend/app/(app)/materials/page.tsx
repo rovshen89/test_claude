@@ -2,6 +2,8 @@ import { auth } from "@/lib/auth"
 import { listMaterials } from "@/lib/api"
 import { redirect } from "next/navigation"
 import Link from "next/link"
+import { DeleteButton } from "@/app/(app)/_components/DeleteButton"
+import { deleteMaterialAction } from "@/app/actions/materials"
 
 export default async function MaterialsPage() {
   const session = await auth()
@@ -57,6 +59,10 @@ export default async function MaterialsPage() {
                     >
                       Edit
                     </Link>
+                    <DeleteButton
+                      action={() => deleteMaterialAction(mat.id)}
+                      confirmMessage={`Delete "${mat.name}"? This cannot be undone.`}
+                    />
                   </td>
                 )}
               </tr>

@@ -13,6 +13,8 @@ import {
 import { redirect, notFound } from "next/navigation"
 import Link from "next/link"
 import { ConfirmButton } from "./_components/ConfirmButton"
+import { DeleteButton } from "@/app/(app)/_components/DeleteButton"
+import { deleteProjectAction } from "@/app/actions/projects"
 
 function statusColors(status: string): string {
   switch (status) {
@@ -90,6 +92,10 @@ export default async function ProjectDetailPage({
         >
           + New Configuration
         </Link>
+        <DeleteButton
+          action={() => deleteProjectAction(id)}
+          confirmMessage="Delete this project and all its configurations? This cannot be undone."
+        />
       </div>
       {/* Room Schema */}
       <section className="bg-slate-800 border border-slate-700 rounded-lg p-4 mb-6">
