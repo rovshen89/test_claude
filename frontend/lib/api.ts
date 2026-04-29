@@ -376,3 +376,32 @@ export async function deleteConfiguration(token: string, configId: string): Prom
 export async function deleteProject(token: string, projectId: string): Promise<void> {
   return apiFetch<void>(`/projects/${projectId}`, token, { method: "DELETE" })
 }
+
+export type TenantSettings = {
+  id: string
+  name: string
+  margin_pct: number
+  webhook_url: string | null
+  crm_config: Record<string, unknown> | null
+}
+
+export type TenantUpdate = {
+  name?: string
+  margin_pct?: number
+  webhook_url?: string | null
+  crm_config?: Record<string, unknown> | null
+}
+
+export async function getTenant(token: string): Promise<TenantSettings> {
+  return apiFetch<TenantSettings>("/tenants/me", token)
+}
+
+export async function updateTenant(
+  token: string,
+  data: TenantUpdate
+): Promise<TenantSettings> {
+  return apiFetch<TenantSettings>("/tenants/me", token, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  })
+}

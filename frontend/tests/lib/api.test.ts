@@ -28,6 +28,8 @@ import {
   deleteMaterial,
   deleteConfiguration,
   deleteProject,
+  getTenant,
+  updateTenant,
   type Order,
   type AppliedConfig,
   type Material,
@@ -38,6 +40,8 @@ import {
   type FurnitureTypeUpdate,
   type PricingSnapshot,
   type BomSnapshot,
+  type TenantSettings,
+  type TenantUpdate,
 } from "@/lib/api"
 
 const mockFetch = jest.fn()
@@ -839,5 +843,75 @@ describe("deleteProject", () => {
       expect.objectContaining({ method: "DELETE" })
     )
     expect(result).toBeUndefined()
+  })
+})
+
+describe("getTenant", () => {
+  it("GETs /tenants/me with Authorization header", async () => {
+    const fixture = {
+      id: "t-1",
+      name: "Acme",
+      margin_pct: 10,
+      webhook_url: "https://example.com",
+      crm_config: null,
+    }
+    mockFetch.mockResolvedValueOnce({ ok: true, status: 200, json: async () => fixture })
+
+    const result = await getTenant("tok")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/tenants/me",
+      expect.objectContaining({
+        headers: expect.objectContaining({ Authorization: "Bearer tok" }),
+      })
+    )
+    expect(result.name).toBe("Acme")
+    expect(result.margin_pct).toBe(10)
+  })
+})
+
+describe("updateTenant", () => {
+  it("PUTs /tenants/me with body and returns TenantSettings", async () => {
+    const fixture = {
+      id: "t-1",
+      name: "Updated",
+      margin_pct: 15,
+      webhook_url: "https://hook.example.com",
+      crm_config: { key: "val" },
+    }
+    mockFetch.mockResolvedValueOnce({ ok: true, status: 200, json: async () => fixture })
+
+    const result = await updateTenant("tok", {
+      name: "Updated",
+      margin_pct: 15,
+      webhook_url: "https://hook.example.com",
+      crm_config: { key: "val" },
+    })
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/tenants/me",
+      expect.objectContaining({
+        method: "PUT",
+        headers: expect.objectContaining({ Authorization: "Bearer tok" }),
+        body: JSON.stringify({
+          name: "Updated",
+          margin_pct: 15,
+          webhook_url: "https://hook.example.com",
+          crm_config: { key: "val" },
+        }),
+      })
+    )
+    expect(result.name).toBe("Updated")
+    expect(result.webhook_url).toBe("https://hook.example.com")
+  })
+
+  it("handles 404 ApiError when no tenant", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 404,
+      text: async () => "No tenant associated with this account",
+    })
+
+    await expect(updateTenant("tok", { name: "x" })).rejects.toThrow(ApiError)
   })
 })
