@@ -69,7 +69,8 @@ export async function updateMaterialAction(
     throw e
   }
   revalidatePath("/materials")
-  redirect("/materials")
+  revalidatePath(`/materials/${matId}`)
+  redirect(`/materials/${matId}`)
 }
 
 export async function deleteMaterialAction(matId: string): Promise<{ error?: string }> {

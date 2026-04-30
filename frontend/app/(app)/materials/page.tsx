@@ -44,7 +44,11 @@ export default async function MaterialsPage() {
           <tbody>
             {materials.map((mat) => (
               <tr key={mat.id} className="border-b border-slate-800 last:border-0">
-                <td className="py-3 px-4 text-slate-200">{mat.name}</td>
+                <td className="py-3 px-4">
+                  <Link href={`/materials/${mat.id}`} className="text-slate-200 hover:text-indigo-300">
+                    {mat.name}
+                  </Link>
+                </td>
                 <td className="py-3 px-4 font-mono text-xs">{mat.sku}</td>
                 <td className="py-3 px-4">{mat.category}</td>
                 <td className="py-3 px-4 text-right">{(mat.thickness_options ?? []).join(", ")}</td>
@@ -54,7 +58,7 @@ export default async function MaterialsPage() {
                 {canManage && (
                   <td className="py-3 px-4 text-right">
                     <Link
-                      href={`/materials/${mat.id}/edit`}
+                      href={`/materials/${mat.id}`}
                       className="text-xs text-indigo-400 hover:text-indigo-300"
                     >
                       Edit
