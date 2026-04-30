@@ -31,6 +31,7 @@ import {
   getTenant,
   updateTenant,
   updateProject,
+  listAllConfigurations,
   type Order,
   type AppliedConfig,
   type Material,
@@ -941,5 +942,32 @@ describe("updateProject", () => {
       })
     )
     expect(result.name).toBe("Renamed")
+  })
+})
+
+describe("listAllConfigurations", () => {
+  it("GETs /configurations with Authorization header and returns array", async () => {
+    const fixture = [
+      {
+        id: "c-1",
+        project_id: "p-1",
+        furniture_type_id: "ft-1",
+        applied_config: {},
+        placement: null,
+        status: "draft",
+      },
+    ]
+    mockFetch.mockResolvedValueOnce({ ok: true, status: 200, json: async () => fixture })
+
+    const result = await listAllConfigurations("tok")
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost:8000/configurations",
+      expect.objectContaining({
+        headers: expect.objectContaining({ Authorization: "Bearer tok" }),
+      })
+    )
+    expect(result).toHaveLength(1)
+    expect(result[0].id).toBe("c-1")
   })
 })

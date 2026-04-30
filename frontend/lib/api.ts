@@ -420,3 +420,7 @@ export async function updateProject(
     body: JSON.stringify(data),
   })
 }
+
+export async function listAllConfigurations(token: string): Promise<Configuration[]> {
+  return apiFetch<Configuration[]>("/configurations", token)
+}
