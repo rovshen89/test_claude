@@ -1,5 +1,6 @@
 # backend/app/api/configurations.py
 from uuid import UUID
+from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
@@ -51,14 +52,21 @@ async def create_configuration(
 
 @router.get("", response_model=list[ConfigurationResponse])
 async def list_configurations(
-    project_id: UUID = Query(...),
+    project_id: Optional[UUID] = Query(None),
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    await _get_owned_project(db, project_id, user)
-    result = await db.execute(
-        select(Configuration).where(Configuration.project_id == project_id)
-    )
+    if project_id is not None:
+        await _get_owned_project(db, project_id, user)
+        result = await db.execute(
+            select(Configuration).where(Configuration.project_id == project_id)
+        )
+    else:
+        result = await db.execute(
+            select(Configuration)
+            .join(Project, Configuration.project_id == Project.id)
+            .where(Project.user_id == user.id)
+        )
     return result.scalars().all()
 
 

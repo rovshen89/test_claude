@@ -197,3 +197,39 @@ async def test_list_configurations_wrong_owner_returns_404(client):
 
     r = await client.get(f"/configurations?project_id={project_id}", headers=headers_b)
     assert r.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_list_all_configurations(client):
+    headers, project_id, ft_id = await _setup(client)
+    r = await client.post("/projects", json={"name": "Second"}, headers=headers)
+    project_id_2 = r.json()["id"]
+    await client.post("/configurations", json={
+        "project_id": project_id,
+        "furniture_type_id": ft_id,
+        "applied_config": {"width": 1200, "height": 2100, "depth": 580},
+    }, headers=headers)
+    await client.post("/configurations", json={
+        "project_id": project_id_2,
+        "furniture_type_id": ft_id,
+        "applied_config": {"width": 1000, "height": 2000, "depth": 500},
+    }, headers=headers)
+
+    response = await client.get("/configurations", headers=headers)
+    assert response.status_code == 200
+    assert len(response.json()) == 2
+
+
+@pytest.mark.asyncio
+async def test_list_all_configurations_isolation(client):
+    headers_a, project_id_a, ft_id_a = await _setup(client)
+    headers_b, _, _ = await _setup(client)
+    await client.post("/configurations", json={
+        "project_id": project_id_a,
+        "furniture_type_id": ft_id_a,
+        "applied_config": {"width": 1200, "height": 2100, "depth": 580},
+    }, headers=headers_a)
+
+    response = await client.get("/configurations", headers=headers_b)
+    assert response.status_code == 200
+    assert len(response.json()) == 0
