@@ -134,7 +134,17 @@ async def create_order(
     except IntegrityError:
         await db.rollback()
         raise HTTPException(status_code=409, detail="Order already exists for this configuration")
-    return order
+    return {
+        "id": order.id,
+        "configuration_id": order.configuration_id,
+        "project_id": cfg.project_id,
+        "pricing_snapshot": order.pricing_snapshot,
+        "bom_snapshot": order.bom_snapshot,
+        "export_urls": order.export_urls,
+        "crm_ref": order.crm_ref,
+        "last_dispatch": order.last_dispatch,
+        "created_at": order.created_at,
+    }
 
 
 @router.get("", response_model=List[OrderResponse])
@@ -143,13 +153,26 @@ async def list_orders(
     user: User = Depends(get_current_user),
 ):
     stmt = (
-        select(Order)
+        select(Order, Configuration.project_id)
         .join(Configuration, Order.configuration_id == Configuration.id)
         .join(Project, Configuration.project_id == Project.id)
         .where(Project.user_id == user.id)
     )
     result = await db.execute(stmt)
-    return result.scalars().all()
+    return [
+        {
+            "id": order.id,
+            "configuration_id": order.configuration_id,
+            "project_id": project_id,
+            "pricing_snapshot": order.pricing_snapshot,
+            "bom_snapshot": order.bom_snapshot,
+            "export_urls": order.export_urls,
+            "crm_ref": order.crm_ref,
+            "last_dispatch": order.last_dispatch,
+            "created_at": order.created_at,
+        }
+        for order, project_id in result.all()
+    ]
 
 
 @router.get("/{order_id}", response_model=OrderResponse)
@@ -169,7 +192,17 @@ async def get_order(
     if not project or project.user_id != user.id:
         raise HTTPException(status_code=404, detail="Order not found")
 
-    return order
+    return {
+        "id": order.id,
+        "configuration_id": order.configuration_id,
+        "project_id": cfg.project_id,
+        "pricing_snapshot": order.pricing_snapshot,
+        "bom_snapshot": order.bom_snapshot,
+        "export_urls": order.export_urls,
+        "crm_ref": order.crm_ref,
+        "last_dispatch": order.last_dispatch,
+        "created_at": order.created_at,
+    }
 
 
 @router.post("/{order_id}/dispatch", response_model=DispatchResponse)

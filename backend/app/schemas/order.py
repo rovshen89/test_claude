@@ -13,6 +13,7 @@ class OrderCreate(BaseModel):
 class OrderResponse(BaseModel):
     id: UUID
     configuration_id: UUID
+    project_id: UUID
     pricing_snapshot: dict
     bom_snapshot: dict
     export_urls: dict

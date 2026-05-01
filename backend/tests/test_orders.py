@@ -500,3 +500,27 @@ async def test_dispatch_crm_ref_absent_in_response_is_non_fatal(
 async def test_dispatch_unauthenticated_returns_403(client):
     r = await client.post("/orders/00000000-0000-0000-0000-000000000001/dispatch")
     assert r.status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_create_order_includes_project_id(client, s3_mock):
+    headers, cfg_id = await _setup_confirmed_config(client, "projid1@example.com")
+    cfg_r = await client.get(f"/configurations/{cfg_id}", headers=headers)
+    expected_project_id = cfg_r.json()["project_id"]
+
+    r = await client.post("/orders", json={"configuration_id": cfg_id}, headers=headers)
+    assert r.status_code == 201
+    assert r.json()["project_id"] == expected_project_id
+
+
+@pytest.mark.asyncio
+async def test_list_orders_includes_project_id(client, s3_mock):
+    headers, cfg_id = await _setup_confirmed_config(client, "projid2@example.com")
+    cfg_r = await client.get(f"/configurations/{cfg_id}", headers=headers)
+    expected_project_id = cfg_r.json()["project_id"]
+
+    await client.post("/orders", json={"configuration_id": cfg_id}, headers=headers)
+
+    r = await client.get("/orders", headers=headers)
+    assert r.status_code == 200
+    assert r.json()[0]["project_id"] == expected_project_id
