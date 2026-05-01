@@ -33,7 +33,7 @@ export default async function NewProjectPage({
   return (
     <div className="max-w-md">
       <div className="mb-4">
-        <Link href="/dashboard" className="text-xs text-indigo-400 hover:text-indigo-300">
+        <Link href="/projects" className="text-xs text-indigo-400 hover:text-indigo-300">
           ← Projects
         </Link>
       </div>
@@ -64,7 +64,7 @@ export default async function NewProjectPage({
             Create project
           </button>
           <Link
-            href="/dashboard"
+            href="/projects"
             className="bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-md px-4 py-2 text-sm font-medium transition-colors"
           >
             Cancel

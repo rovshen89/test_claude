@@ -37,7 +37,7 @@ export default async function RegisterPage({
 
     // Auto-login after successful registration
     try {
-      await signIn("credentials", { email, password, redirectTo: "/dashboard" })
+      await signIn("credentials", { email, password, redirectTo: "/projects" })
     } catch (e) {
       if (e instanceof AuthError) redirect("/login?error=1")
       throw e

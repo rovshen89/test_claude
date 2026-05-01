@@ -80,7 +80,7 @@ export default async function ProjectDetailPage({
   return (
     <div>
       <div className="mb-2">
-        <Link href="/dashboard" className="text-xs text-indigo-400 hover:text-indigo-300">
+        <Link href="/projects" className="text-xs text-indigo-400 hover:text-indigo-300">
           ← Projects
         </Link>
       </div>

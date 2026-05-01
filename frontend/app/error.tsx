@@ -19,7 +19,7 @@ export default function ErrorPage({
         >
           Try again
         </button>
-        <Link href="/dashboard" className="text-slate-500 hover:text-slate-400 text-sm">
+        <Link href="/projects" className="text-slate-500 hover:text-slate-400 text-sm">
           Go home
         </Link>
       </div>

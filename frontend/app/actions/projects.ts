@@ -36,8 +36,8 @@ export async function deleteProjectAction(
     if (e instanceof ApiError) return { error: e.message }
     throw e
   }
-  revalidatePath("/dashboard")
-  redirect("/dashboard")
+  revalidatePath("/projects")
+  redirect("/projects")
 }
 
 export async function updateProjectAction(
