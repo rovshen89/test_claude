@@ -14,10 +14,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-screen bg-slate-950">
       <nav className="bg-slate-900 border-b border-slate-800 h-12 flex items-center justify-between px-6">
-        <Link href="/dashboard" className="text-sm font-semibold text-slate-50">
+        <Link href="/projects" className="text-sm font-semibold text-slate-50">
           Configurator
         </Link>
         <div className="flex items-center gap-6">
+          <Link href="/projects" className="text-xs text-slate-400 hover:text-slate-200">
+            Projects
+          </Link>
           <Link href="/materials" className="text-xs text-slate-400 hover:text-slate-200">
             Materials
           </Link>
