@@ -1,7 +1,6 @@
 import { auth } from "@/lib/auth"
 import {
   listOrders,
-  getConfiguration,
   ApiError,
   type Order,
 } from "@/lib/api"
@@ -25,18 +24,6 @@ export default async function OrdersPage() {
     throw e
   }
 
-  // Resolve project_id for each order via its configuration.
-  // Failures are silently skipped — those order rows render without a "View" link.
-  const configResults = await Promise.allSettled(
-    orders.map((o) => getConfiguration(token, o.configuration_id))
-  )
-  const projectMap: Record<string, string> = {}
-  configResults.forEach((result, i) => {
-    if (result.status === "fulfilled") {
-      projectMap[orders[i].configuration_id] = result.value.project_id
-    }
-  })
-
   return (
     <div>
       <h1 className="text-lg font-semibold text-slate-50 mb-6">Orders</h1>
@@ -55,42 +42,35 @@ export default async function OrdersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-700">
-              {orders.map((order) => {
-                const projectId = projectMap[order.configuration_id]
-                return (
-                  <tr key={order.id} className="hover:bg-slate-700">
-                    <td className="px-4 py-3">
-                      <span
-                        className="text-xs font-mono text-slate-400"
-                        title={order.id}
-                      >
-                        {order.id.slice(0, 8)}…
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-slate-300 text-xs">
-                      {new Date(order.created_at).toLocaleDateString()}
-                    </td>
-                    <td className="px-4 py-3 text-right text-slate-200 text-sm">
-                      ${fmt(order.pricing_snapshot.total)}
-                    </td>
-                    <td className="px-4 py-3 text-slate-400 text-xs">
-                      {order.crm_ref ?? "—"}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      {projectId ? (
-                        <Link
-                          href={`/projects/${projectId}/orders/${order.id}`}
-                          className="text-xs text-indigo-400 hover:text-indigo-300 font-medium"
-                        >
-                          View →
-                        </Link>
-                      ) : (
-                        <span className="text-xs text-slate-600">—</span>
-                      )}
-                    </td>
-                  </tr>
-                )
-              })}
+              {orders.map((order) => (
+                <tr key={order.id} className="hover:bg-slate-700">
+                  <td className="px-4 py-3">
+                    <span
+                      className="text-xs font-mono text-slate-400"
+                      title={order.id}
+                    >
+                      {order.id.slice(0, 8)}…
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-slate-300 text-xs">
+                    {new Date(order.created_at).toLocaleDateString()}
+                  </td>
+                  <td className="px-4 py-3 text-right text-slate-200 text-sm">
+                    ${fmt(order.pricing_snapshot.total)}
+                  </td>
+                  <td className="px-4 py-3 text-slate-400 text-xs">
+                    {order.crm_ref ?? "—"}
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <Link
+                      href={`/projects/${order.project_id}/orders/${order.id}`}
+                      className="text-xs text-indigo-400 hover:text-indigo-300 font-medium"
+                    >
+                      View →
+                    </Link>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

@@ -335,6 +335,7 @@ describe("updateConfiguration", () => {
 const orderFixture: Order = {
   id: "ord1",
   configuration_id: "cfg1",
+  project_id: "proj1",
   pricing_snapshot: {
     panel_cost: 100,
     edge_cost: 20,
@@ -410,6 +411,12 @@ describe("listOrders", () => {
     )
     expect(result).toHaveLength(1)
     expect(result[0].id).toBe("ord1")
+  })
+
+  it("includes project_id in returned orders", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => [orderFixture] })
+    const result = await listOrders("tok")
+    expect(result[0].project_id).toBe("proj1")
   })
 
   it("throws ApiError on non-ok response", async () => {

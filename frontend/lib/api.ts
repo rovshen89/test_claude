@@ -205,6 +205,7 @@ export type BomSnapshot = {
 export type Order = {
   id: string
   configuration_id: string
+  project_id: string
   pricing_snapshot: PricingSnapshot
   bom_snapshot: BomSnapshot
   export_urls: { dxf: string; pdf: string }
