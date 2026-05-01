@@ -8,6 +8,8 @@ import {
 } from "@/lib/api"
 import { redirect } from "next/navigation"
 import Link from "next/link"
+import { DeleteButton } from "@/app/(app)/_components/DeleteButton"
+import { deleteConfigurationFromListAction } from "@/app/actions/configurations"
 
 export default async function ConfigurationsPage() {
   const session = await auth()
@@ -66,12 +68,20 @@ export default async function ConfigurationsPage() {
                   </span>
                 </td>
                 <td className="py-3 px-4 text-right">
-                  <Link
-                    href={`/projects/${cfg.project_id}/configurations/${cfg.id}`}
-                    className="text-xs text-indigo-400 hover:text-indigo-300"
-                  >
-                    View
-                  </Link>
+                  <div className="flex items-center justify-end gap-3">
+                    <Link
+                      href={`/projects/${cfg.project_id}/configurations/${cfg.id}`}
+                      className="text-xs text-indigo-400 hover:text-indigo-300"
+                    >
+                      View
+                    </Link>
+                    {cfg.status === "draft" && (
+                      <DeleteButton
+                        action={() => deleteConfigurationFromListAction(cfg.id)}
+                        confirmMessage="Delete this draft configuration? This cannot be undone."
+                      />
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}

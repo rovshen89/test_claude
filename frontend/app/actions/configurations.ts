@@ -84,3 +84,20 @@ export async function deleteConfigurationAction(
   revalidatePath(`/projects/${projectId}`)
   redirect(`/projects/${projectId}`)
 }
+
+export async function deleteConfigurationFromListAction(
+  configId: string
+): Promise<{ error?: string }> {
+  const session = await auth()
+  if (!session?.user?.access_token) redirect("/login")
+  const token = session.user.access_token
+  try {
+    await deleteConfiguration(token, configId)
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 401) redirect("/login")
+    if (e instanceof ApiError) return { error: e.message }
+    throw e
+  }
+  revalidatePath("/configurations")
+  redirect("/configurations")
+}
