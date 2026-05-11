@@ -24,7 +24,7 @@ services:
     volumes:
       - minio_data:/data
     ports:
-      - "9001:9001"   # MinIO web console (optional)
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"   # MinIO web console (optional)
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 5s
@@ -69,7 +69,7 @@ services:
       S3_ENDPOINT_URL: http://minio:9000
       AWS_REGION: us-east-1
     ports:
-      - "8000:8000"
+      - "${BACKEND_PORT:-8000}:8000"
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -86,7 +86,7 @@ services:
       AUTH_URL: ${AUTH_URL}
       BACKEND_URL: http://backend:8000
     ports:
-      - "3000:3000"
+      - "${FRONTEND_PORT:-3000}:3000"
     depends_on:
       - backend
     restart: unless-stopped
