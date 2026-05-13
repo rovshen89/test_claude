@@ -309,16 +309,36 @@ npm test
 
 ---
 
+## Enterprise Implementation Plans
+
+Two strategic documents live in `docs/` for the next phase of development:
+
+| File | Description |
+|---|---|
+| `docs/enterprise-implementation-plan.md` | 1,400-line enterprise architecture plan (v2.0, May 2026). Covers scene-centric domain model, 6-phase delivery, Zustand store slices, GLB/USDZ/AR pipeline, worker service, Redis, optimistic locking, and all bottlenecks/mitigations. |
+| `docs/3d-designer-spec.md` | Detailed UX spec for the full 3D designer experience (inspired by Flatma). 12 feature areas with file-level task breakdowns, effort estimates (67 days total), and recommended build order across 5 phases. |
+
+The enterprise plan's recommended immediate next steps (Section 22):
+1. Finalize the scene/configuration/order source-of-truth decision
+2. Write the `SceneObject` and `ProjectScene` schemas
+3. Add backend derivation tests for one-object scene parity with existing config flow
+4. Spike USDZ conversion in Docker before committing to iOS AR
+5. Implement scene backend behind a feature flag
+6. Refactor Babylon scale to `0.001` (currently uses raw mm values)
+7. Build the editor core only after backend scene contracts are stable
+
+---
+
 ## Suggested Next Steps
 
 Priority order based on what's most visible to users:
 
-1. **Visual room planner** — replace the JSON textarea at `/projects/[id]/room-schema/edit` with an HTML5 Canvas drawing tool. This is the largest UX gap between what's built and what the product spec describes.
+1. **Visual room planner** — replace the JSON textarea at `/projects/[id]/room-schema/edit` with an HTML5 Canvas drawing tool. This is the largest UX gap between what's built and what the product spec describes. See `docs/3d-designer-spec.md` → Feature Area 1 (Room Setup) and Feature Area 8 (2D Floor Plan).
 
-2. **Full parametric 3D builder** — extend `BabylonScene.tsx` to render from `applied_config.panels[]` with the correct per-panel dimensions from `FurnitureSchema`. Apply S3 material textures to each panel using the stored `material_id`.
+2. **Full parametric 3D builder** — extend `BabylonScene.tsx` to render from `applied_config.panels[]` with the correct per-panel dimensions from `FurnitureSchema`. Apply S3 material textures to each panel using the stored `material_id`. See `docs/3d-designer-spec.md` → Feature Areas 3–5, 11.
 
-3. **SVG panel nesting export** — add a third export format to the order pipeline. `export_urls` already has the `dxf`/`pdf` shape; add `svg`.
+3. **SVG panel nesting export** — add a third export format to the order pipeline. `export_urls` already has the `dxf`/`pdf` shape; add `svg`. See `docs/3d-designer-spec.md` → Feature Area 9 (Cutting Layout).
 
 4. **Admin UI** — pages under `/admin` for tenant management, global material library, user overview.
 
-5. **Zustand** — once the 3D configurator grows in complexity, add Zustand for shared state between the canvas, sidebar controls, and panel assignment list.
+5. **Zustand + scene store** — once the 3D configurator grows in complexity, add Zustand for shared state between the canvas, sidebar controls, and panel assignment list. See `docs/enterprise-implementation-plan.md` → Section 8 (Frontend Architecture) for the full 7-slice store design.
