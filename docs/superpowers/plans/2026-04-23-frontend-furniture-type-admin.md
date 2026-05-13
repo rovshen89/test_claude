@@ -79,7 +79,7 @@ const canManage = session.user.role === "admin" || session.user.role === "manufa
 - Modify: `frontend/tests/lib/api.test.ts`
 - Modify: `frontend/lib/api.ts`
 
-- [ ] **Step 1.1: Add failing tests to `api.test.ts`**
+- [x] **Step 1.1: Add failing tests to `api.test.ts`**
 
 **1a. Update the import block** at the top of `frontend/tests/lib/api.test.ts`. Replace the existing import with:
 
@@ -154,7 +154,7 @@ describe("createFurnitureType", () => {
 })
 ```
 
-- [ ] **Step 1.2: Run tests — verify 2 new tests fail**
+- [x] **Step 1.2: Run tests — verify 2 new tests fail**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -15
@@ -162,7 +162,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -15
 
 Expected: 2 failures (`createFurnitureType is not a function`). Existing 38 tests still pass.
 
-- [ ] **Step 1.3: Add `FurnitureTypeCreate` type and `createFurnitureType` to `lib/api.ts`**
+- [x] **Step 1.3: Add `FurnitureTypeCreate` type and `createFurnitureType` to `lib/api.ts`**
 
 Append after the last function in `frontend/lib/api.ts` (after `updateMaterial`):
 
@@ -183,7 +183,7 @@ export async function createFurnitureType(
 }
 ```
 
-- [ ] **Step 1.4: Run tests — verify all 40 pass**
+- [x] **Step 1.4: Run tests — verify all 40 pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
@@ -191,7 +191,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
 
 Expected: `Tests: 40 passed, 40 total`
 
-- [ ] **Step 1.5: Commit**
+- [x] **Step 1.5: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git add frontend/lib/api.ts frontend/tests/lib/api.test.ts && git commit -m "feat: add FurnitureTypeCreate type and createFurnitureType to api.ts"
@@ -204,7 +204,7 @@ cd /Users/rovshennurybayev/claude_agents && git add frontend/lib/api.ts frontend
 **Files:**
 - Create: `frontend/app/actions/furniture-types.ts`
 
-- [ ] **Step 2.1: Create `frontend/app/actions/furniture-types.ts`**
+- [x] **Step 2.1: Create `frontend/app/actions/furniture-types.ts`**
 
 Full content:
 
@@ -236,7 +236,7 @@ export async function createFurnitureTypeAction(
 }
 ```
 
-- [ ] **Step 2.2: Run tests — verify 40 still pass**
+- [x] **Step 2.2: Run tests — verify 40 still pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
@@ -244,7 +244,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
 
 Expected: `Tests: 40 passed, 40 total`
 
-- [ ] **Step 2.3: Commit**
+- [x] **Step 2.3: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git add frontend/app/actions/furniture-types.ts && git commit -m "feat: add createFurnitureTypeAction Server Action"
@@ -258,7 +258,7 @@ cd /Users/rovshennurybayev/claude_agents && git add frontend/app/actions/furnitu
 - Modify: `frontend/app/(app)/layout.tsx`
 - Create: `frontend/app/(app)/furniture-types/page.tsx`
 
-- [ ] **Step 3.1: Add "Furniture Types" nav link to `frontend/app/(app)/layout.tsx`**
+- [x] **Step 3.1: Add "Furniture Types" nav link to `frontend/app/(app)/layout.tsx`**
 
 The current nav has three children: brand link, Materials link, user div. Add "Furniture Types" after "Materials".
 
@@ -281,7 +281,7 @@ Replace with:
         <div className="flex items-center gap-4">
 ```
 
-- [ ] **Step 3.2: Create `frontend/app/(app)/furniture-types/page.tsx`**
+- [x] **Step 3.2: Create `frontend/app/(app)/furniture-types/page.tsx`**
 
 Full content:
 
@@ -345,7 +345,7 @@ export default async function FurnitureTypesPage() {
 }
 ```
 
-- [ ] **Step 3.3: Run tests — verify 40 still pass**
+- [x] **Step 3.3: Run tests — verify 40 still pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
@@ -353,7 +353,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
 
 Expected: `Tests: 40 passed, 40 total`
 
-- [ ] **Step 3.4: Commit**
+- [x] **Step 3.4: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git add "frontend/app/(app)/layout.tsx" "frontend/app/(app)/furniture-types/page.tsx" && git commit -m "feat: add furniture types nav link and list page"
@@ -367,7 +367,7 @@ cd /Users/rovshennurybayev/claude_agents && git add "frontend/app/(app)/layout.t
 - Create: `frontend/app/(app)/furniture-types/new/page.tsx`
 - Create: `frontend/app/(app)/furniture-types/new/_components/NewFurnitureTypeForm.tsx`
 
-- [ ] **Step 4.1: Create `frontend/app/(app)/furniture-types/new/page.tsx`**
+- [x] **Step 4.1: Create `frontend/app/(app)/furniture-types/new/page.tsx`**
 
 Full content:
 
@@ -397,7 +397,7 @@ export default async function NewFurnitureTypePage() {
 }
 ```
 
-- [ ] **Step 4.2: Create `frontend/app/(app)/furniture-types/new/_components/NewFurnitureTypeForm.tsx`**
+- [x] **Step 4.2: Create `frontend/app/(app)/furniture-types/new/_components/NewFurnitureTypeForm.tsx`**
 
 Full content:
 
@@ -505,7 +505,7 @@ export function NewFurnitureTypeForm() {
 }
 ```
 
-- [ ] **Step 4.3: Run tests — verify 40 still pass**
+- [x] **Step 4.3: Run tests — verify 40 still pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
@@ -513,7 +513,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
 
 Expected: `Tests: 40 passed, 40 total`
 
-- [ ] **Step 4.4: Commit**
+- [x] **Step 4.4: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git add "frontend/app/(app)/furniture-types/new/page.tsx" "frontend/app/(app)/furniture-types/new/_components/NewFurnitureTypeForm.tsx" && git commit -m "feat: add new furniture type page with JSON schema form"

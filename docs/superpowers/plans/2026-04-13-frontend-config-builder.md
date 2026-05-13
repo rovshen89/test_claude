@@ -30,7 +30,7 @@
 - Modify: `frontend/lib/api.ts`
 - Modify: `frontend/tests/lib/api.test.ts`
 
-- [ ] **Step 1: Add 4 failing tests to `frontend/tests/lib/api.test.ts`**
+- [x] **Step 1: Add 4 failing tests to `frontend/tests/lib/api.test.ts`**
 
 Add these three `describe` blocks at the end of the file, and update the import at the top.
 
@@ -132,7 +132,7 @@ describe("confirmConfiguration", () => {
 })
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend
@@ -141,7 +141,7 @@ npm test 2>&1 | tail -20
 
 Expected: 4 new tests FAIL with something like `"getFurnitureTypes is not a function"`. The existing 10 tests should still pass.
 
-- [ ] **Step 3: Add three new functions to `frontend/lib/api.ts`**
+- [x] **Step 3: Add three new functions to `frontend/lib/api.ts`**
 
 Append after the existing `getFurnitureType` function (after line 68):
 
@@ -173,7 +173,7 @@ export async function confirmConfiguration(token: string, configId: string): Pro
 }
 ```
 
-- [ ] **Step 4: Run tests to verify all 14 pass**
+- [x] **Step 4: Run tests to verify all 14 pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend
@@ -186,7 +186,7 @@ Test Suites: 1 passed, 1 total
 Tests:       14 passed, 14 total
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents
@@ -201,7 +201,7 @@ git commit -m "feat: add getFurnitureTypes, createConfiguration, confirmConfigur
 **Files:**
 - Create: `frontend/app/actions/configurations.ts`
 
-- [ ] **Step 1: Create `frontend/app/actions/` directory and file**
+- [x] **Step 1: Create `frontend/app/actions/` directory and file**
 
 Create `frontend/app/actions/configurations.ts` with this exact content:
 
@@ -253,7 +253,7 @@ export async function confirmConfigurationAction(
 
 Note on `redirect()` and try/catch: `redirect()` throws `NEXT_REDIRECT` internally. Calling `redirect("/login")` inside the catch block throws `NEXT_REDIRECT`, which exits the catch block and propagates up — this is intentional and correct. The final `redirect(...)` / `revalidatePath(...)` outside the try/catch only runs when no error occurred.
 
-- [ ] **Step 2: TypeScript check**
+- [x] **Step 2: TypeScript check**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend
@@ -262,7 +262,7 @@ npx tsc --noEmit 2>&1 | head -30
 
 Expected: no errors.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents
@@ -278,7 +278,7 @@ git commit -m "feat: add createConfigurationAction and confirmConfigurationActio
 - Create: `frontend/app/(app)/projects/[id]/_components/ConfirmButton.tsx`
 - Modify: `frontend/app/(app)/projects/[id]/page.tsx`
 
-- [ ] **Step 1: Create `frontend/app/(app)/projects/[id]/_components/ConfirmButton.tsx`**
+- [x] **Step 1: Create `frontend/app/(app)/projects/[id]/_components/ConfirmButton.tsx`**
 
 ```tsx
 "use client"
@@ -325,7 +325,7 @@ export function ConfirmButton({
 }
 ```
 
-- [ ] **Step 2: Update `frontend/app/(app)/projects/[id]/page.tsx`**
+- [x] **Step 2: Update `frontend/app/(app)/projects/[id]/page.tsx`**
 
 Make two changes:
 
@@ -420,7 +420,7 @@ Replace with:
             </div>
 ```
 
-- [ ] **Step 3: TypeScript check**
+- [x] **Step 3: TypeScript check**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend
@@ -429,7 +429,7 @@ npx tsc --noEmit 2>&1 | head -30
 
 Expected: no errors.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents
@@ -445,7 +445,7 @@ git commit -m "feat: add ConfirmButton to draft cards, activate New Configuratio
 - Create: `frontend/app/(app)/projects/[id]/configurations/new/page.tsx`
 - Create: `frontend/app/(app)/projects/[id]/configurations/new/_components/ConfigurationForm.tsx`
 
-- [ ] **Step 1: Create `frontend/app/(app)/projects/[id]/configurations/new/_components/ConfigurationForm.tsx`**
+- [x] **Step 1: Create `frontend/app/(app)/projects/[id]/configurations/new/_components/ConfigurationForm.tsx`**
 
 ```tsx
 "use client"
@@ -621,7 +621,7 @@ export function ConfigurationForm({
 }
 ```
 
-- [ ] **Step 2: Create `frontend/app/(app)/projects/[id]/configurations/new/page.tsx`**
+- [x] **Step 2: Create `frontend/app/(app)/projects/[id]/configurations/new/page.tsx`**
 
 ```tsx
 import { auth } from "@/lib/auth"
@@ -671,7 +671,7 @@ export default async function NewConfigurationPage({
 }
 ```
 
-- [ ] **Step 3: TypeScript check**
+- [x] **Step 3: TypeScript check**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend
@@ -680,7 +680,7 @@ npx tsc --noEmit 2>&1 | head -30
 
 Expected: no errors.
 
-- [ ] **Step 4: Run all tests**
+- [x] **Step 4: Run all tests**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend
@@ -699,7 +699,7 @@ cd /Users/rovshennurybayev/claude_agents/backend
 
 Expected: 103 passed.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents

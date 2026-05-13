@@ -31,7 +31,7 @@ Context: `frontend/app/actions/configurations.ts` already has a `deleteConfigura
 
 Current Jest test count: 57. Current TypeScript errors: 0. These must remain unchanged after this task.
 
-- [ ] **Step 1: Add `deleteConfigurationFromListAction` to `frontend/app/actions/configurations.ts`**
+- [x] **Step 1: Add `deleteConfigurationFromListAction` to `frontend/app/actions/configurations.ts`**
 
 Read the file first. It ends at line 86 (`}`). Append the following after the closing brace of `deleteConfigurationAction`:
 
@@ -56,7 +56,7 @@ export async function deleteConfigurationFromListAction(
 
 All imports (`auth`, `deleteConfiguration`, `ApiError`, `redirect`, `revalidatePath`) already exist in this file — no new imports needed.
 
-- [ ] **Step 2: Verify TypeScript compiles cleanly**
+- [x] **Step 2: Verify TypeScript compiles cleanly**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | head -10
@@ -64,7 +64,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | hea
 
 Expected: no output (0 errors).
 
-- [ ] **Step 3: Update `frontend/app/(app)/configurations/page.tsx` to add delete button**
+- [x] **Step 3: Update `frontend/app/(app)/configurations/page.tsx` to add delete button**
 
 Read the file first. The full page is at `/Users/rovshennurybayev/claude_agents/frontend/app/(app)/configurations/page.tsx`.
 
@@ -134,7 +134,7 @@ Replace with:
                 </td>
 ```
 
-- [ ] **Step 4: Verify TypeScript + Jest**
+- [x] **Step 4: Verify TypeScript + Jest**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | head -20 && npx jest --no-coverage 2>&1 | tail -5
@@ -142,7 +142,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | hea
 
 Expected: no TS errors; 57 tests pass.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && git add "app/actions/configurations.ts" "app/(app)/configurations/page.tsx" && git commit -m "feat: add delete button for draft configs on configurations list page (sub-plan 19)
@@ -154,7 +154,7 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 
 ### Task 2: Push
 
-- [ ] **Step 1: Run full frontend checks**
+- [x] **Step 1: Run full frontend checks**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | head -10 && npx jest --no-coverage 2>&1 | tail -5
@@ -162,7 +162,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | hea
 
 Expected: no TS errors; 57 tests pass.
 
-- [ ] **Step 2: Push**
+- [x] **Step 2: Push**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git push origin main

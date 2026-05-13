@@ -21,7 +21,7 @@ Context: `OrderResponse` at `backend/app/schemas/order.py` lines 13–23 uses `f
 
 `_setup_confirmed_config` in `backend/tests/test_orders.py` returns `(headers, cfg_id)`. To get `project_id` in new tests, call `GET /configurations/{cfg_id}` which already returns `ConfigurationResponse` including `project_id`.
 
-- [ ] **Step 1: Write 2 failing tests at the end of `backend/tests/test_orders.py`**
+- [x] **Step 1: Write 2 failing tests at the end of `backend/tests/test_orders.py`**
 
 ```python
 @pytest.mark.asyncio
@@ -48,7 +48,7 @@ async def test_list_orders_includes_project_id(client, s3_mock):
     assert r.json()[0]["project_id"] == expected_project_id
 ```
 
-- [ ] **Step 2: Run tests to confirm they fail**
+- [x] **Step 2: Run tests to confirm they fail**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytest tests/test_orders.py::test_create_order_includes_project_id tests/test_orders.py::test_list_orders_includes_project_id -x -q 2>&1 | tail -10
@@ -56,7 +56,7 @@ cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytes
 
 Expected: 2 failures — `KeyError: 'project_id'` or validation error.
 
-- [ ] **Step 3: Add `project_id` to `OrderResponse` in `backend/app/schemas/order.py`**
+- [x] **Step 3: Add `project_id` to `OrderResponse` in `backend/app/schemas/order.py`**
 
 Current file (`backend/app/schemas/order.py` lines 13–23):
 ```python
@@ -89,7 +89,7 @@ class OrderResponse(BaseModel):
     model_config = {"from_attributes": True}
 ```
 
-- [ ] **Step 4: Update `list_orders` in `backend/app/api/orders.py`**
+- [x] **Step 4: Update `list_orders` in `backend/app/api/orders.py`**
 
 Find the existing `list_orders` function (lines ~140–152):
 ```python
@@ -138,7 +138,7 @@ async def list_orders(
     ]
 ```
 
-- [ ] **Step 5: Update `get_order` in `backend/app/api/orders.py`**
+- [x] **Step 5: Update `get_order` in `backend/app/api/orders.py`**
 
 Find the existing `get_order` function (lines ~155–172):
 ```python
@@ -194,7 +194,7 @@ async def get_order(
     }
 ```
 
-- [ ] **Step 6: Update `create_order` in `backend/app/api/orders.py`**
+- [x] **Step 6: Update `create_order` in `backend/app/api/orders.py`**
 
 Find the final lines of `create_order` (lines ~122–137). The function already has `cfg` and `project` loaded. Find the current return:
 ```python
@@ -230,7 +230,7 @@ Replace `return order` with a dict (keep the try/except unchanged):
     }
 ```
 
-- [ ] **Step 7: Run new tests to confirm they pass**
+- [x] **Step 7: Run new tests to confirm they pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytest tests/test_orders.py::test_create_order_includes_project_id tests/test_orders.py::test_list_orders_includes_project_id -x -q 2>&1 | tail -10
@@ -238,7 +238,7 @@ cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytes
 
 Expected: 2 passed.
 
-- [ ] **Step 8: Run full backend suite**
+- [x] **Step 8: Run full backend suite**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytest -q 2>&1 | tail -5
@@ -246,7 +246,7 @@ cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytes
 
 Expected: 123 passed, 0 failures.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/backend && git add app/schemas/order.py app/api/orders.py tests/test_orders.py && git commit -m "feat: add project_id to OrderResponse, computed from Configuration join (sub-plan 18, task 1)
@@ -265,7 +265,7 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 
 Context: `Order` type at `frontend/lib/api.ts` lines 205–214 lacks `project_id`. The `orderFixture` const in `frontend/tests/lib/api.test.ts` at line 335 also lacks `project_id` and will cause TypeScript to error once the type is updated. The orders list page at `frontend/app/(app)/orders/page.tsx` currently imports `getConfiguration` and calls it N times to resolve `project_id` via `Promise.allSettled`. Current Jest test count: 56.
 
-- [ ] **Step 1: Add `project_id` to `Order` type in `frontend/lib/api.ts`**
+- [x] **Step 1: Add `project_id` to `Order` type in `frontend/lib/api.ts`**
 
 Find the `Order` type (lines 205–214):
 ```ts
@@ -296,7 +296,7 @@ export type Order = {
 }
 ```
 
-- [ ] **Step 2: Add `project_id` to `orderFixture` in `frontend/tests/lib/api.test.ts`**
+- [x] **Step 2: Add `project_id` to `orderFixture` in `frontend/tests/lib/api.test.ts`**
 
 Read the file. Find `orderFixture` (lines ~335–352):
 ```ts
@@ -343,7 +343,7 @@ const orderFixture: Order = {
 }
 ```
 
-- [ ] **Step 3: Add a new test asserting `project_id` is returned by `listOrders`**
+- [x] **Step 3: Add a new test asserting `project_id` is returned by `listOrders`**
 
 Read the end of `frontend/tests/lib/api.test.ts`. Find the `listOrders` describe block (lines ~399–419):
 ```ts
@@ -401,7 +401,7 @@ describe("listOrders", () => {
 })
 ```
 
-- [ ] **Step 4: Run Jest to confirm 57 tests pass**
+- [x] **Step 4: Run Jest to confirm 57 tests pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx jest --no-coverage 2>&1 | tail -5
@@ -409,7 +409,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx jest --no-coverage 2>&1
 
 Expected: 57 tests, 0 failures.
 
-- [ ] **Step 5: Simplify `frontend/app/(app)/orders/page.tsx`**
+- [x] **Step 5: Simplify `frontend/app/(app)/orders/page.tsx`**
 
 Read the file. Find the current import block and N+1 pattern.
 
@@ -522,7 +522,7 @@ Replace with (use `order.project_id` directly, remove conditional rendering):
                 ))}
 ```
 
-- [ ] **Step 6: Verify TypeScript + tests**
+- [x] **Step 6: Verify TypeScript + tests**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | head -20 && npx jest --no-coverage 2>&1 | tail -5
@@ -530,7 +530,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | hea
 
 Expected: no TS errors; 57 tests pass.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && git add lib/api.ts tests/lib/api.test.ts "app/(app)/orders/page.tsx" && git commit -m "feat: add project_id to Order type, simplify orders list page (sub-plan 18, task 2)
@@ -542,7 +542,7 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 
 ### Task 3: Push everything
 
-- [ ] **Step 1: Run full backend suite**
+- [x] **Step 1: Run full backend suite**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytest -q 2>&1 | tail -5
@@ -550,7 +550,7 @@ cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytes
 
 Expected: 123 passed, 0 failures.
 
-- [ ] **Step 2: Run full frontend checks**
+- [x] **Step 2: Run full frontend checks**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | head -10 && npx jest --no-coverage 2>&1 | tail -5
@@ -558,7 +558,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | hea
 
 Expected: no TS errors; 57 tests pass.
 
-- [ ] **Step 3: Push**
+- [x] **Step 3: Push**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git push origin main

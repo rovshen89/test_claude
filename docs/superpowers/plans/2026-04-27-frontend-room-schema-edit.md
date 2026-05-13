@@ -18,7 +18,7 @@
 
 Context: `apiFetch<T>()` is the internal helper that adds `Authorization` + `Content-Type` headers. All other PUT endpoints follow the same pattern. The existing `Project` type already has `room_schema: Record<string, unknown> | null`. Current test count is 44.
 
-- [ ] **Step 1: Write 2 failing tests**
+- [x] **Step 1: Write 2 failing tests**
 
 Add to `frontend/tests/lib/api.test.ts`:
 
@@ -75,7 +75,7 @@ describe("updateRoomSchema", () => {
 })
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx jest tests/lib/api.test.ts --no-coverage 2>&1 | tail -20
@@ -83,7 +83,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx jest tests/lib/api.test
 
 Expected: 2 failures mentioning `updateRoomSchema` is not exported / not a function.
 
-- [ ] **Step 3: Implement `updateRoomSchema` in `frontend/lib/api.ts`**
+- [x] **Step 3: Implement `updateRoomSchema` in `frontend/lib/api.ts`**
 
 Add after `generateBom` (at the very end of the file):
 
@@ -100,7 +100,7 @@ export async function updateRoomSchema(
 }
 ```
 
-- [ ] **Step 4: Run tests to verify all 46 pass**
+- [x] **Step 4: Run tests to verify all 46 pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx jest tests/lib/api.test.ts --no-coverage 2>&1 | tail -10
@@ -108,7 +108,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx jest tests/lib/api.test
 
 Expected: 46 tests, 0 failures.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && git add lib/api.ts tests/lib/api.test.ts && git commit -m "feat: add updateRoomSchema API function with tests (sub-plan 10, task 1)"
@@ -124,7 +124,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && git add lib/api.ts tests/li
 
 Context: The server action pattern follows `app/actions/furniture-types.ts` exactly — `"use server"` at module top, `auth()` for token, try/catch for ApiError, `revalidatePath` then `redirect` outside the try block. The project page currently has a `flex justify-between items-center mb-6` header div at line 85-93, followed by `{configs.length === 0 ? (` at line 94. The Room Schema section goes between those two.
 
-- [ ] **Step 1: Create `frontend/app/actions/projects.ts`**
+- [x] **Step 1: Create `frontend/app/actions/projects.ts`**
 
 ```ts
 "use server"
@@ -153,7 +153,7 @@ export async function updateRoomSchemaAction(
 }
 ```
 
-- [ ] **Step 2: Add Room Schema section to `frontend/app/(app)/projects/[id]/page.tsx`**
+- [x] **Step 2: Add Room Schema section to `frontend/app/(app)/projects/[id]/page.tsx`**
 
 The file currently has the `</div>` closing the header block at line 93, then `{configs.length === 0 ? (` at line 94. Insert the Room Schema section between them.
 
@@ -193,7 +193,7 @@ Replace with:
       {configs.length === 0 ? (
 ```
 
-- [ ] **Step 3: Verify TypeScript compiles**
+- [x] **Step 3: Verify TypeScript compiles**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | head -30
@@ -201,7 +201,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | hea
 
 Expected: no output (clean compile).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && git add app/actions/projects.ts "app/(app)/projects/[id]/page.tsx" && git commit -m "feat: add updateRoomSchemaAction and Room Schema section on project page (sub-plan 10, task 2)"
@@ -217,7 +217,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && git add app/actions/project
 
 Context: The edit page follows the same Server Component pattern as `furniture-types/new/page.tsx` — auth guard, fetch project (with 404/401 handling), render client form. The form follows `NewFurnitureTypeForm.tsx` — JSON textarea, `JSON.parse` validation, call server action, show error in red box. No role gating for room schema (any authenticated user owns their own projects).
 
-- [ ] **Step 1: Create `frontend/app/(app)/projects/[id]/room-schema/edit/page.tsx`**
+- [x] **Step 1: Create `frontend/app/(app)/projects/[id]/room-schema/edit/page.tsx`**
 
 ```tsx
 import { auth } from "@/lib/auth"
@@ -253,7 +253,7 @@ export default async function RoomSchemaEditPage({
 }
 ```
 
-- [ ] **Step 2: Create `frontend/app/(app)/projects/[id]/room-schema/edit/_components/RoomSchemaForm.tsx`**
+- [x] **Step 2: Create `frontend/app/(app)/projects/[id]/room-schema/edit/_components/RoomSchemaForm.tsx`**
 
 ```tsx
 "use client"
@@ -328,7 +328,7 @@ export function RoomSchemaForm({
 }
 ```
 
-- [ ] **Step 3: Verify TypeScript compiles**
+- [x] **Step 3: Verify TypeScript compiles**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | head -30
@@ -336,7 +336,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | hea
 
 Expected: no output (clean compile).
 
-- [ ] **Step 4: Run full test suite**
+- [x] **Step 4: Run full test suite**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx jest --no-coverage 2>&1 | tail -15
@@ -344,7 +344,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx jest --no-coverage 2>&1
 
 Expected: 46 tests, 0 failures.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && git add "app/(app)/projects/[id]/room-schema/" && git commit -m "feat: add room schema edit page and form (sub-plan 10, task 3)"

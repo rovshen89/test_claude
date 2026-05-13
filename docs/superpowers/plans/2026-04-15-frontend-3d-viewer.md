@@ -33,7 +33,7 @@
 
 ---
 
-- [ ] **Step 1: Write 4 failing tests**
+- [x] **Step 1: Write 4 failing tests**
 
 Add to the bottom of `frontend/tests/lib/api.test.ts`.
 
@@ -126,7 +126,7 @@ describe("updateConfiguration", () => {
 })
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 ```bash
 cd frontend && npx jest tests/lib/api.test.ts --no-coverage 2>&1 | tail -20
@@ -134,7 +134,7 @@ cd frontend && npx jest tests/lib/api.test.ts --no-coverage 2>&1 | tail -20
 
 Expected: 4 failures — `getConfiguration is not a function` / `updateConfiguration is not a function`.
 
-- [ ] **Step 3: Implement `getConfiguration` and `updateConfiguration` in `lib/api.ts`**
+- [x] **Step 3: Implement `getConfiguration` and `updateConfiguration` in `lib/api.ts`**
 
 Append to the end of `frontend/lib/api.ts`:
 
@@ -155,7 +155,7 @@ export async function updateConfiguration(
 }
 ```
 
-- [ ] **Step 4: Run tests to verify all 20 pass**
+- [x] **Step 4: Run tests to verify all 20 pass**
 
 ```bash
 cd frontend && npx jest tests/lib/api.test.ts --no-coverage 2>&1 | tail -10
@@ -163,7 +163,7 @@ cd frontend && npx jest tests/lib/api.test.ts --no-coverage 2>&1 | tail -10
 
 Expected: `Tests: 20 passed, 20 total`
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd frontend && git add lib/api.ts tests/lib/api.test.ts
@@ -179,7 +179,7 @@ git commit -m "feat: add getConfiguration and updateConfiguration API helpers"
 
 ---
 
-- [ ] **Step 1: Add `updateConfiguration` to the import and add the action**
+- [x] **Step 1: Add `updateConfiguration` to the import and add the action**
 
 Replace the import line in `frontend/app/actions/configurations.ts`:
 
@@ -213,7 +213,7 @@ export async function updateConfigurationAction(
 
 Note: The return type is `Promise<{ error: string }>` — success path always calls `redirect()` which throws internally and never returns. A 400 from the backend (e.g. "Only draft configurations can be modified") surfaces as `{ error: e.message }` and will show as an error banner in the viewer.
 
-- [ ] **Step 2: Verify TypeScript compiles**
+- [x] **Step 2: Verify TypeScript compiles**
 
 ```bash
 cd frontend && npx tsc --noEmit 2>&1 | head -20
@@ -221,7 +221,7 @@ cd frontend && npx tsc --noEmit 2>&1 | head -20
 
 Expected: no output (zero errors).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 cd frontend && git add app/actions/configurations.ts
@@ -238,7 +238,7 @@ git commit -m "feat: add updateConfigurationAction server action"
 
 ---
 
-- [ ] **Step 1: Add "View in 3D" links to non-draft cards in `page.tsx`**
+- [x] **Step 1: Add "View in 3D" links to non-draft cards in `page.tsx`**
 
 In `frontend/app/(app)/projects/[id]/page.tsx`, replace the existing draft-only button block:
 
@@ -268,7 +268,7 @@ with:
               </div>
 ```
 
-- [ ] **Step 2: Remove step validation from `ConfigurationForm.tsx`**
+- [x] **Step 2: Remove step validation from `ConfigurationForm.tsx`**
 
 In `frontend/app/(app)/projects/[id]/configurations/new/_components/ConfigurationForm.tsx`:
 
@@ -314,7 +314,7 @@ New:
                   </p>
 ```
 
-- [ ] **Step 3: Verify TypeScript compiles**
+- [x] **Step 3: Verify TypeScript compiles**
 
 ```bash
 cd frontend && npx tsc --noEmit 2>&1 | head -20
@@ -322,7 +322,7 @@ cd frontend && npx tsc --noEmit 2>&1 | head -20
 
 Expected: no output.
 
-- [ ] **Step 4: Run tests to confirm nothing broke**
+- [x] **Step 4: Run tests to confirm nothing broke**
 
 ```bash
 cd frontend && npx jest --no-coverage 2>&1 | tail -10
@@ -330,7 +330,7 @@ cd frontend && npx jest --no-coverage 2>&1 | tail -10
 
 Expected: 20 passed.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd frontend && git add app/\(app\)/projects/\[id\]/page.tsx app/\(app\)/projects/\[id\]/configurations/new/_components/ConfigurationForm.tsx
@@ -347,7 +347,7 @@ git commit -m "feat: add View in 3D links to project cards; remove step validati
 
 ---
 
-- [ ] **Step 1: Install `@babylonjs/core`**
+- [x] **Step 1: Install `@babylonjs/core`**
 
 ```bash
 cd frontend && npm install @babylonjs/core
@@ -355,7 +355,7 @@ cd frontend && npm install @babylonjs/core
 
 Expected: package added to `dependencies` in `package.json`.
 
-- [ ] **Step 2: Create directory and BabylonScene component**
+- [x] **Step 2: Create directory and BabylonScene component**
 
 Create `frontend/app/(app)/projects/[id]/configurations/[cfgId]/_components/BabylonScene.tsx`:
 
@@ -533,7 +533,7 @@ export default function BabylonScene({ dimensions, schema }: Props) {
 }
 ```
 
-- [ ] **Step 3: Verify TypeScript compiles**
+- [x] **Step 3: Verify TypeScript compiles**
 
 ```bash
 cd frontend && npx tsc --noEmit 2>&1 | head -20
@@ -541,7 +541,7 @@ cd frontend && npx tsc --noEmit 2>&1 | head -20
 
 Expected: no output.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd frontend && git add package.json package-lock.json app/\(app\)/projects/\[id\]/configurations/\[cfgId\]/_components/BabylonScene.tsx
@@ -557,7 +557,7 @@ git commit -m "feat: install @babylonjs/core and add BabylonScene WebGL componen
 
 ---
 
-- [ ] **Step 1: Create ConfigurationViewer.tsx**
+- [x] **Step 1: Create ConfigurationViewer.tsx**
 
 Create `frontend/app/(app)/projects/[id]/configurations/[cfgId]/_components/ConfigurationViewer.tsx`:
 
@@ -770,7 +770,7 @@ export function ConfigurationViewer({ configuration, furnitureType, projectId, i
 
 Note on the number input: it uses `defaultValue` + `key` (forces remount when slider changes) + `onBlur` validation. This allows typing freely without every keystroke triggering validation, while keeping the input in sync when sliders change.
 
-- [ ] **Step 2: Verify TypeScript compiles**
+- [x] **Step 2: Verify TypeScript compiles**
 
 ```bash
 cd frontend && npx tsc --noEmit 2>&1 | head -20
@@ -778,7 +778,7 @@ cd frontend && npx tsc --noEmit 2>&1 | head -20
 
 Expected: no output.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 cd frontend && git add app/\(app\)/projects/\[id\]/configurations/\[cfgId\]/_components/ConfigurationViewer.tsx
@@ -794,7 +794,7 @@ git commit -m "feat: add ConfigurationViewer client component with dimension con
 
 ---
 
-- [ ] **Step 1: Create the page**
+- [x] **Step 1: Create the page**
 
 Create `frontend/app/(app)/projects/[id]/configurations/[cfgId]/page.tsx`:
 
@@ -870,7 +870,7 @@ Note: `project` is fetched to validate ownership (the backend 404s on a project 
 
 Note: The `(app)` layout wraps children in `<main className="p-6">`. The `-m-6` wrapper on this page cancels that padding so the full-height viewer can flush against the viewport edges. `ConfigurationViewer` uses `h-[calc(100vh-3rem)]` to fill exactly the remaining height below the 48px (`h-12`) app nav.
 
-- [ ] **Step 2: Run full test suite**
+- [x] **Step 2: Run full test suite**
 
 ```bash
 cd frontend && npx jest --no-coverage 2>&1 | tail -10
@@ -878,7 +878,7 @@ cd frontend && npx jest --no-coverage 2>&1 | tail -10
 
 Expected: `Tests: 20 passed, 20 total`
 
-- [ ] **Step 3: Verify TypeScript compiles**
+- [x] **Step 3: Verify TypeScript compiles**
 
 ```bash
 cd frontend && npx tsc --noEmit 2>&1 | head -20
@@ -886,7 +886,7 @@ cd frontend && npx tsc --noEmit 2>&1 | head -20
 
 Expected: no output.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd frontend && git add app/\(app\)/projects/\[id\]/configurations/\[cfgId\]/page.tsx

@@ -67,7 +67,7 @@ Each `describe` block tests one exported function. `beforeEach` resets `mockFetc
 - Test: `frontend/tests/lib/api.test.ts`
 - Modify: `frontend/lib/api.ts`
 
-- [ ] **Step 1: Append 6 failing tests to `frontend/tests/lib/api.test.ts`**
+- [x] **Step 1: Append 6 failing tests to `frontend/tests/lib/api.test.ts`**
 
 Add the following three `describe` blocks at the end of the file (after the existing `updateConfiguration` describe block). The import line at the top of the file also needs updating.
 
@@ -183,7 +183,7 @@ describe("listOrders", () => {
 })
 ```
 
-- [ ] **Step 2: Run tests to confirm they fail**
+- [x] **Step 2: Run tests to confirm they fail**
 
 ```bash
 cd frontend && npm test -- --testPathPattern="api.test" 2>&1 | tail -20
@@ -191,7 +191,7 @@ cd frontend && npm test -- --testPathPattern="api.test" 2>&1 | tail -20
 
 Expected: 6 new tests fail with `SyntaxError` or "is not a function" — `createOrder`, `getOrder`, `listOrders` don't exist yet.
 
-- [ ] **Step 3: Add Order types and helpers to `frontend/lib/api.ts`**
+- [x] **Step 3: Add Order types and helpers to `frontend/lib/api.ts`**
 
 Append the following to the end of `frontend/lib/api.ts` (after the existing `updateConfiguration` function):
 
@@ -270,7 +270,7 @@ export async function listOrders(token: string): Promise<Order[]> {
 }
 ```
 
-- [ ] **Step 4: Run tests to confirm all 26 pass**
+- [x] **Step 4: Run tests to confirm all 26 pass**
 
 ```bash
 cd frontend && npm test -- --testPathPattern="api.test" 2>&1 | tail -10
@@ -278,7 +278,7 @@ cd frontend && npm test -- --testPathPattern="api.test" 2>&1 | tail -10
 
 Expected: `Tests: 26 passed, 26 total`
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd frontend && git add lib/api.ts tests/lib/api.test.ts && git commit -m "feat: add Order types and createOrder/getOrder/listOrders API helpers"
@@ -291,7 +291,7 @@ cd frontend && git add lib/api.ts tests/lib/api.test.ts && git commit -m "feat: 
 **Files:**
 - Create: `frontend/app/actions/orders.ts`
 
-- [ ] **Step 1: Create `frontend/app/actions/orders.ts`**
+- [x] **Step 1: Create `frontend/app/actions/orders.ts`**
 
 ```ts
 "use server"
@@ -320,7 +320,7 @@ export async function createOrderAction(
 }
 ```
 
-- [ ] **Step 2: Run tests to confirm no regressions**
+- [x] **Step 2: Run tests to confirm no regressions**
 
 ```bash
 cd frontend && npm test 2>&1 | tail -5
@@ -328,7 +328,7 @@ cd frontend && npm test 2>&1 | tail -5
 
 Expected: `Tests: 26 passed, 26 total`
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 cd frontend && git add app/actions/orders.ts && git commit -m "feat: add createOrderAction Server Action"
@@ -343,7 +343,7 @@ cd frontend && git add app/actions/orders.ts && git commit -m "feat: add createO
 
 The current file is 216 lines. Replace it entirely with the following. The only changes vs the current file are: (1) new import `createOrderAction`, (2) two new state variables `isPlacingOrder` and `orderError`, (3) new `handlePlaceOrder` async function, (4) new "Place Order" JSX block at the end of the sidebar.
 
-- [ ] **Step 1: Replace `frontend/app/(app)/projects/[id]/configurations/[cfgId]/_components/ConfigurationViewer.tsx`**
+- [x] **Step 1: Replace `frontend/app/(app)/projects/[id]/configurations/[cfgId]/_components/ConfigurationViewer.tsx`**
 
 ```tsx
 "use client"
@@ -596,7 +596,7 @@ export function ConfigurationViewer({ configuration, furnitureType, projectId, i
 }
 ```
 
-- [ ] **Step 2: Run tests to confirm no regressions**
+- [x] **Step 2: Run tests to confirm no regressions**
 
 ```bash
 cd frontend && npm test 2>&1 | tail -5
@@ -604,7 +604,7 @@ cd frontend && npm test 2>&1 | tail -5
 
 Expected: `Tests: 26 passed, 26 total`
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 cd frontend && git add app/(app)/projects/[id]/configurations/[cfgId]/_components/ConfigurationViewer.tsx && git commit -m "feat: add Place Order button to ConfigurationViewer sidebar"
@@ -619,7 +619,7 @@ cd frontend && git add app/(app)/projects/[id]/configurations/[cfgId]/_component
 
 Replace the entire file with the following. Changes vs the current file: (1) add `listOrders, type Order` to the import from `@/lib/api`, (2) add `listOrders` call and `orderMap` after the furniture types fetch, (3) add "View Order →" `<Link>` in the card action area for `in_production` and `completed` cards that have an order.
 
-- [ ] **Step 1: Replace `frontend/app/(app)/projects/[id]/page.tsx`**
+- [x] **Step 1: Replace `frontend/app/(app)/projects/[id]/page.tsx`**
 
 ```tsx
 import { auth } from "@/lib/auth"
@@ -770,7 +770,7 @@ export default async function ProjectDetailPage({
 }
 ```
 
-- [ ] **Step 2: Run tests to confirm no regressions**
+- [x] **Step 2: Run tests to confirm no regressions**
 
 ```bash
 cd frontend && npm test 2>&1 | tail -5
@@ -778,7 +778,7 @@ cd frontend && npm test 2>&1 | tail -5
 
 Expected: `Tests: 26 passed, 26 total`
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 cd frontend && git add app/(app)/projects/[id]/page.tsx && git commit -m "feat: add View Order links to project page for in_production and completed configs"
@@ -793,7 +793,7 @@ cd frontend && git add app/(app)/projects/[id]/page.tsx && git commit -m "feat: 
 
 Note: `[id]` is the project ID; `[orderId]` is the order ID. The directory must be created as well.
 
-- [ ] **Step 1: Create `frontend/app/(app)/projects/[id]/orders/[orderId]/page.tsx`**
+- [x] **Step 1: Create `frontend/app/(app)/projects/[id]/orders/[orderId]/page.tsx`**
 
 ```tsx
 import { auth } from "@/lib/auth"
@@ -997,7 +997,7 @@ export default async function OrderDetailPage({
 }
 ```
 
-- [ ] **Step 2: Run tests to confirm no regressions**
+- [x] **Step 2: Run tests to confirm no regressions**
 
 ```bash
 cd frontend && npm test 2>&1 | tail -5
@@ -1005,7 +1005,7 @@ cd frontend && npm test 2>&1 | tail -5
 
 Expected: `Tests: 26 passed, 26 total`
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 cd frontend && git add "app/(app)/projects/[id]/orders/[orderId]/page.tsx" && git commit -m "feat: add order detail page with pricing, BOM, and download links"

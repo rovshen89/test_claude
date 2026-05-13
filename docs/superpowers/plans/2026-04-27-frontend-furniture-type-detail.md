@@ -18,7 +18,7 @@
 
 Context: `getFurnitureType(token, id)` is already in `lib/api.ts` (returns `FurnitureType` with `id`, `tenant_id`, `category`, `schema`). The list page currently has 4 columns: Category, ID, Tenant, Schema keys.
 
-- [ ] **Step 1: Modify `frontend/app/(app)/furniture-types/page.tsx`**
+- [x] **Step 1: Modify `frontend/app/(app)/furniture-types/page.tsx`**
 
 Add `Link` import if not already present (it is already imported). Add a 5th column to the table.
 
@@ -59,7 +59,7 @@ Replace with:
               </tr>
 ```
 
-- [ ] **Step 2: Create `frontend/app/(app)/furniture-types/[ftId]/page.tsx`**
+- [x] **Step 2: Create `frontend/app/(app)/furniture-types/[ftId]/page.tsx`**
 
 ```tsx
 import { auth } from "@/lib/auth"
@@ -119,7 +119,7 @@ export default async function FurnitureTypeDetailPage({
 }
 ```
 
-- [ ] **Step 3: Verify TypeScript compiles**
+- [x] **Step 3: Verify TypeScript compiles**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | head -20
@@ -127,7 +127,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | hea
 
 Expected: no output.
 
-- [ ] **Step 4: Run full test suite**
+- [x] **Step 4: Run full test suite**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx jest --no-coverage 2>&1 | tail -5
@@ -135,7 +135,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx jest --no-coverage 2>&1
 
 Expected: 46 tests, 0 failures.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && git add "app/(app)/furniture-types/page.tsx" "app/(app)/furniture-types/[ftId]/page.tsx" && git commit -m "feat: add furniture type detail page with View links (sub-plan 12)

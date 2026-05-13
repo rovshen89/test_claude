@@ -77,7 +77,7 @@ On success it calls `redirect()` internally.
 - Modify: `frontend/tests/lib/api.test.ts`
 - Modify: `frontend/lib/api.ts`
 
-- [ ] **Step 1.1: Update the import block in `frontend/tests/lib/api.test.ts`**
+- [x] **Step 1.1: Update the import block in `frontend/tests/lib/api.test.ts`**
 
 Replace the entire existing import block (lines 1–30) with:
 
@@ -118,7 +118,7 @@ import {
 } from "@/lib/api"
 ```
 
-- [ ] **Step 1.2: Append 4 new tests at the end of `frontend/tests/lib/api.test.ts`**
+- [x] **Step 1.2: Append 4 new tests at the end of `frontend/tests/lib/api.test.ts`**
 
 Add after the last `describe` block (after the closing `}` of the `createFurnitureType` describe block):
 
@@ -212,7 +212,7 @@ describe("generateBom", () => {
 })
 ```
 
-- [ ] **Step 1.3: Run tests — verify 4 new tests fail**
+- [x] **Step 1.3: Run tests — verify 4 new tests fail**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -15
@@ -220,7 +220,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -15
 
 Expected: 4 failures (`calculatePricing is not a function`, `generateBom is not a function`). The existing 40 tests still pass.
 
-- [ ] **Step 1.4: Append `calculatePricing` and `generateBom` to `frontend/lib/api.ts`**
+- [x] **Step 1.4: Append `calculatePricing` and `generateBom` to `frontend/lib/api.ts`**
 
 Append after the last function in the file (after `createFurnitureType`):
 
@@ -246,7 +246,7 @@ export async function generateBom(
 }
 ```
 
-- [ ] **Step 1.5: Run tests — verify all 44 pass**
+- [x] **Step 1.5: Run tests — verify all 44 pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
@@ -254,7 +254,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
 
 Expected: `Tests: 44 passed, 44 total`
 
-- [ ] **Step 1.6: Commit**
+- [x] **Step 1.6: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git add frontend/lib/api.ts frontend/tests/lib/api.test.ts && git commit -m "feat: add calculatePricing and generateBom to api.ts"
@@ -289,7 +289,7 @@ The sidebar currently has a conditional block starting at around line 365 that s
 )}
 ```
 
-- [ ] **Step 2.1: Read `ConfigurationViewer.tsx` to find the exact line numbers**
+- [x] **Step 2.1: Read `ConfigurationViewer.tsx` to find the exact line numbers**
 
 ```bash
 grep -n "Place Order\|allPanelsAssigned\|isPlacingOrder" /Users/rovshennurybayev/claude_agents/frontend/app/\(app\)/projects/\[id\]/configurations/\[cfgId\]/_components/ConfigurationViewer.tsx
@@ -297,7 +297,7 @@ grep -n "Place Order\|allPanelsAssigned\|isPlacingOrder" /Users/rovshennurybayev
 
 Note the exact lines so you can make a precise edit.
 
-- [ ] **Step 2.2: Add the "Preview Pricing & BOM" link above the "Place Order" button**
+- [x] **Step 2.2: Add the "Preview Pricing & BOM" link above the "Place Order" button**
 
 Find this exact block (the full content of the `<>...</>` fragment):
 
@@ -347,7 +347,7 @@ Replace with:
 
 Note: `Link` is already imported at line 5 of `ConfigurationViewer.tsx` — no import change needed. Use `&amp;` for the ampersand in JSX text, or use `{"&"}` — actually in JSX you can write `&` directly in string literals without escaping, but in JSX text content between tags it must be `&amp;` or wrapped: `Preview Pricing & BOM` with `&amp;`. Actually in JSX you CAN write `&` in text content — JSX handles it. Use `Preview Pricing & BOM` directly.
 
-- [ ] **Step 2.3: Run tests — verify 44 still pass**
+- [x] **Step 2.3: Run tests — verify 44 still pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
@@ -355,7 +355,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
 
 Expected: `Tests: 44 passed, 44 total`
 
-- [ ] **Step 2.4: Commit**
+- [x] **Step 2.4: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git add "frontend/app/(app)/projects/[id]/configurations/[cfgId]/_components/ConfigurationViewer.tsx" && git commit -m "feat: add Preview Pricing & BOM link to configuration viewer sidebar"
@@ -369,7 +369,7 @@ cd /Users/rovshennurybayev/claude_agents && git add "frontend/app/(app)/projects
 - Create: `frontend/app/(app)/projects/[id]/configurations/[cfgId]/preview/page.tsx`
 - Create: `frontend/app/(app)/projects/[id]/configurations/[cfgId]/preview/_components/PlaceOrderButton.tsx`
 
-- [ ] **Step 3.1: Create `PlaceOrderButton.tsx`**
+- [x] **Step 3.1: Create `PlaceOrderButton.tsx`**
 
 Full content of `frontend/app/(app)/projects/[id]/configurations/[cfgId]/preview/_components/PlaceOrderButton.tsx`:
 
@@ -419,7 +419,7 @@ export function PlaceOrderButton({
 }
 ```
 
-- [ ] **Step 3.2: Create `preview/page.tsx`**
+- [x] **Step 3.2: Create `preview/page.tsx`**
 
 Full content of `frontend/app/(app)/projects/[id]/configurations/[cfgId]/preview/page.tsx`:
 
@@ -648,7 +648,7 @@ export default async function PricingBomPreviewPage({
 }
 ```
 
-- [ ] **Step 3.3: Run tests — verify 44 still pass**
+- [x] **Step 3.3: Run tests — verify 44 still pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
@@ -656,7 +656,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
 
 Expected: `Tests: 44 passed, 44 total`
 
-- [ ] **Step 3.4: Commit**
+- [x] **Step 3.4: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git add \

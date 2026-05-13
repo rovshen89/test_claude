@@ -111,7 +111,7 @@ Typed as `Record<string, unknown> | null` in the frontend `Order` type — must 
 - Modify: `frontend/tests/lib/api.test.ts`
 - Modify: `frontend/lib/api.ts`
 
-- [ ] **Step 1.1: Add failing tests to `api.test.ts`**
+- [x] **Step 1.1: Add failing tests to `api.test.ts`**
 
 Open `frontend/tests/lib/api.test.ts`.
 
@@ -182,7 +182,7 @@ describe("dispatchOrder", () => {
 })
 ```
 
-- [ ] **Step 1.2: Run tests — verify 2 new tests fail**
+- [x] **Step 1.2: Run tests — verify 2 new tests fail**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -15
@@ -190,7 +190,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -15
 
 Expected: 2 failures (`dispatchOrder is not a function`, `DispatchResponse` import error or similar). 28 tests still pass, 2 fail.
 
-- [ ] **Step 1.3: Add `DispatchResponse` type and `dispatchOrder` to `lib/api.ts`**
+- [x] **Step 1.3: Add `DispatchResponse` type and `dispatchOrder` to `lib/api.ts`**
 
 Open `frontend/lib/api.ts`. After the `listMaterials` function (currently the last function in the file), append:
 
@@ -208,7 +208,7 @@ export async function dispatchOrder(token: string, orderId: string): Promise<Dis
 }
 ```
 
-- [ ] **Step 1.4: Run tests — verify all 30 pass**
+- [x] **Step 1.4: Run tests — verify all 30 pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
@@ -219,7 +219,7 @@ Expected:
 Tests: 30 passed, 30 total
 ```
 
-- [ ] **Step 1.5: Commit**
+- [x] **Step 1.5: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git add frontend/lib/api.ts frontend/tests/lib/api.test.ts && git commit -m "feat: add DispatchResponse type and dispatchOrder to api.ts"
@@ -232,7 +232,7 @@ cd /Users/rovshennurybayev/claude_agents && git add frontend/lib/api.ts frontend
 **Files:**
 - Modify: `frontend/app/actions/orders.ts`
 
-- [ ] **Step 2.1: Update `orders.ts`**
+- [x] **Step 2.1: Update `orders.ts`**
 
 Open `frontend/app/actions/orders.ts`. The file currently looks like:
 
@@ -282,7 +282,7 @@ export async function dispatchOrderAction(
 }
 ```
 
-- [ ] **Step 2.2: Run tests — verify 30 still pass**
+- [x] **Step 2.2: Run tests — verify 30 still pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
@@ -290,7 +290,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
 
 Expected: `Tests: 30 passed, 30 total`
 
-- [ ] **Step 2.3: Commit**
+- [x] **Step 2.3: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git add frontend/app/actions/orders.ts && git commit -m "feat: add dispatchOrderAction to orders Server Actions"
@@ -304,7 +304,7 @@ cd /Users/rovshennurybayev/claude_agents && git add frontend/app/actions/orders.
 - Create: `frontend/app/(app)/projects/[id]/orders/[orderId]/_components/DispatchButton.tsx`
 - Modify: `frontend/app/(app)/projects/[id]/orders/[orderId]/page.tsx`
 
-- [ ] **Step 3.1: Create `_components/DispatchButton.tsx`**
+- [x] **Step 3.1: Create `_components/DispatchButton.tsx`**
 
 Create the directory and file:
 
@@ -407,7 +407,7 @@ export function DispatchButton({
 }
 ```
 
-- [ ] **Step 3.2: Update `page.tsx`**
+- [x] **Step 3.2: Update `page.tsx`**
 
 Open `frontend/app/(app)/projects/[id]/orders/[orderId]/page.tsx`.
 
@@ -445,7 +445,7 @@ const lastDispatch =
       </section>
 ```
 
-- [ ] **Step 3.3: Run tests — verify 30 still pass**
+- [x] **Step 3.3: Run tests — verify 30 still pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
@@ -453,7 +453,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
 
 Expected: `Tests: 30 passed, 30 total`
 
-- [ ] **Step 3.4: Commit**
+- [x] **Step 3.4: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git add "frontend/app/(app)/projects/[id]/orders/[orderId]/_components/DispatchButton.tsx" "frontend/app/(app)/projects/[id]/orders/[orderId]/page.tsx" && git commit -m "feat: add CRM dispatch button to order detail page"

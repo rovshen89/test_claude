@@ -246,7 +246,7 @@ describe("listMaterials", () => {
 })
 ```
 
-- [ ] **Step 1.2: Run tests to verify failures**
+- [x] **Step 1.2: Run tests to verify failures**
 
 ```bash
 cd frontend && npm test -- --testPathPattern=tests/lib/api.test.ts
@@ -254,7 +254,7 @@ cd frontend && npm test -- --testPathPattern=tests/lib/api.test.ts
 
 Expected: Tests fail with errors about `listMaterials` not exported, `AppliedConfig` not exported, type errors on `createConfiguration`/`updateConfiguration` calls.
 
-- [ ] **Step 1.3: Implement changes in `lib/api.ts`**
+- [x] **Step 1.3: Implement changes in `lib/api.ts`**
 
 **1. Add the new types.** Insert after the `FurnitureType` type definition (after `}` on line 24, before `export class ApiError`):
 
@@ -349,7 +349,7 @@ export async function listMaterials(token: string): Promise<Material[]> {
 }
 ```
 
-- [ ] **Step 1.4: Run tests to verify they pass**
+- [x] **Step 1.4: Run tests to verify they pass**
 
 ```bash
 cd frontend && npm test -- --testPathPattern=tests/lib/api.test.ts
@@ -357,7 +357,7 @@ cd frontend && npm test -- --testPathPattern=tests/lib/api.test.ts
 
 Expected: All 28 tests pass (26 existing + 2 new `listMaterials` tests).
 
-- [ ] **Step 1.5: Commit**
+- [x] **Step 1.5: Commit**
 
 ```bash
 git add frontend/lib/api.ts frontend/tests/lib/api.test.ts
@@ -371,7 +371,7 @@ git commit -m "feat: add Material/AppliedConfig types, listMaterials, update cre
 **Files:**
 - Modify: `frontend/app/actions/configurations.ts`
 
-- [ ] **Step 2.1: Update `createConfigurationAction` and `updateConfigurationAction`**
+- [x] **Step 2.1: Update `createConfigurationAction` and `updateConfigurationAction`**
 
 Replace the entire content of `frontend/app/actions/configurations.ts` with:
 
@@ -446,7 +446,7 @@ export async function updateConfigurationAction(
 }
 ```
 
-- [ ] **Step 2.2: Run tests to confirm nothing broke**
+- [x] **Step 2.2: Run tests to confirm nothing broke**
 
 ```bash
 cd frontend && npm test
@@ -454,7 +454,7 @@ cd frontend && npm test
 
 Expected: All 28 tests pass.
 
-- [ ] **Step 2.3: Commit**
+- [x] **Step 2.3: Commit**
 
 ```bash
 git add frontend/app/actions/configurations.ts
@@ -468,7 +468,7 @@ git commit -m "feat: update Server Actions to accept AppliedConfig instead of Re
 **Files:**
 - Modify: `frontend/app/(app)/projects/[id]/configurations/new/_components/ConfigurationForm.tsx`
 
-- [ ] **Step 3.1: Update imports and `handleSubmit`**
+- [x] **Step 3.1: Update imports and `handleSubmit`**
 
 Replace the entire content of `frontend/app/(app)/projects/[id]/configurations/new/_components/ConfigurationForm.tsx` with:
 
@@ -651,7 +651,7 @@ export function ConfigurationForm({
 }
 ```
 
-- [ ] **Step 3.2: Run tests**
+- [x] **Step 3.2: Run tests**
 
 ```bash
 cd frontend && npm test
@@ -659,7 +659,7 @@ cd frontend && npm test
 
 Expected: All 28 tests pass.
 
-- [ ] **Step 3.3: Commit**
+- [x] **Step 3.3: Commit**
 
 ```bash
 git add frontend/app/(app)/projects/[id]/configurations/new/_components/ConfigurationForm.tsx
@@ -673,7 +673,7 @@ git commit -m "feat: ConfigurationForm submits full AppliedConfig format with em
 **Files:**
 - Modify: `frontend/app/(app)/projects/[id]/configurations/[cfgId]/page.tsx`
 
-- [ ] **Step 4.1: Update the page to fetch and pass materials**
+- [x] **Step 4.1: Update the page to fetch and pass materials**
 
 Replace the entire content of `frontend/app/(app)/projects/[id]/configurations/[cfgId]/page.tsx` with:
 
@@ -761,7 +761,7 @@ export default async function ConfigurationViewerPage({
 }
 ```
 
-- [ ] **Step 4.2: Run tests**
+- [x] **Step 4.2: Run tests**
 
 ```bash
 cd frontend && npm test
@@ -769,7 +769,7 @@ cd frontend && npm test
 
 Expected: All 28 tests pass (Server Component pages have no Jest tests; this change is verified by TypeScript + build).
 
-- [ ] **Step 4.3: Commit**
+- [x] **Step 4.3: Commit**
 
 ```bash
 git add frontend/app/(app)/projects/[id]/configurations/[cfgId]/page.tsx
@@ -783,7 +783,7 @@ git commit -m "feat: fetch materials server-side in viewer page and pass as prop
 **Files:**
 - Modify: `frontend/app/(app)/projects/[id]/configurations/[cfgId]/_components/ConfigurationViewer.tsx`
 
-- [ ] **Step 5.1: Write the updated ConfigurationViewer**
+- [x] **Step 5.1: Write the updated ConfigurationViewer**
 
 Replace the entire content of `frontend/app/(app)/projects/[id]/configurations/[cfgId]/_components/ConfigurationViewer.tsx` with:
 
@@ -1174,7 +1174,7 @@ export function ConfigurationViewer({ configuration, furnitureType, projectId, i
 }
 ```
 
-- [ ] **Step 5.2: Run tests**
+- [x] **Step 5.2: Run tests**
 
 ```bash
 cd frontend && npm test
@@ -1182,7 +1182,7 @@ cd frontend && npm test
 
 Expected: All 28 tests pass.
 
-- [ ] **Step 5.3: Commit**
+- [x] **Step 5.3: Commit**
 
 ```bash
 git add frontend/app/(app)/projects/[id]/configurations/[cfgId]/_components/ConfigurationViewer.tsx

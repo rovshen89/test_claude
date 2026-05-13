@@ -57,7 +57,7 @@
 - Modify: `backend/app/models/__init__.py`
 - Modify: `backend/tests/conftest.py`
 
-- [ ] **Step 1: Add ezdxf and weasyprint to requirements.txt**
+- [x] **Step 1: Add ezdxf and weasyprint to requirements.txt**
 
 Replace the contents of `backend/requirements.txt` with:
 
@@ -80,7 +80,7 @@ ezdxf>=1.3
 weasyprint>=62
 ```
 
-- [ ] **Step 2: Install new dependencies**
+- [x] **Step 2: Install new dependencies**
 
 ```bash
 pip install ezdxf "weasyprint>=62"
@@ -88,7 +88,7 @@ pip install ezdxf "weasyprint>=62"
 
 Expected: both packages install without error. On macOS, WeasyPrint≥62 bundles its system libraries so no separate brew install is needed.
 
-- [ ] **Step 3: Create the Order model**
+- [x] **Step 3: Create the Order model**
 
 Create `backend/app/models/order.py`:
 
@@ -124,7 +124,7 @@ class Order(Base):
     )
 ```
 
-- [ ] **Step 4: Create the Alembic migration**
+- [x] **Step 4: Create the Alembic migration**
 
 Create `backend/alembic/versions/004_create_orders.py`:
 
@@ -169,7 +169,7 @@ def downgrade() -> None:
     op.drop_table("orders")
 ```
 
-- [ ] **Step 5: Create order schemas**
+- [x] **Step 5: Create order schemas**
 
 Create `backend/app/schemas/order.py`:
 
@@ -198,7 +198,7 @@ class OrderResponse(BaseModel):
     model_config = {"from_attributes": True}
 ```
 
-- [ ] **Step 6: Export Order from app/models/__init__.py**
+- [x] **Step 6: Export Order from app/models/__init__.py**
 
 Replace `backend/app/models/__init__.py` with:
 
@@ -213,7 +213,7 @@ from app.models.material import Material  # noqa: F401
 from app.models.order import Order  # noqa: F401
 ```
 
-- [ ] **Step 7: Add Order to conftest imports**
+- [x] **Step 7: Add Order to conftest imports**
 
 Edit `backend/tests/conftest.py` line 10. Change:
 
@@ -227,7 +227,7 @@ to:
 from app.models import Tenant, User, Project, FurnitureType, Configuration, Material, Order  # noqa: F401
 ```
 
-- [ ] **Step 8: Run existing tests to verify nothing broke**
+- [x] **Step 8: Run existing tests to verify nothing broke**
 
 ```bash
 python3 -m pytest tests/ -v
@@ -235,7 +235,7 @@ python3 -m pytest tests/ -v
 
 Expected: 70 passed (same as before). The `orders` table is now created by `Base.metadata.create_all` in the conftest fixture.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add backend/requirements.txt backend/app/models/order.py \
@@ -252,7 +252,7 @@ git commit -m "feat: add Order model, migration, schemas, and export dependencie
 - Create: `backend/tests/test_export_dxf.py`
 - Create: `backend/app/core/export_dxf.py`
 
-- [ ] **Step 1: Write the failing DXF tests**
+- [x] **Step 1: Write the failing DXF tests**
 
 Create `backend/tests/test_export_dxf.py`:
 
@@ -369,7 +369,7 @@ def test_dxf_no_grain_arrow():
     assert len(arrows) == 0
 ```
 
-- [ ] **Step 2: Run tests to verify they fail with ImportError**
+- [x] **Step 2: Run tests to verify they fail with ImportError**
 
 ```bash
 python3 -m pytest tests/test_export_dxf.py -v
@@ -377,7 +377,7 @@ python3 -m pytest tests/test_export_dxf.py -v
 
 Expected: FAILED — `ImportError: cannot import name 'generate_dxf' from 'app.core.export_dxf'` (module does not exist yet).
 
-- [ ] **Step 3: Implement the DXF export engine**
+- [x] **Step 3: Implement the DXF export engine**
 
 Create `backend/app/core/export_dxf.py`:
 
@@ -460,7 +460,7 @@ def generate_dxf(bom: BomResponse) -> bytes:
     return buf.getvalue().encode("utf-8")
 ```
 
-- [ ] **Step 4: Run DXF tests to verify they pass**
+- [x] **Step 4: Run DXF tests to verify they pass**
 
 ```bash
 python3 -m pytest tests/test_export_dxf.py -v
@@ -475,7 +475,7 @@ tests/test_export_dxf.py::test_dxf_no_grain_arrow PASSED
 4 passed
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add backend/tests/test_export_dxf.py backend/app/core/export_dxf.py
@@ -490,7 +490,7 @@ git commit -m "feat: add DXF export engine with panel layout and grain direction
 - Create: `backend/tests/test_export_pdf.py`
 - Create: `backend/app/core/export_pdf.py`
 
-- [ ] **Step 1: Write the failing PDF tests**
+- [x] **Step 1: Write the failing PDF tests**
 
 Create `backend/tests/test_export_pdf.py`:
 
@@ -565,7 +565,7 @@ def test_pdf_is_valid_pdf():
     assert result[:4] == b"%PDF"
 ```
 
-- [ ] **Step 2: Run tests to verify they fail with ImportError**
+- [x] **Step 2: Run tests to verify they fail with ImportError**
 
 ```bash
 python3 -m pytest tests/test_export_pdf.py -v
@@ -573,7 +573,7 @@ python3 -m pytest tests/test_export_pdf.py -v
 
 Expected: FAILED — `ImportError: cannot import name 'generate_pdf' from 'app.core.export_pdf'`.
 
-- [ ] **Step 3: Implement the PDF export engine**
+- [x] **Step 3: Implement the PDF export engine**
 
 Create `backend/app/core/export_pdf.py`:
 
@@ -670,7 +670,7 @@ def generate_pdf(bom: BomResponse, pricing: PricingResponse) -> bytes:
     return weasyprint.HTML(string=html).write_pdf()
 ```
 
-- [ ] **Step 4: Run PDF tests to verify they pass**
+- [x] **Step 4: Run PDF tests to verify they pass**
 
 ```bash
 python3 -m pytest tests/test_export_pdf.py -v
@@ -683,7 +683,7 @@ tests/test_export_pdf.py::test_pdf_is_valid_pdf PASSED
 2 passed
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add backend/tests/test_export_pdf.py backend/app/core/export_pdf.py
@@ -700,7 +700,7 @@ git commit -m "feat: add PDF export engine using WeasyPrint"
 - Create: `backend/app/api/orders.py`
 - Modify: `backend/app/api/router.py`
 
-- [ ] **Step 1: Fix confirm endpoint status code in configurations.py**
+- [x] **Step 1: Fix confirm endpoint status code in configurations.py**
 
 In `backend/app/api/configurations.py`, find lines 99–103:
 
@@ -720,7 +720,7 @@ Change to:
         )
 ```
 
-- [ ] **Step 2: Write the failing orders integration tests**
+- [x] **Step 2: Write the failing orders integration tests**
 
 Create `backend/tests/test_orders.py`:
 
@@ -1043,7 +1043,7 @@ async def test_get_order_wrong_owner_returns_404(client, s3_mock):
     assert r.status_code == 404
 ```
 
-- [ ] **Step 3: Run tests to verify they fail**
+- [x] **Step 3: Run tests to verify they fail**
 
 ```bash
 python3 -m pytest tests/test_orders.py -v
@@ -1051,7 +1051,7 @@ python3 -m pytest tests/test_orders.py -v
 
 Expected: tests fail — `404 Not Found` for `/orders` (router not registered yet) and `409` checks fail on confirm (status code was 400 before the fix in Step 1).
 
-- [ ] **Step 4: Implement the orders API**
+- [x] **Step 4: Implement the orders API**
 
 Create `backend/app/api/orders.py`:
 
@@ -1212,7 +1212,7 @@ async def get_order(
     return order
 ```
 
-- [ ] **Step 5: Register the orders router**
+- [x] **Step 5: Register the orders router**
 
 Edit `backend/app/api/router.py`. Change:
 
@@ -1253,7 +1253,7 @@ api_router.include_router(bom.router, prefix="/bom", tags=["bom"])
 api_router.include_router(orders.router, prefix="/orders", tags=["orders"])
 ```
 
-- [ ] **Step 6: Run orders tests to verify they pass**
+- [x] **Step 6: Run orders tests to verify they pass**
 
 ```bash
 python3 -m pytest tests/test_orders.py -v
@@ -1274,7 +1274,7 @@ tests/test_orders.py::test_get_order_wrong_owner_returns_404 PASSED
 10 passed
 ```
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add backend/app/api/configurations.py backend/app/api/orders.py \
@@ -1288,7 +1288,7 @@ git commit -m "feat: add Orders API with DXF+PDF export generation on order crea
 
 **Files:** None (verification only)
 
-- [ ] **Step 1: Run the complete test suite**
+- [x] **Step 1: Run the complete test suite**
 
 ```bash
 python3 -m pytest tests/ -v
@@ -1301,7 +1301,7 @@ Expected: all tests pass. Prior count was 70; with the new tests the expected to
 - 10 orders tests
 = **86 passed**
 
-- [ ] **Step 2: If any tests fail, investigate and fix before committing**
+- [x] **Step 2: If any tests fail, investigate and fix before committing**
 
 Common failure modes:
 - `ImportError` for `ezdxf` or `weasyprint` → run `pip install ezdxf "weasyprint>=62"`
@@ -1309,7 +1309,7 @@ Common failure modes:
 - `model_dump(mode='json')` serialisation error → verify both `BomResponse` and `PricingResponse` have `@field_serializer` on all Decimal fields (they do per existing code)
 - WeasyPrint PDF output doesn't start with `%PDF` → ensure WeasyPrint≥62 is installed
 
-- [ ] **Step 3: Commit any fixes**
+- [x] **Step 3: Commit any fixes**
 
 ```bash
 git add -p  # stage only relevant fixes

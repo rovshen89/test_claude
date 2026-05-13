@@ -49,7 +49,7 @@ backend/
 - Modify: `backend/app/models/__init__.py`
 - Create: `backend/alembic/versions/003_create_material_catalog.py`
 
-- [ ] **Step 1.1: Add boto3 and Pillow to requirements.txt**
+- [x] **Step 1.1: Add boto3 and Pillow to requirements.txt**
 
 Replace the contents of `backend/requirements.txt` with:
 
@@ -70,7 +70,7 @@ boto3>=1.34
 Pillow>=10.0
 ```
 
-- [ ] **Step 1.2: Add moto to requirements-dev.txt**
+- [x] **Step 1.2: Add moto to requirements-dev.txt**
 
 Replace the contents of `backend/requirements-dev.txt` with:
 
@@ -83,7 +83,7 @@ httpx>=0.27
 moto[s3]>=5.0
 ```
 
-- [ ] **Step 1.3: Install new dev dependencies**
+- [x] **Step 1.3: Install new dev dependencies**
 
 ```bash
 cd /path/to/backend
@@ -92,7 +92,7 @@ pip install -r requirements-dev.txt
 
 Expected: boto3, Pillow, moto installed without errors.
 
-- [ ] **Step 1.4: Create backend/app/models/material.py**
+- [x] **Step 1.4: Create backend/app/models/material.py**
 
 ```python
 # backend/app/models/material.py
@@ -131,7 +131,7 @@ class Material(Base):
     grain_direction: Mapped[str] = mapped_column(Text, default="none")
 ```
 
-- [ ] **Step 1.5: Update backend/app/models/__init__.py**
+- [x] **Step 1.5: Update backend/app/models/__init__.py**
 
 ```python
 # backend/app/models/__init__.py
@@ -143,7 +143,7 @@ from app.models.configuration import Configuration  # noqa: F401
 from app.models.material import Material  # noqa: F401
 ```
 
-- [ ] **Step 1.6: Create backend/alembic/versions/003_create_material_catalog.py**
+- [x] **Step 1.6: Create backend/alembic/versions/003_create_material_catalog.py**
 
 ```python
 """create material_catalog
@@ -192,7 +192,7 @@ def downgrade() -> None:
     op.drop_table("material_catalog")
 ```
 
-- [ ] **Step 1.7: Verify existing tests still pass**
+- [x] **Step 1.7: Verify existing tests still pass**
 
 ```bash
 cd /path/to/backend
@@ -201,7 +201,7 @@ pytest tests/ -q
 
 Expected: 28 passed (Material model registered with Base has no side effects on existing tests).
 
-- [ ] **Step 1.8: Commit**
+- [x] **Step 1.8: Commit**
 
 ```bash
 cd /path/to/backend
@@ -220,7 +220,7 @@ git commit -m "feat: add Material model and migration 003"
 - Create: `backend/app/core/storage.py`
 - Create: `backend/tests/test_storage.py`
 
-- [ ] **Step 2.1: Write failing storage tests**
+- [x] **Step 2.1: Write failing storage tests**
 
 ```python
 # backend/tests/test_storage.py
@@ -269,7 +269,7 @@ def test_get_public_url_returns_s3_url():
     assert settings.s3_bucket in url
 ```
 
-- [ ] **Step 2.2: Run tests to confirm they fail**
+- [x] **Step 2.2: Run tests to confirm they fail**
 
 ```bash
 cd /path/to/backend
@@ -278,7 +278,7 @@ pytest tests/test_storage.py -v
 
 Expected: `ImportError: cannot import name 'upload_bytes' from 'app.core.storage'` (module doesn't exist yet).
 
-- [ ] **Step 2.3: Add S3 settings to backend/app/config.py**
+- [x] **Step 2.3: Add S3 settings to backend/app/config.py**
 
 ```python
 # backend/app/config.py
@@ -305,7 +305,7 @@ class Settings(BaseSettings):
 settings = Settings()
 ```
 
-- [ ] **Step 2.4: Create backend/app/core/storage.py**
+- [x] **Step 2.4: Create backend/app/core/storage.py**
 
 ```python
 # backend/app/core/storage.py
@@ -343,7 +343,7 @@ def get_public_url(key: str) -> str:
     return f"https://{settings.s3_bucket}.s3.{settings.aws_region}.amazonaws.com/{key}"
 ```
 
-- [ ] **Step 2.5: Run storage tests to verify they pass**
+- [x] **Step 2.5: Run storage tests to verify they pass**
 
 ```bash
 cd /path/to/backend
@@ -352,7 +352,7 @@ pytest tests/test_storage.py -v
 
 Expected: 3 passed.
 
-- [ ] **Step 2.6: Run full suite to confirm no regressions**
+- [x] **Step 2.6: Run full suite to confirm no regressions**
 
 ```bash
 cd /path/to/backend
@@ -361,7 +361,7 @@ pytest tests/ -q
 
 Expected: 31 passed.
 
-- [ ] **Step 2.7: Commit**
+- [x] **Step 2.7: Commit**
 
 ```bash
 cd /path/to/backend
@@ -377,7 +377,7 @@ git commit -m "feat: add S3 storage client and config settings"
 - Create: `backend/app/core/pbr.py`
 - Create: `backend/tests/test_pbr.py`
 
-- [ ] **Step 3.1: Write failing PBR validator tests**
+- [x] **Step 3.1: Write failing PBR validator tests**
 
 ```python
 # backend/tests/test_pbr.py
@@ -447,7 +447,7 @@ def test_returns_bytes_for_each_map():
         assert data[:8] == b"\x89PNG\r\n\x1a\n", f"{name} is not a valid PNG"
 ```
 
-- [ ] **Step 3.2: Run tests to confirm they fail**
+- [x] **Step 3.2: Run tests to confirm they fail**
 
 ```bash
 cd /path/to/backend
@@ -456,7 +456,7 @@ pytest tests/test_pbr.py -v
 
 Expected: `ImportError: cannot import name 'validate_and_extract_pbr_zip'`.
 
-- [ ] **Step 3.3: Create backend/app/core/pbr.py**
+- [x] **Step 3.3: Create backend/app/core/pbr.py**
 
 ```python
 # backend/app/core/pbr.py
@@ -499,7 +499,7 @@ def validate_and_extract_pbr_zip(zip_bytes: bytes) -> dict:
         raise ValueError("File is not a valid ZIP archive")
 ```
 
-- [ ] **Step 3.4: Run PBR tests to verify they pass**
+- [x] **Step 3.4: Run PBR tests to verify they pass**
 
 ```bash
 cd /path/to/backend
@@ -508,7 +508,7 @@ pytest tests/test_pbr.py -v
 
 Expected: 5 passed.
 
-- [ ] **Step 3.5: Run full suite**
+- [x] **Step 3.5: Run full suite**
 
 ```bash
 cd /path/to/backend
@@ -517,7 +517,7 @@ pytest tests/ -q
 
 Expected: 36 passed.
 
-- [ ] **Step 3.6: Commit**
+- [x] **Step 3.6: Commit**
 
 ```bash
 cd /path/to/backend
@@ -536,7 +536,7 @@ git commit -m "feat: add PBR ZIP validator with Pillow dimension checks"
 - Modify: `backend/tests/conftest.py`
 - Create: `backend/tests/test_materials.py`
 
-- [ ] **Step 4.1: Write failing CRUD tests**
+- [x] **Step 4.1: Write failing CRUD tests**
 
 ```python
 # backend/tests/test_materials.py
@@ -652,7 +652,7 @@ async def test_get_other_tenant_material_returns_404(client):
     assert response.status_code == 404
 ```
 
-- [ ] **Step 4.2: Run tests to verify they fail**
+- [x] **Step 4.2: Run tests to verify they fail**
 
 ```bash
 cd /path/to/backend
@@ -661,7 +661,7 @@ pytest tests/test_materials.py -v
 
 Expected: ImportError or 404 (materials router not registered).
 
-- [ ] **Step 4.3: Create backend/app/schemas/material.py**
+- [x] **Step 4.3: Create backend/app/schemas/material.py**
 
 ```python
 # backend/app/schemas/material.py
@@ -710,7 +710,7 @@ class MaterialResponse(BaseModel):
     grain_direction: str
 ```
 
-- [ ] **Step 4.4: Create backend/app/api/materials.py (CRUD only, no upload yet)**
+- [x] **Step 4.4: Create backend/app/api/materials.py (CRUD only, no upload yet)**
 
 ```python
 # backend/app/api/materials.py
@@ -806,7 +806,7 @@ async def update_material(
     return mat
 ```
 
-- [ ] **Step 4.5: Update backend/app/api/router.py**
+- [x] **Step 4.5: Update backend/app/api/router.py**
 
 ```python
 # backend/app/api/router.py
@@ -823,7 +823,7 @@ api_router.include_router(configurations.router, prefix="/configurations", tags=
 api_router.include_router(materials.router, prefix="/materials", tags=["materials"])
 ```
 
-- [ ] **Step 4.6: Update backend/tests/conftest.py to import Material**
+- [x] **Step 4.6: Update backend/tests/conftest.py to import Material**
 
 Replace line 7 (the models import) with:
 
@@ -917,7 +917,7 @@ def s3_mock():
         yield s3
 ```
 
-- [ ] **Step 4.7: Run material CRUD tests**
+- [x] **Step 4.7: Run material CRUD tests**
 
 ```bash
 cd /path/to/backend
@@ -926,7 +926,7 @@ pytest tests/test_materials.py -v
 
 Expected: 7 passed.
 
-- [ ] **Step 4.8: Run full suite**
+- [x] **Step 4.8: Run full suite**
 
 ```bash
 cd /path/to/backend
@@ -935,7 +935,7 @@ pytest tests/ -q
 
 Expected: 43 passed.
 
-- [ ] **Step 4.9: Commit**
+- [x] **Step 4.9: Commit**
 
 ```bash
 cd /path/to/backend
@@ -952,7 +952,7 @@ git commit -m "feat: add Material schemas and CRUD endpoints (list, get, update)
 - Modify: `backend/app/api/materials.py` (add `/upload` route)
 - Modify: `backend/tests/test_materials.py` (add upload tests)
 
-- [ ] **Step 5.1: Write failing upload tests**
+- [x] **Step 5.1: Write failing upload tests**
 
 Add these tests to the bottom of `backend/tests/test_materials.py`:
 
@@ -1084,7 +1084,7 @@ async def test_consumer_cannot_upload_material(client, s3_mock):
     assert response.status_code == 403
 ```
 
-- [ ] **Step 5.2: Run upload tests to verify they fail**
+- [x] **Step 5.2: Run upload tests to verify they fail**
 
 ```bash
 cd /path/to/backend
@@ -1093,7 +1093,7 @@ pytest tests/test_materials.py::test_upload_material_creates_record -v
 
 Expected: 404 (route not registered yet).
 
-- [ ] **Step 5.3: Add upload endpoint to backend/app/api/materials.py**
+- [x] **Step 5.3: Add upload endpoint to backend/app/api/materials.py**
 
 Add this import at the top (alongside existing imports):
 
@@ -1320,7 +1320,7 @@ async def update_material(
     return mat
 ```
 
-- [ ] **Step 5.4: Run upload tests**
+- [x] **Step 5.4: Run upload tests**
 
 ```bash
 cd /path/to/backend
@@ -1329,7 +1329,7 @@ pytest tests/test_materials.py -v
 
 Expected: all material tests pass (12 total).
 
-- [ ] **Step 5.5: Run full suite**
+- [x] **Step 5.5: Run full suite**
 
 ```bash
 cd /path/to/backend
@@ -1338,7 +1338,7 @@ pytest tests/ -q
 
 Expected: 48 passed.
 
-- [ ] **Step 5.6: Commit**
+- [x] **Step 5.6: Commit**
 
 ```bash
 cd /path/to/backend
@@ -1352,7 +1352,7 @@ git commit -m "feat: add material upload endpoint with PBR ZIP validation and S3
 
 **Files:** None (read-only verification)
 
-- [ ] **Step 6.1: Run full test suite**
+- [x] **Step 6.1: Run full test suite**
 
 ```bash
 cd /path/to/backend
@@ -1361,7 +1361,7 @@ pytest tests/ -v
 
 Expected: all tests pass across test_auth_core, test_auth, test_projects, test_furniture_types, test_configurations, test_storage, test_pbr, test_materials.
 
-- [ ] **Step 6.2: Verify OpenAPI routes include /materials**
+- [x] **Step 6.2: Verify OpenAPI routes include /materials**
 
 ```bash
 cd /path/to/backend
@@ -1376,7 +1376,7 @@ print('OK')
 
 Expected: `OK` printed, `/materials` routes visible.
 
-- [ ] **Step 6.3: Final commit (if any uncommitted changes)**
+- [x] **Step 6.3: Final commit (if any uncommitted changes)**
 
 If there are uncommitted changes:
 

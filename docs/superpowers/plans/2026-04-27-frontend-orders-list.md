@@ -18,7 +18,7 @@
 
 Context: The nav bar has three items currently: "Configurator" (brand), "Materials", "Furniture Types", then the user email + sign out. Add "Orders" between "Materials" and "Furniture Types". The `listOrders` function returns `Order[]` where `Order.configuration_id` is the FK to get `project_id` from `getConfiguration`. Configuration has a `project_id` field. The order detail URL is `/projects/${projectId}/orders/${orderId}`.
 
-- [ ] **Step 1: Add "Orders" nav link to `frontend/app/(app)/layout.tsx`**
+- [x] **Step 1: Add "Orders" nav link to `frontend/app/(app)/layout.tsx`**
 
 Find this exact text in the file (lines 20-25):
 ```tsx
@@ -43,7 +43,7 @@ Replace with:
         </Link>
 ```
 
-- [ ] **Step 2: Create `frontend/app/(app)/orders/page.tsx`**
+- [x] **Step 2: Create `frontend/app/(app)/orders/page.tsx`**
 
 ```tsx
 import { auth } from "@/lib/auth"
@@ -149,7 +149,7 @@ export default async function OrdersPage() {
 }
 ```
 
-- [ ] **Step 3: Verify TypeScript compiles**
+- [x] **Step 3: Verify TypeScript compiles**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | head -30
@@ -157,7 +157,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | hea
 
 Expected: no output (clean compile).
 
-- [ ] **Step 4: Run full test suite**
+- [x] **Step 4: Run full test suite**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx jest --no-coverage 2>&1 | tail -10
@@ -165,7 +165,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx jest --no-coverage 2>&1
 
 Expected: 46 tests, 0 failures.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && git add "app/(app)/layout.tsx" "app/(app)/orders/page.tsx" && git commit -m "feat: add orders list page and nav link (sub-plan 11)

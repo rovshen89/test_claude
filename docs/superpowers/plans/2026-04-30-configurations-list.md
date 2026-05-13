@@ -18,7 +18,7 @@
 
 Context: `list_configurations` currently declares `project_id: UUID = Query(...)` (mandatory). `Optional` is not yet imported in `configurations.py`. The `_setup` helper in the test file registers a manufacturer user, creates one project and one furniture type, and returns `(headers, project_id, ft_id)`. Current backend test count: 119.
 
-- [ ] **Step 1: Write 2 failing tests at the end of `backend/tests/test_configurations.py`**
+- [x] **Step 1: Write 2 failing tests at the end of `backend/tests/test_configurations.py`**
 
 ```python
 @pytest.mark.asyncio
@@ -57,7 +57,7 @@ async def test_list_all_configurations_isolation(client):
     assert len(response.json()) == 0
 ```
 
-- [ ] **Step 2: Run tests to confirm they fail**
+- [x] **Step 2: Run tests to confirm they fail**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytest tests/test_configurations.py::test_list_all_configurations tests/test_configurations.py::test_list_all_configurations_isolation -x -q 2>&1 | tail -10
@@ -65,7 +65,7 @@ cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytes
 
 Expected: 2 failures (422 Unprocessable Entity — missing required `project_id`).
 
-- [ ] **Step 3: Add `Optional` import to `backend/app/api/configurations.py`**
+- [x] **Step 3: Add `Optional` import to `backend/app/api/configurations.py`**
 
 Read the file. The current imports start with:
 ```python
@@ -82,7 +82,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 ```
 
-- [ ] **Step 4: Update `list_configurations` in `backend/app/api/configurations.py`**
+- [x] **Step 4: Update `list_configurations` in `backend/app/api/configurations.py`**
 
 Find the existing `list_configurations` function (lines ~52–62):
 ```python
@@ -121,7 +121,7 @@ async def list_configurations(
     return result.scalars().all()
 ```
 
-- [ ] **Step 5: Run new tests to confirm they pass**
+- [x] **Step 5: Run new tests to confirm they pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytest tests/test_configurations.py::test_list_all_configurations tests/test_configurations.py::test_list_all_configurations_isolation -x -q 2>&1 | tail -10
@@ -129,7 +129,7 @@ cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytes
 
 Expected: 2 passed.
 
-- [ ] **Step 6: Run full backend suite**
+- [x] **Step 6: Run full backend suite**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytest -q 2>&1 | tail -5
@@ -137,7 +137,7 @@ cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytes
 
 Expected: 121 passed, 0 failures.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/backend && git add app/api/configurations.py tests/test_configurations.py && git commit -m "feat: make project_id optional in GET /configurations (sub-plan 17, task 1)
@@ -155,7 +155,7 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 
 Context: `apiFetch<T>(path, token, options?)` is the generic fetch helper. `listConfigurations` at line 109 already calls `/configurations?project_id=...`. Current Jest test count: 55. The test file mocks `fetch` via `mockFetch` and uses `mockResolvedValueOnce`.
 
-- [ ] **Step 1: Append `listAllConfigurations` to `frontend/lib/api.ts`**
+- [x] **Step 1: Append `listAllConfigurations` to `frontend/lib/api.ts`**
 
 Append at the end of `frontend/lib/api.ts`:
 ```ts
@@ -164,11 +164,11 @@ export async function listAllConfigurations(token: string): Promise<Configuratio
 }
 ```
 
-- [ ] **Step 2: Add `listAllConfigurations` to the import in `frontend/tests/lib/api.test.ts`**
+- [x] **Step 2: Add `listAllConfigurations` to the import in `frontend/tests/lib/api.test.ts`**
 
 Read the file. Find the import block that imports from `@/lib/api`. Add `listAllConfigurations` to it.
 
-- [ ] **Step 3: Append the new test at the end of `frontend/tests/lib/api.test.ts`**
+- [x] **Step 3: Append the new test at the end of `frontend/tests/lib/api.test.ts`**
 
 ```ts
 describe("listAllConfigurations", () => {
@@ -199,7 +199,7 @@ describe("listAllConfigurations", () => {
 })
 ```
 
-- [ ] **Step 4: Run tests**
+- [x] **Step 4: Run tests**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx jest --no-coverage 2>&1 | tail -5
@@ -207,7 +207,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx jest --no-coverage 2>&1
 
 Expected: 56 tests, 0 failures.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && git add lib/api.ts tests/lib/api.test.ts && git commit -m "feat: add listAllConfigurations API function (sub-plan 17, task 2)
@@ -225,7 +225,7 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 
 Context: `getProjects(token)` returns `Project[]`. `listAllConfigurations(token)` returns `Configuration[]` (added in Task 2). `Configuration` has `id`, `project_id`, `status` fields. `Project` has `id`, `name` fields. The nav in `layout.tsx` has links: Materials, Orders, Furniture Types, Settings. Add "Configurations" between Materials and Orders.
 
-- [ ] **Step 1: Create `frontend/app/(app)/configurations/page.tsx`**
+- [x] **Step 1: Create `frontend/app/(app)/configurations/page.tsx`**
 
 ```tsx
 import { auth } from "@/lib/auth"
@@ -316,7 +316,7 @@ export default async function ConfigurationsPage() {
 }
 ```
 
-- [ ] **Step 2: Add "Configurations" nav link to `frontend/app/(app)/layout.tsx`**
+- [x] **Step 2: Add "Configurations" nav link to `frontend/app/(app)/layout.tsx`**
 
 Read the file. Find the nav links section. The current order is: Materials, Orders, Furniture Types, Settings.
 
@@ -343,7 +343,7 @@ Replace with:
           </Link>
 ```
 
-- [ ] **Step 3: Verify TypeScript + tests**
+- [x] **Step 3: Verify TypeScript + tests**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | head -20 && npx jest --no-coverage 2>&1 | tail -5
@@ -351,7 +351,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | hea
 
 Expected: no TS errors; 56 tests pass.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && git add "app/(app)/configurations/page.tsx" "app/(app)/layout.tsx" && git commit -m "feat: add configurations list page and nav link (sub-plan 17, task 3)
@@ -363,7 +363,7 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 
 ### Task 4: Push everything
 
-- [ ] **Step 1: Run full backend suite**
+- [x] **Step 1: Run full backend suite**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytest -q 2>&1 | tail -5
@@ -371,7 +371,7 @@ cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytes
 
 Expected: 121 passed, 0 failures.
 
-- [ ] **Step 2: Run full frontend checks**
+- [x] **Step 2: Run full frontend checks**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | head -10 && npx jest --no-coverage 2>&1 | tail -5
@@ -379,7 +379,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | hea
 
 Expected: no TS errors; 56 tests pass.
 
-- [ ] **Step 3: Push**
+- [x] **Step 3: Push**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git push origin main

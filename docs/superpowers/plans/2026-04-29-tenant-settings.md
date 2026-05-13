@@ -18,7 +18,7 @@
 - Modify: `backend/app/api/router.py`
 - Create: `backend/tests/test_tenants.py`
 
-- [ ] **Step 1: Create `backend/app/schemas/tenant.py`**
+- [x] **Step 1: Create `backend/app/schemas/tenant.py`**
 
 ```python
 # backend/app/schemas/tenant.py
@@ -50,7 +50,7 @@ class TenantUpdate(BaseModel):
     crm_config: Optional[Dict[str, Any]] = None
 ```
 
-- [ ] **Step 2: Write 4 failing tests in `backend/tests/test_tenants.py`**
+- [x] **Step 2: Write 4 failing tests in `backend/tests/test_tenants.py`**
 
 ```python
 # backend/tests/test_tenants.py
@@ -117,7 +117,7 @@ async def test_update_tenant_no_tenant(client):
     assert response.status_code == 404
 ```
 
-- [ ] **Step 3: Run tests to confirm they fail**
+- [x] **Step 3: Run tests to confirm they fail**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytest tests/test_tenants.py -x -q 2>&1 | tail -10
@@ -125,7 +125,7 @@ cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytes
 
 Expected: 4 failures (404 Not Found — router not registered yet).
 
-- [ ] **Step 4: Create `backend/app/api/tenants.py`**
+- [x] **Step 4: Create `backend/app/api/tenants.py`**
 
 ```python
 # backend/app/api/tenants.py
@@ -171,7 +171,7 @@ async def update_my_tenant(
     return tenant
 ```
 
-- [ ] **Step 5: Register tenants router in `backend/app/api/router.py`**
+- [x] **Step 5: Register tenants router in `backend/app/api/router.py`**
 
 Find:
 ```python
@@ -194,7 +194,7 @@ api_router.include_router(orders.router, prefix="/orders", tags=["orders"])
 api_router.include_router(tenants.router, prefix="/tenants", tags=["tenants"])
 ```
 
-- [ ] **Step 6: Run tests to confirm all pass**
+- [x] **Step 6: Run tests to confirm all pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytest tests/test_tenants.py -x -q 2>&1 | tail -10
@@ -202,7 +202,7 @@ cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytes
 
 Expected: 4 passed.
 
-- [ ] **Step 7: Run full backend suite**
+- [x] **Step 7: Run full backend suite**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytest -q 2>&1 | tail -5
@@ -210,7 +210,7 @@ cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytes
 
 Expected: 117 passed (113 + 4 new), 0 failures.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/backend && git add app/schemas/tenant.py app/api/tenants.py app/api/router.py tests/test_tenants.py && git commit -m "feat: add GET/PUT /tenants/me endpoints (sub-plan 14, task 1)
@@ -228,7 +228,7 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 
 Context: `apiFetch` is already defined and handles 204. Current test count: 51.
 
-- [ ] **Step 1: Add `TenantSettings`, `TenantUpdate` types and `getTenant`, `updateTenant` functions to `frontend/lib/api.ts`**
+- [x] **Step 1: Add `TenantSettings`, `TenantUpdate` types and `getTenant`, `updateTenant` functions to `frontend/lib/api.ts`**
 
 Append at the end of `frontend/lib/api.ts`:
 
@@ -263,7 +263,7 @@ export async function updateTenant(
 }
 ```
 
-- [ ] **Step 2: Write 3 failing tests**
+- [x] **Step 2: Write 3 failing tests**
 
 First, add `getTenant`, `updateTenant`, `type TenantSettings`, `type TenantUpdate` to the import block in `frontend/tests/lib/api.test.ts`.
 
@@ -341,7 +341,7 @@ describe("updateTenant", () => {
 })
 ```
 
-- [ ] **Step 3: Run tests**
+- [x] **Step 3: Run tests**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx jest --no-coverage 2>&1 | tail -10
@@ -349,7 +349,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx jest --no-coverage 2>&1
 
 Expected: 54 tests, 0 failures (51 + 3 new).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && git add lib/api.ts tests/lib/api.test.ts && git commit -m "feat: add getTenant + updateTenant API functions (sub-plan 14, task 2)
@@ -367,7 +367,7 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 - Create: `frontend/app/(app)/settings/_components/TenantSettingsForm.tsx`
 - Modify: `frontend/app/(app)/layout.tsx`
 
-- [ ] **Step 1: Create `frontend/app/actions/tenant.ts`**
+- [x] **Step 1: Create `frontend/app/actions/tenant.ts`**
 
 ```ts
 "use server"
@@ -395,7 +395,7 @@ export async function updateTenantAction(
 
 Note: This action returns `{ success: true }` instead of redirecting — the settings page stays open after save so the user can see their updated values.
 
-- [ ] **Step 2: Create `frontend/app/(app)/settings/_components/TenantSettingsForm.tsx`**
+- [x] **Step 2: Create `frontend/app/(app)/settings/_components/TenantSettingsForm.tsx`**
 
 ```tsx
 "use client"
@@ -523,7 +523,7 @@ export function TenantSettingsForm({ tenant }: { tenant: TenantSettings }) {
 }
 ```
 
-- [ ] **Step 3: Create `frontend/app/(app)/settings/page.tsx`**
+- [x] **Step 3: Create `frontend/app/(app)/settings/page.tsx`**
 
 ```tsx
 import { auth } from "@/lib/auth"
@@ -560,7 +560,7 @@ export default async function SettingsPage() {
 }
 ```
 
-- [ ] **Step 4: Add "Settings" nav link to `frontend/app/(app)/layout.tsx`**
+- [x] **Step 4: Add "Settings" nav link to `frontend/app/(app)/layout.tsx`**
 
 Read the file first. Find the nav links group:
 ```tsx
@@ -595,7 +595,7 @@ Replace with:
         </div>
 ```
 
-- [ ] **Step 5: Verify TypeScript + tests**
+- [x] **Step 5: Verify TypeScript + tests**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | head -20 && npx jest --no-coverage 2>&1 | tail -5
@@ -603,7 +603,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | hea
 
 Expected: no TS errors; 54 tests pass.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && git add app/actions/tenant.ts "app/(app)/settings/" "app/(app)/layout.tsx" && git commit -m "feat: add tenant settings page with webhook/margin/CRM config form (sub-plan 14, task 3)
@@ -615,7 +615,7 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 
 ### Task 4: Push everything
 
-- [ ] **Step 1: Run full backend test suite**
+- [x] **Step 1: Run full backend test suite**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytest -q 2>&1 | tail -5
@@ -623,7 +623,7 @@ cd /Users/rovshennurybayev/claude_agents/backend && .venv312/bin/python -m pytes
 
 Expected: 117 passed, 0 failures.
 
-- [ ] **Step 2: Run full frontend tests + TypeScript check**
+- [x] **Step 2: Run full frontend tests + TypeScript check**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | head -10 && npx jest --no-coverage 2>&1 | tail -5
@@ -631,7 +631,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | hea
 
 Expected: no TS errors; 54 tests pass.
 
-- [ ] **Step 3: Push**
+- [x] **Step 3: Push**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git push origin main

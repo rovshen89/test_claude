@@ -18,7 +18,7 @@
 
 Context: `updateMaterialAction` currently does `revalidatePath("/materials"); redirect("/materials")`. After a save we want the user to stay on the detail page. The materials list currently shows the name as plain text and has an "Edit" link pointing to `/materials/${mat.id}/edit`. Both need updating.
 
-- [ ] **Step 1: Update `updateMaterialAction` in `frontend/app/actions/materials.ts`**
+- [x] **Step 1: Update `updateMaterialAction` in `frontend/app/actions/materials.ts`**
 
 Read the file first. Find the `updateMaterialAction` function. Change the two lines at the end from:
 
@@ -37,7 +37,7 @@ To:
 
 The function signature is `updateMaterialAction(matId: string, data: MaterialUpdate)` — `matId` is already available.
 
-- [ ] **Step 2: Update `frontend/app/(app)/materials/page.tsx`**
+- [x] **Step 2: Update `frontend/app/(app)/materials/page.tsx`**
 
 Read the file first. Make two changes:
 
@@ -63,7 +63,7 @@ Replace with:
 href={`/materials/${mat.id}`}
 ```
 
-- [ ] **Step 3: Verify TypeScript + Jest**
+- [x] **Step 3: Verify TypeScript + Jest**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | head -20 && npx jest --no-coverage 2>&1 | tail -5
@@ -71,7 +71,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | hea
 
 Expected: no TypeScript errors; 55 tests pass.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && git add app/actions/materials.ts "app/(app)/materials/page.tsx" && git commit -m "feat: update updateMaterialAction redirect + materials list links (sub-plan 16, task 1)
@@ -88,7 +88,7 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 
 Context: This is essentially `EditMaterialForm` with one addition: a `DeleteButton` at the bottom. The `DeleteButton` shared component is at `frontend/app/(app)/_components/DeleteButton.tsx` and takes `action` (async fn returning `{ error?: string }`) and `confirmMessage` props. The `deleteMaterialAction` is already exported from `frontend/app/actions/materials.ts`.
 
-- [ ] **Step 1: Create the directory and file**
+- [x] **Step 1: Create the directory and file**
 
 Create `frontend/app/(app)/materials/[matId]/_components/MaterialDetailForm.tsx` with this exact content:
 
@@ -292,7 +292,7 @@ export function MaterialDetailForm({ material }: Props) {
 }
 ```
 
-- [ ] **Step 2: Verify TypeScript + Jest**
+- [x] **Step 2: Verify TypeScript + Jest**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | head -20 && npx jest --no-coverage 2>&1 | tail -5
@@ -300,7 +300,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | hea
 
 Expected: no TypeScript errors; 55 tests pass.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && git add "app/(app)/materials/[matId]/_components/MaterialDetailForm.tsx" && git commit -m "feat: add MaterialDetailForm inline edit component (sub-plan 16, task 2)
@@ -319,7 +319,7 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 
 Context: The Server Component fetches the material via `getMaterial(token, matId)` (already in `lib/api.ts`). Role check: `session.user.role === "admin" || session.user.role === "manufacturer"`. The old edit pages at `[matId]/edit/` are superseded and must be removed so Next.js doesn't keep serving the old route.
 
-- [ ] **Step 1: Create `frontend/app/(app)/materials/[matId]/page.tsx`**
+- [x] **Step 1: Create `frontend/app/(app)/materials/[matId]/page.tsx`**
 
 ```tsx
 import { auth } from "@/lib/auth"
@@ -399,7 +399,7 @@ export default async function MaterialDetailPage({
 }
 ```
 
-- [ ] **Step 2: Delete old edit pages**
+- [x] **Step 2: Delete old edit pages**
 
 ```bash
 rm "/Users/rovshennurybayev/claude_agents/frontend/app/(app)/materials/[matId]/edit/page.tsx"
@@ -408,7 +408,7 @@ rmdir "/Users/rovshennurybayev/claude_agents/frontend/app/(app)/materials/[matId
 rmdir "/Users/rovshennurybayev/claude_agents/frontend/app/(app)/materials/[matId]/edit"
 ```
 
-- [ ] **Step 3: Verify TypeScript + Jest**
+- [x] **Step 3: Verify TypeScript + Jest**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | head -20 && npx jest --no-coverage 2>&1 | tail -5
@@ -416,7 +416,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | hea
 
 Expected: no TypeScript errors; 55 tests pass.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && git add "app/(app)/materials/[matId]/page.tsx" && git rm "app/(app)/materials/[matId]/edit/page.tsx" "app/(app)/materials/[matId]/edit/_components/EditMaterialForm.tsx" && git commit -m "feat: add material detail page, remove separate edit pages (sub-plan 16, task 3)
@@ -428,7 +428,7 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 
 ### Task 4: Push
 
-- [ ] **Step 1: Run full frontend checks**
+- [x] **Step 1: Run full frontend checks**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | head -10 && npx jest --no-coverage 2>&1 | tail -5
@@ -436,7 +436,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | hea
 
 Expected: no TS errors; 55 tests pass.
 
-- [ ] **Step 2: Push**
+- [x] **Step 2: Push**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git push origin main

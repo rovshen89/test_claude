@@ -48,13 +48,13 @@
 - Modify: `backend/app/models/order.py`
 - Modify: `backend/app/schemas/order.py`
 
-- [ ] **Step 1: Create feature branch**
+- [x] **Step 1: Create feature branch**
 
 ```bash
 git checkout -b feat/webhook-dispatch
 ```
 
-- [ ] **Step 2: Add pytest-httpx to requirements.txt**
+- [x] **Step 2: Add pytest-httpx to requirements.txt**
 
 Open `backend/requirements.txt` and append one line at the end:
 
@@ -62,7 +62,7 @@ Open `backend/requirements.txt` and append one line at the end:
 pytest-httpx>=0.30
 ```
 
-- [ ] **Step 3: Install pytest-httpx**
+- [x] **Step 3: Install pytest-httpx**
 
 ```bash
 .venv312/bin/pip install "pytest-httpx>=0.30"
@@ -70,7 +70,7 @@ pytest-httpx>=0.30
 
 Expected: installs without error.
 
-- [ ] **Step 4: Create migration 005**
+- [x] **Step 4: Create migration 005**
 
 Create `backend/alembic/versions/005_add_last_dispatch_to_orders.py`:
 
@@ -99,7 +99,7 @@ def downgrade() -> None:
     op.drop_column("orders", "last_dispatch")
 ```
 
-- [ ] **Step 5: Add `last_dispatch` to the Order model**
+- [x] **Step 5: Add `last_dispatch` to the Order model**
 
 Open `backend/app/models/order.py`. The current file ends with the `crm_ref` and `created_at` fields. Add `last_dispatch` after `crm_ref`:
 
@@ -136,7 +136,7 @@ class Order(Base):
     )
 ```
 
-- [ ] **Step 6: Update schemas**
+- [x] **Step 6: Update schemas**
 
 Replace the entire contents of `backend/app/schemas/order.py` with:
 
@@ -174,7 +174,7 @@ class DispatchResponse(BaseModel):
     crm_ref: Optional[str]
 ```
 
-- [ ] **Step 7: Run existing tests to verify no regressions**
+- [x] **Step 7: Run existing tests to verify no regressions**
 
 ```bash
 .venv312/bin/python -m pytest tests/ -v 2>&1 | tail -5
@@ -185,7 +185,7 @@ Expected:
 86 passed, 9 warnings in ...
 ```
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add backend/requirements.txt \
@@ -203,7 +203,7 @@ git commit -m "feat: add last_dispatch column, DispatchResponse schema, pytest-h
 - Create: `backend/tests/test_webhook.py`
 - Create: `backend/app/core/webhook.py`
 
-- [ ] **Step 1: Write the failing unit tests**
+- [x] **Step 1: Write the failing unit tests**
 
 Create `backend/tests/test_webhook.py`:
 
@@ -273,7 +273,7 @@ def test_extract_crm_ref_returns_none_when_no_path_configured():
     assert result is None
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 ```bash
 .venv312/bin/python -m pytest tests/test_webhook.py -v
@@ -281,7 +281,7 @@ def test_extract_crm_ref_returns_none_when_no_path_configured():
 
 Expected: `ModuleNotFoundError: No module named 'app.core.webhook'` or similar import error.
 
-- [ ] **Step 3: Create the webhook helpers**
+- [x] **Step 3: Create the webhook helpers**
 
 Create `backend/app/core/webhook.py`:
 
@@ -332,7 +332,7 @@ def extract_crm_ref(response_json: dict, crm_config: Optional[dict]) -> Optional
     return str(value) if value is not None else None
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 ```bash
 .venv312/bin/python -m pytest tests/test_webhook.py -v
@@ -349,7 +349,7 @@ tests/test_webhook.py::test_extract_crm_ref_returns_none_when_no_path_configured
 6 passed
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add backend/tests/test_webhook.py backend/app/core/webhook.py
@@ -364,7 +364,7 @@ git commit -m "feat: add webhook payload builder and crm_ref extractor"
 - Modify: `backend/tests/test_orders.py` (add 6 dispatch tests + imports + helper)
 - Modify: `backend/app/api/orders.py` (add dispatch endpoint)
 
-- [ ] **Step 1: Add dispatch tests to test_orders.py**
+- [x] **Step 1: Add dispatch tests to test_orders.py**
 
 At the top of `backend/tests/test_orders.py`, add these imports (after the existing `import pytest` line):
 
@@ -533,7 +533,7 @@ async def test_dispatch_unauthenticated_returns_403(client):
     assert r.status_code == 403
 ```
 
-- [ ] **Step 2: Run dispatch tests to verify they fail**
+- [x] **Step 2: Run dispatch tests to verify they fail**
 
 ```bash
 .venv312/bin/python -m pytest tests/test_orders.py -k "dispatch" -v
@@ -541,7 +541,7 @@ async def test_dispatch_unauthenticated_returns_403(client):
 
 Expected: 6 tests collected, all fail with `405 Method Not Allowed` or `404 Not Found` (endpoint does not exist yet).
 
-- [ ] **Step 3: Implement the dispatch endpoint in orders.py**
+- [x] **Step 3: Implement the dispatch endpoint in orders.py**
 
 Open `backend/app/api/orders.py`. Make the following changes:
 
@@ -634,7 +634,7 @@ async def dispatch_order(
     )
 ```
 
-- [ ] **Step 4: Run dispatch tests to verify they pass**
+- [x] **Step 4: Run dispatch tests to verify they pass**
 
 ```bash
 .venv312/bin/python -m pytest tests/test_orders.py -k "dispatch" -v
@@ -651,7 +651,7 @@ tests/test_orders.py::test_dispatch_unauthenticated_returns_403 PASSED
 6 passed
 ```
 
-- [ ] **Step 5: Run the full test suite**
+- [x] **Step 5: Run the full test suite**
 
 ```bash
 .venv312/bin/python -m pytest tests/ -v 2>&1 | tail -5
@@ -664,7 +664,7 @@ Expected:
 
 (86 existing + 6 webhook unit + 6 dispatch integration = 98 passed)
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add backend/tests/test_orders.py backend/app/api/orders.py

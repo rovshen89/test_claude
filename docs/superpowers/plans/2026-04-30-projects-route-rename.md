@@ -21,7 +21,7 @@ Context: The projects list currently lives at `/dashboard` (in `dashboard/page.t
 
 Note: There is no `frontend/app/(app)/projects/page.tsx` yet — `frontend/app/(app)/projects/` only contains `[id]/` and `new/` subdirs. The new file sits alongside those dirs.
 
-- [ ] **Step 1: Create `frontend/app/(app)/projects/page.tsx`**
+- [x] **Step 1: Create `frontend/app/(app)/projects/page.tsx`**
 
 Create the file with this exact content:
 
@@ -82,7 +82,7 @@ export default async function ProjectsPage() {
 }
 ```
 
-- [ ] **Step 2: Replace `frontend/app/(app)/dashboard/page.tsx` with a redirect shim**
+- [x] **Step 2: Replace `frontend/app/(app)/dashboard/page.tsx` with a redirect shim**
 
 Replace the entire file content with:
 
@@ -96,7 +96,7 @@ export default function DashboardPage() {
 
 (The current file has ~54 lines of projects list logic — discard it all.)
 
-- [ ] **Step 3: Update `frontend/app/(app)/layout.tsx`**
+- [x] **Step 3: Update `frontend/app/(app)/layout.tsx`**
 
 Two changes in this file:
 
@@ -137,7 +137,7 @@ Replace with:
           </Link>
 ```
 
-- [ ] **Step 4: Verify TypeScript compiles cleanly**
+- [x] **Step 4: Verify TypeScript compiles cleanly**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | head -20
@@ -145,7 +145,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | hea
 
 Expected: no output (0 errors).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git add "frontend/app/(app)/projects/page.tsx" "frontend/app/(app)/dashboard/page.tsx" "frontend/app/(app)/layout.tsx" && git commit -m "feat: add projects list page at /projects, redirect /dashboard, update nav (sub-plan 20)
@@ -170,7 +170,7 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 
 Context: These 9 files each contain one or two `/dashboard` references (as `href`, `redirect()`, `redirectTo:`, or `revalidatePath()` arguments) that must all point to `/projects` instead.
 
-- [ ] **Step 1: Update `frontend/app/page.tsx`**
+- [x] **Step 1: Update `frontend/app/page.tsx`**
 
 Find:
 ```tsx
@@ -182,7 +182,7 @@ Replace with:
   if (session) redirect("/projects")
 ```
 
-- [ ] **Step 2: Update `frontend/app/not-found.tsx`**
+- [x] **Step 2: Update `frontend/app/not-found.tsx`**
 
 Find:
 ```tsx
@@ -198,7 +198,7 @@ Replace with:
       </Link>
 ```
 
-- [ ] **Step 3: Update `frontend/app/error.tsx`**
+- [x] **Step 3: Update `frontend/app/error.tsx`**
 
 Find:
 ```tsx
@@ -214,7 +214,7 @@ Replace with:
         </Link>
 ```
 
-- [ ] **Step 4: Update `frontend/app/(auth)/login/page.tsx`**
+- [x] **Step 4: Update `frontend/app/(auth)/login/page.tsx`**
 
 Find:
 ```tsx
@@ -226,7 +226,7 @@ Replace with:
       await signIn("credentials", { email, password, redirectTo: "/projects" })
 ```
 
-- [ ] **Step 5: Update `frontend/app/(auth)/register/page.tsx`**
+- [x] **Step 5: Update `frontend/app/(auth)/register/page.tsx`**
 
 Find:
 ```tsx
@@ -238,7 +238,7 @@ Replace with:
       await signIn("credentials", { email, password, redirectTo: "/projects" })
 ```
 
-- [ ] **Step 6: Update `frontend/app/(app)/projects/[id]/page.tsx`**
+- [x] **Step 6: Update `frontend/app/(app)/projects/[id]/page.tsx`**
 
 Find:
 ```tsx
@@ -254,7 +254,7 @@ Replace with:
         </Link>
 ```
 
-- [ ] **Step 7: Update `frontend/app/(app)/projects/[id]/not-found.tsx`**
+- [x] **Step 7: Update `frontend/app/(app)/projects/[id]/not-found.tsx`**
 
 Find:
 ```tsx
@@ -270,7 +270,7 @@ Replace with:
       </Link>
 ```
 
-- [ ] **Step 8: Update `frontend/app/(app)/projects/new/page.tsx`** (two references)
+- [x] **Step 8: Update `frontend/app/(app)/projects/new/page.tsx`** (two references)
 
 First reference — breadcrumb link:
 
@@ -310,7 +310,7 @@ Replace with:
           </Link>
 ```
 
-- [ ] **Step 9: Update `frontend/app/actions/projects.ts`** (two references in `deleteProjectAction`)
+- [x] **Step 9: Update `frontend/app/actions/projects.ts`** (two references in `deleteProjectAction`)
 
 Find:
 ```ts
@@ -324,7 +324,7 @@ Replace with:
   redirect("/projects")
 ```
 
-- [ ] **Step 10: Verify TypeScript + Jest**
+- [x] **Step 10: Verify TypeScript + Jest**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | head -20 && npx jest --no-coverage 2>&1 | tail -5
@@ -332,7 +332,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | hea
 
 Expected: no TS errors; 57 tests pass.
 
-- [ ] **Step 11: Confirm no remaining `/dashboard` references in frontend**
+- [x] **Step 11: Confirm no remaining `/dashboard` references in frontend**
 
 ```bash
 grep -r '"/dashboard"' /Users/rovshennurybayev/claude_agents/frontend/app/
@@ -340,7 +340,7 @@ grep -r '"/dashboard"' /Users/rovshennurybayev/claude_agents/frontend/app/
 
 Expected: no output (all references replaced). If any appear, fix them before committing.
 
-- [ ] **Step 12: Commit**
+- [x] **Step 12: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git add \
@@ -362,7 +362,7 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 
 ### Task 3: Push
 
-- [ ] **Step 1: Run full frontend checks**
+- [x] **Step 1: Run full frontend checks**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | head -10 && npx jest --no-coverage 2>&1 | tail -5
@@ -370,7 +370,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npx tsc --noEmit 2>&1 | hea
 
 Expected: no TS errors; 57 tests pass.
 
-- [ ] **Step 2: Push**
+- [x] **Step 2: Push**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git push origin main

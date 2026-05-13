@@ -72,7 +72,7 @@ backend/
 - Create: `backend/app/config.py`
 - Create: `backend/app/main.py`
 
-- [ ] **Step 1.1: Create requirements.txt**
+- [x] **Step 1.1: Create requirements.txt**
 
 ```
 # backend/requirements.txt
@@ -89,7 +89,7 @@ passlib[bcrypt]>=1.7.4
 python-multipart>=0.0.12
 ```
 
-- [ ] **Step 1.2: Create requirements-dev.txt**
+- [x] **Step 1.2: Create requirements-dev.txt**
 
 ```
 # backend/requirements-dev.txt
@@ -99,7 +99,7 @@ pytest-asyncio>=0.23
 httpx>=0.27
 ```
 
-- [ ] **Step 1.3: Create pyproject.toml**
+- [x] **Step 1.3: Create pyproject.toml**
 
 ```toml
 # backend/pyproject.toml
@@ -108,7 +108,7 @@ asyncio_mode = "auto"
 testpaths = ["tests"]
 ```
 
-- [ ] **Step 1.4: Create app/config.py**
+- [x] **Step 1.4: Create app/config.py**
 
 ```python
 # backend/app/config.py
@@ -125,7 +125,7 @@ class Settings(BaseSettings):
 settings = Settings()
 ```
 
-- [ ] **Step 1.5: Create app/main.py with health check only**
+- [x] **Step 1.5: Create app/main.py with health check only**
 
 ```python
 # backend/app/main.py
@@ -139,7 +139,7 @@ async def health() -> dict:
     return {"status": "ok"}
 ```
 
-- [ ] **Step 1.6: Install dev dependencies and verify health endpoint runs**
+- [x] **Step 1.6: Install dev dependencies and verify health endpoint runs**
 
 ```bash
 cd backend
@@ -150,7 +150,7 @@ curl http://localhost:8000/health
 # Expected: {"status":"ok"}
 ```
 
-- [ ] **Step 1.7: Create empty `__init__.py` files**
+- [x] **Step 1.7: Create empty `__init__.py` files**
 
 ```bash
 touch backend/app/__init__.py
@@ -161,7 +161,7 @@ touch backend/app/core/__init__.py
 touch backend/tests/__init__.py
 ```
 
-- [ ] **Step 1.8: Commit**
+- [x] **Step 1.8: Commit**
 
 ```bash
 cd backend
@@ -179,7 +179,7 @@ git commit -m "feat: scaffold FastAPI backend with health check"
 - Create: `backend/alembic.ini`
 - Create: `backend/alembic/env.py`
 
-- [ ] **Step 2.1: Create models/base.py**
+- [x] **Step 2.1: Create models/base.py**
 
 ```python
 # backend/app/models/base.py
@@ -190,7 +190,7 @@ class Base(DeclarativeBase):
     pass
 ```
 
-- [ ] **Step 2.2: Create database.py**
+- [x] **Step 2.2: Create database.py**
 
 ```python
 # backend/app/database.py
@@ -205,14 +205,14 @@ engine = create_async_engine(settings.database_url, echo=False)
 async_session_factory = async_sessionmaker(engine, expire_on_commit=False)
 ```
 
-- [ ] **Step 2.3: Initialize Alembic**
+- [x] **Step 2.3: Initialize Alembic**
 
 ```bash
 cd backend
 alembic init alembic
 ```
 
-- [ ] **Step 2.4: Replace alembic/env.py with async-compatible version**
+- [x] **Step 2.4: Replace alembic/env.py with async-compatible version**
 
 ```python
 # backend/alembic/env.py
@@ -276,7 +276,7 @@ else:
     run_migrations_online()
 ```
 
-- [ ] **Step 2.5: Commit**
+- [x] **Step 2.5: Commit**
 
 ```bash
 cd backend
@@ -293,7 +293,7 @@ git commit -m "feat: add SQLAlchemy 2.0 async database layer and Alembic config"
 - Create: `backend/app/models/user.py`
 - Modify: `backend/app/models/__init__.py`
 
-- [ ] **Step 3.1: Create models/tenant.py**
+- [x] **Step 3.1: Create models/tenant.py**
 
 ```python
 # backend/app/models/tenant.py
@@ -316,7 +316,7 @@ class Tenant(Base):
     crm_config: Mapped[dict | None] = mapped_column(JSON, nullable=True)
 ```
 
-- [ ] **Step 3.2: Create models/user.py**
+- [x] **Step 3.2: Create models/user.py**
 
 ```python
 # backend/app/models/user.py
@@ -342,7 +342,7 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column(Text)
 ```
 
-- [ ] **Step 3.3: Update models/__init__.py to register models with Base**
+- [x] **Step 3.3: Update models/__init__.py to register models with Base**
 
 ```python
 # backend/app/models/__init__.py
@@ -350,7 +350,7 @@ from app.models.tenant import Tenant  # noqa: F401
 from app.models.user import User  # noqa: F401
 ```
 
-- [ ] **Step 3.4: Generate and apply first migration**
+- [x] **Step 3.4: Generate and apply first migration**
 
 ```bash
 cd backend
@@ -359,7 +359,7 @@ alembic upgrade head
 # Expected: two new tables created in PostgreSQL
 ```
 
-- [ ] **Step 3.5: Commit**
+- [x] **Step 3.5: Commit**
 
 ```bash
 cd backend
@@ -374,7 +374,7 @@ git commit -m "feat: add Tenant and User models with initial migration"
 **Files:**
 - Create: `backend/app/core/auth.py`
 
-- [ ] **Step 4.1: Write the failing test for auth core**
+- [x] **Step 4.1: Write the failing test for auth core**
 
 ```python
 # backend/tests/test_auth_core.py
@@ -402,7 +402,7 @@ def test_decode_invalid_token_raises():
         decode_token("not.a.valid.token")
 ```
 
-- [ ] **Step 4.2: Run test to verify it fails**
+- [x] **Step 4.2: Run test to verify it fails**
 
 ```bash
 cd backend
@@ -410,7 +410,7 @@ pytest tests/test_auth_core.py -v
 # Expected: ImportError — app.core.auth not found
 ```
 
-- [ ] **Step 4.3: Create app/core/auth.py**
+- [x] **Step 4.3: Create app/core/auth.py**
 
 ```python
 # backend/app/core/auth.py
@@ -445,7 +445,7 @@ def decode_token(token: str) -> dict:
     return jwt.decode(token, settings.secret_key, algorithms=["HS256"])
 ```
 
-- [ ] **Step 4.4: Run test to verify it passes**
+- [x] **Step 4.4: Run test to verify it passes**
 
 ```bash
 cd backend
@@ -453,7 +453,7 @@ pytest tests/test_auth_core.py -v
 # Expected: 3 passed
 ```
 
-- [ ] **Step 4.5: Commit**
+- [x] **Step 4.5: Commit**
 
 ```bash
 cd backend
@@ -473,7 +473,7 @@ git commit -m "feat: add JWT auth core (hash, verify, create/decode token)"
 - Create: `backend/tests/conftest.py`
 - Create: `backend/tests/test_auth.py`
 
-- [ ] **Step 5.1: Create app/schemas/auth.py**
+- [x] **Step 5.1: Create app/schemas/auth.py**
 
 ```python
 # backend/app/schemas/auth.py
@@ -500,7 +500,7 @@ class TokenResponse(BaseModel):
     token_type: str
 ```
 
-- [ ] **Step 5.2: Create app/core/deps.py (get_db only)**
+- [x] **Step 5.2: Create app/core/deps.py (get_db only)**
 
 ```python
 # backend/app/core/deps.py
@@ -516,7 +516,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         yield session
 ```
 
-- [ ] **Step 5.3: Create app/api/auth.py**
+- [x] **Step 5.3: Create app/api/auth.py**
 
 ```python
 # backend/app/api/auth.py
@@ -564,7 +564,7 @@ async def login(body: LoginRequest, db: AsyncSession = Depends(get_db)):
     return TokenResponse(access_token=token, token_type="bearer")
 ```
 
-- [ ] **Step 5.4: Register auth router in main.py**
+- [x] **Step 5.4: Register auth router in main.py**
 
 ```python
 # backend/app/main.py
@@ -582,7 +582,7 @@ async def health() -> dict:
     return {"status": "ok"}
 ```
 
-- [ ] **Step 5.5: Create tests/conftest.py**
+- [x] **Step 5.5: Create tests/conftest.py**
 
 ```python
 # backend/tests/conftest.py
@@ -629,7 +629,7 @@ async def client(db_session: AsyncSession):
     app.dependency_overrides.clear()
 ```
 
-- [ ] **Step 5.6: Write failing auth tests**
+- [x] **Step 5.6: Write failing auth tests**
 
 ```python
 # backend/tests/test_auth.py
@@ -687,7 +687,7 @@ async def test_login_wrong_password_returns_401(client):
     assert response.status_code == 401
 ```
 
-- [ ] **Step 5.7: Run tests to verify they pass**
+- [x] **Step 5.7: Run tests to verify they pass**
 
 ```bash
 cd backend
@@ -695,7 +695,7 @@ pytest tests/test_auth.py -v
 # Expected: 4 passed
 ```
 
-- [ ] **Step 5.8: Commit**
+- [x] **Step 5.8: Commit**
 
 ```bash
 cd backend
@@ -711,7 +711,7 @@ git commit -m "feat: add JWT auth endpoints (register, login) with tests"
 **Files:**
 - Modify: `backend/app/core/deps.py`
 
-- [ ] **Step 6.1: Write failing test for protected endpoint**
+- [x] **Step 6.1: Write failing test for protected endpoint**
 
 Add to `tests/test_auth.py`:
 
@@ -727,7 +727,7 @@ async def test_protected_endpoint_without_token_returns_403(client):
     assert response.status_code in (401, 403, 404)
 ```
 
-- [ ] **Step 6.2: Extend app/core/deps.py with get_current_user and require_role**
+- [x] **Step 6.2: Extend app/core/deps.py with get_current_user and require_role**
 
 ```python
 # backend/app/core/deps.py
@@ -787,7 +787,7 @@ def require_role(*roles: str):
     return _check
 ```
 
-- [ ] **Step 6.3: Run all existing tests to confirm no regressions**
+- [x] **Step 6.3: Run all existing tests to confirm no regressions**
 
 ```bash
 cd backend
@@ -795,7 +795,7 @@ pytest tests/ -v
 # Expected: all previously passing tests still pass
 ```
 
-- [ ] **Step 6.4: Commit**
+- [x] **Step 6.4: Commit**
 
 ```bash
 cd backend
@@ -815,7 +815,7 @@ git commit -m "feat: add get_current_user and require_role RBAC dependencies"
 - Modify: `backend/app/main.py`
 - Create: `backend/tests/test_projects.py`
 
-- [ ] **Step 7.1: Write failing project tests**
+- [x] **Step 7.1: Write failing project tests**
 
 ```python
 # backend/tests/test_projects.py
@@ -894,7 +894,7 @@ async def test_get_other_users_project_returns_404(client):
     assert response.status_code == 404
 ```
 
-- [ ] **Step 7.2: Run tests to verify they fail**
+- [x] **Step 7.2: Run tests to verify they fail**
 
 ```bash
 cd backend
@@ -902,7 +902,7 @@ pytest tests/test_projects.py -v
 # Expected: ImportError or 404 — /projects not registered
 ```
 
-- [ ] **Step 7.3: Create app/models/project.py**
+- [x] **Step 7.3: Create app/models/project.py**
 
 ```python
 # backend/app/models/project.py
@@ -933,7 +933,7 @@ class Project(Base):
     )
 ```
 
-- [ ] **Step 7.4: Update models/__init__.py**
+- [x] **Step 7.4: Update models/__init__.py**
 
 ```python
 # backend/app/models/__init__.py
@@ -942,7 +942,7 @@ from app.models.user import User  # noqa: F401
 from app.models.project import Project  # noqa: F401
 ```
 
-- [ ] **Step 7.5: Create app/schemas/project.py**
+- [x] **Step 7.5: Create app/schemas/project.py**
 
 ```python
 # backend/app/schemas/project.py
@@ -972,7 +972,7 @@ class ProjectResponse(BaseModel):
     updated_at: datetime
 ```
 
-- [ ] **Step 7.6: Create app/api/projects.py**
+- [x] **Step 7.6: Create app/api/projects.py**
 
 ```python
 # backend/app/api/projects.py
@@ -1040,7 +1040,7 @@ async def update_room_schema(
     return project
 ```
 
-- [ ] **Step 7.7: Register projects router in main.py**
+- [x] **Step 7.7: Register projects router in main.py**
 
 ```python
 # backend/app/main.py
@@ -1059,7 +1059,7 @@ async def health() -> dict:
     return {"status": "ok"}
 ```
 
-- [ ] **Step 7.8: Generate and apply migration**
+- [x] **Step 7.8: Generate and apply migration**
 
 ```bash
 cd backend
@@ -1067,7 +1067,7 @@ alembic revision --autogenerate -m "create projects"
 alembic upgrade head
 ```
 
-- [ ] **Step 7.9: Run project tests to verify they pass**
+- [x] **Step 7.9: Run project tests to verify they pass**
 
 ```bash
 cd backend
@@ -1075,7 +1075,7 @@ pytest tests/test_projects.py -v
 # Expected: 5 passed
 ```
 
-- [ ] **Step 7.10: Run all tests to confirm no regressions**
+- [x] **Step 7.10: Run all tests to confirm no regressions**
 
 ```bash
 cd backend
@@ -1083,7 +1083,7 @@ pytest tests/ -v
 # Expected: all tests pass
 ```
 
-- [ ] **Step 7.11: Commit**
+- [x] **Step 7.11: Commit**
 
 ```bash
 cd backend
@@ -1104,7 +1104,7 @@ git commit -m "feat: add Project model and CRUD endpoints with tests"
 - Modify: `backend/app/main.py`
 - Create: `backend/tests/test_furniture_types.py`
 
-- [ ] **Step 8.1: Write failing furniture type tests**
+- [x] **Step 8.1: Write failing furniture type tests**
 
 ```python
 # backend/tests/test_furniture_types.py
@@ -1180,7 +1180,7 @@ async def test_get_furniture_type_by_id(client):
     assert response.json()["id"] == ft_id
 ```
 
-- [ ] **Step 8.2: Run tests to verify they fail**
+- [x] **Step 8.2: Run tests to verify they fail**
 
 ```bash
 cd backend
@@ -1188,7 +1188,7 @@ pytest tests/test_furniture_types.py -v
 # Expected: ImportError or 404
 ```
 
-- [ ] **Step 8.3: Create app/models/furniture_type.py**
+- [x] **Step 8.3: Create app/models/furniture_type.py**
 
 ```python
 # backend/app/models/furniture_type.py
@@ -1211,7 +1211,7 @@ class FurnitureType(Base):
     schema: Mapped[dict] = mapped_column(JSON)
 ```
 
-- [ ] **Step 8.4: Update models/__init__.py**
+- [x] **Step 8.4: Update models/__init__.py**
 
 ```python
 # backend/app/models/__init__.py
@@ -1221,7 +1221,7 @@ from app.models.project import Project  # noqa: F401
 from app.models.furniture_type import FurnitureType  # noqa: F401
 ```
 
-- [ ] **Step 8.5: Create app/schemas/furniture_type.py**
+- [x] **Step 8.5: Create app/schemas/furniture_type.py**
 
 ```python
 # backend/app/schemas/furniture_type.py
@@ -1246,7 +1246,7 @@ class FurnitureTypeResponse(BaseModel):
     schema: dict[str, Any]
 ```
 
-- [ ] **Step 8.6: Create app/api/furniture_types.py**
+- [x] **Step 8.6: Create app/api/furniture_types.py**
 
 ```python
 # backend/app/api/furniture_types.py
@@ -1309,7 +1309,7 @@ async def get_furniture_type(
     return ft
 ```
 
-- [ ] **Step 8.7: Register furniture_types router in main.py**
+- [x] **Step 8.7: Register furniture_types router in main.py**
 
 ```python
 # backend/app/main.py
@@ -1329,7 +1329,7 @@ async def health() -> dict:
     return {"status": "ok"}
 ```
 
-- [ ] **Step 8.8: Generate and apply migration**
+- [x] **Step 8.8: Generate and apply migration**
 
 ```bash
 cd backend
@@ -1337,7 +1337,7 @@ alembic revision --autogenerate -m "create furniture_types"
 alembic upgrade head
 ```
 
-- [ ] **Step 8.9: Run furniture type tests to verify they pass**
+- [x] **Step 8.9: Run furniture type tests to verify they pass**
 
 ```bash
 cd backend
@@ -1345,7 +1345,7 @@ pytest tests/test_furniture_types.py -v
 # Expected: 4 passed
 ```
 
-- [ ] **Step 8.10: Commit**
+- [x] **Step 8.10: Commit**
 
 ```bash
 cd backend
@@ -1367,7 +1367,7 @@ git commit -m "feat: add FurnitureType model and CRUD endpoints with tests"
 - Modify: `backend/app/main.py`
 - Create: `backend/tests/test_configurations.py`
 
-- [ ] **Step 9.1: Write failing configuration tests**
+- [x] **Step 9.1: Write failing configuration tests**
 
 ```python
 # backend/tests/test_configurations.py
@@ -1477,7 +1477,7 @@ async def test_confirm_already_confirmed_returns_400(client):
     assert response.status_code == 400
 ```
 
-- [ ] **Step 9.2: Run tests to verify they fail**
+- [x] **Step 9.2: Run tests to verify they fail**
 
 ```bash
 cd backend
@@ -1485,7 +1485,7 @@ pytest tests/test_configurations.py -v
 # Expected: ImportError or 404
 ```
 
-- [ ] **Step 9.3: Create app/models/configuration.py**
+- [x] **Step 9.3: Create app/models/configuration.py**
 
 ```python
 # backend/app/models/configuration.py
@@ -1510,7 +1510,7 @@ class Configuration(Base):
     status: Mapped[str] = mapped_column(Text, default="draft")
 ```
 
-- [ ] **Step 9.4: Update models/__init__.py**
+- [x] **Step 9.4: Update models/__init__.py**
 
 ```python
 # backend/app/models/__init__.py
@@ -1521,7 +1521,7 @@ from app.models.furniture_type import FurnitureType  # noqa: F401
 from app.models.configuration import Configuration  # noqa: F401
 ```
 
-- [ ] **Step 9.5: Create app/schemas/configuration.py**
+- [x] **Step 9.5: Create app/schemas/configuration.py**
 
 ```python
 # backend/app/schemas/configuration.py
@@ -1554,7 +1554,7 @@ class ConfigurationResponse(BaseModel):
     status: str
 ```
 
-- [ ] **Step 9.6: Create app/api/configurations.py**
+- [x] **Step 9.6: Create app/api/configurations.py**
 
 ```python
 # backend/app/api/configurations.py
@@ -1654,7 +1654,7 @@ async def confirm_configuration(
     return config
 ```
 
-- [ ] **Step 9.7: Register configurations router in main.py**
+- [x] **Step 9.7: Register configurations router in main.py**
 
 ```python
 # backend/app/main.py
@@ -1675,7 +1675,7 @@ async def health() -> dict:
     return {"status": "ok"}
 ```
 
-- [ ] **Step 9.8: Generate and apply migration**
+- [x] **Step 9.8: Generate and apply migration**
 
 ```bash
 cd backend
@@ -1683,7 +1683,7 @@ alembic revision --autogenerate -m "create configurations"
 alembic upgrade head
 ```
 
-- [ ] **Step 9.9: Run configuration tests to verify they pass**
+- [x] **Step 9.9: Run configuration tests to verify they pass**
 
 ```bash
 cd backend
@@ -1691,7 +1691,7 @@ pytest tests/test_configurations.py -v
 # Expected: 5 passed
 ```
 
-- [ ] **Step 9.10: Commit**
+- [x] **Step 9.10: Commit**
 
 ```bash
 cd backend
@@ -1705,7 +1705,7 @@ git commit -m "feat: add Configuration model and CRUD endpoints with tests"
 
 ### Task 10: Full Test Suite + Smoke Test
 
-- [ ] **Step 10.1: Run the full test suite**
+- [x] **Step 10.1: Run the full test suite**
 
 ```bash
 cd backend
@@ -1714,7 +1714,7 @@ pytest tests/ -v
 #           test_furniture_types, test_configurations)
 ```
 
-- [ ] **Step 10.2: Verify OpenAPI docs are generated correctly**
+- [x] **Step 10.2: Verify OpenAPI docs are generated correctly**
 
 ```bash
 cd backend
@@ -1724,7 +1724,7 @@ uvicorn app.main:app
 # All endpoints listed with correct request/response schemas
 ```
 
-- [ ] **Step 10.3: Final commit**
+- [x] **Step 10.3: Final commit**
 
 ```bash
 cd backend

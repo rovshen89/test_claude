@@ -50,7 +50,7 @@
 - Modify: `backend/app/api/configurations.py`
 - Modify: `backend/tests/test_configurations.py`
 
-- [ ] **Step 1: Write failing tests**
+- [x] **Step 1: Write failing tests**
 
 Append to `backend/tests/test_configurations.py`:
 
@@ -99,7 +99,7 @@ async def test_list_configurations_wrong_owner_returns_404(client):
     assert r.status_code == 404
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/backend
@@ -108,7 +108,7 @@ cd /Users/rovshennurybayev/claude_agents/backend
 
 Expected: FAIL — `405 Method Not Allowed` or route not found.
 
-- [ ] **Step 3: Add the list endpoint**
+- [x] **Step 3: Add the list endpoint**
 
 Edit `backend/app/api/configurations.py`.
 
@@ -135,7 +135,7 @@ async def list_configurations(
     return result.scalars().all()
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/backend
@@ -144,7 +144,7 @@ cd /Users/rovshennurybayev/claude_agents/backend
 
 Expected: all 8 tests PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents
@@ -164,7 +164,7 @@ git commit -m "feat: add GET /configurations?project_id= list endpoint"
 - Create: `frontend/postcss.config.js`
 - Create: `frontend/app/globals.css`
 
-- [ ] **Step 1: Create `frontend/package.json`**
+- [x] **Step 1: Create `frontend/package.json`**
 
 ```json
 {
@@ -197,7 +197,7 @@ git commit -m "feat: add GET /configurations?project_id= list endpoint"
 }
 ```
 
-- [ ] **Step 2: Create `frontend/tsconfig.json`**
+- [x] **Step 2: Create `frontend/tsconfig.json`**
 
 ```json
 {
@@ -223,7 +223,7 @@ git commit -m "feat: add GET /configurations?project_id= list endpoint"
 }
 ```
 
-- [ ] **Step 3: Create `frontend/next.config.ts`**
+- [x] **Step 3: Create `frontend/next.config.ts`**
 
 ```ts
 import type { NextConfig } from "next"
@@ -233,7 +233,7 @@ const nextConfig: NextConfig = {}
 export default nextConfig
 ```
 
-- [ ] **Step 4: Create `frontend/tailwind.config.ts`**
+- [x] **Step 4: Create `frontend/tailwind.config.ts`**
 
 ```ts
 import type { Config } from "tailwindcss"
@@ -247,7 +247,7 @@ const config: Config = {
 export default config
 ```
 
-- [ ] **Step 5: Create `frontend/postcss.config.js`**
+- [x] **Step 5: Create `frontend/postcss.config.js`**
 
 ```js
 module.exports = {
@@ -258,7 +258,7 @@ module.exports = {
 }
 ```
 
-- [ ] **Step 6: Create `frontend/app/globals.css`**
+- [x] **Step 6: Create `frontend/app/globals.css`**
 
 ```css
 @tailwind base;
@@ -266,7 +266,7 @@ module.exports = {
 @tailwind utilities;
 ```
 
-- [ ] **Step 7: Install dependencies**
+- [x] **Step 7: Install dependencies**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend
@@ -275,7 +275,7 @@ npm install
 
 Expected: `node_modules/` created, no errors.
 
-- [ ] **Step 8: Verify TypeScript compiles**
+- [x] **Step 8: Verify TypeScript compiles**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend
@@ -284,7 +284,7 @@ npx tsc --noEmit
 
 Expected: no output (no errors). If `next-env.d.ts` is missing, run `npx next build` once to generate it, then re-run tsc.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents
@@ -303,7 +303,7 @@ git commit -m "feat: scaffold Next.js 15 frontend with Tailwind"
 
 NextAuth v5 stores `access_token` (the FastAPI JWT) inside its own session JWT cookie. The type augmentation in `types/next-auth.d.ts` tells TypeScript about this extra field so `session.user.access_token` is typed correctly.
 
-- [ ] **Step 1: Create `frontend/types/next-auth.d.ts`**
+- [x] **Step 1: Create `frontend/types/next-auth.d.ts`**
 
 ```ts
 import "next-auth"
@@ -328,7 +328,7 @@ declare module "next-auth/jwt" {
 }
 ```
 
-- [ ] **Step 2: Create `frontend/lib/auth.ts`**
+- [x] **Step 2: Create `frontend/lib/auth.ts`**
 
 `authorize()` calls `POST /auth/login` on the FastAPI backend and returns the access token. The `jwt` callback copies it into the NextAuth JWT. The `session` callback exposes it via `auth()`.
 
@@ -377,7 +377,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 })
 ```
 
-- [ ] **Step 3: Create `frontend/app/api/auth/[...nextauth]/route.ts`**
+- [x] **Step 3: Create `frontend/app/api/auth/[...nextauth]/route.ts`**
 
 Create the directories `frontend/app/api/auth/[...nextauth]/` then create `route.ts`:
 
@@ -386,7 +386,7 @@ import { handlers } from "@/lib/auth"
 export const { GET, POST } = handlers
 ```
 
-- [ ] **Step 4: Create `.env.local` with required env vars**
+- [x] **Step 4: Create `.env.local` with required env vars**
 
 Create `frontend/.env.local` (this file is gitignored by Next.js):
 
@@ -402,7 +402,7 @@ openssl rand -base64 32
 
 Paste the output as the `AUTH_SECRET` value. **Do not commit this file.**
 
-- [ ] **Step 5: Verify TypeScript**
+- [x] **Step 5: Verify TypeScript**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend
@@ -411,7 +411,7 @@ npx tsc --noEmit
 
 Expected: no errors.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents
@@ -428,7 +428,7 @@ git commit -m "feat: add NextAuth v5 Credentials provider config"
 - Create: `frontend/lib/api.ts`
 - Create: `frontend/tests/lib/api.test.ts`
 
-- [ ] **Step 1: Create `frontend/jest.config.ts`**
+- [x] **Step 1: Create `frontend/jest.config.ts`**
 
 `nextJest` handles TypeScript transpilation and resolves `@/` path aliases automatically.
 
@@ -447,7 +447,7 @@ const config: Config = {
 export default createJestConfig(config)
 ```
 
-- [ ] **Step 2: Write failing tests**
+- [x] **Step 2: Write failing tests**
 
 Create `frontend/tests/lib/api.test.ts`:
 
@@ -567,7 +567,7 @@ describe("getFurnitureType", () => {
 })
 ```
 
-- [ ] **Step 3: Run tests to verify they fail**
+- [x] **Step 3: Run tests to verify they fail**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend
@@ -576,7 +576,7 @@ npm test
 
 Expected: FAIL — `Cannot find module '@/lib/api'`.
 
-- [ ] **Step 4: Create `frontend/lib/api.ts`**
+- [x] **Step 4: Create `frontend/lib/api.ts`**
 
 ```ts
 export type Project = {
@@ -649,7 +649,7 @@ export async function getFurnitureType(token: string, id: string): Promise<Furni
 }
 ```
 
-- [ ] **Step 5: Run tests to verify they pass**
+- [x] **Step 5: Run tests to verify they pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend
@@ -658,7 +658,7 @@ npm test
 
 Expected: all 8 tests PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents
@@ -677,7 +677,7 @@ git commit -m "feat: add lib/api.ts typed fetch helpers with Jest tests"
 - Create: `frontend/app/not-found.tsx`
 - Create: `frontend/app/error.tsx`
 
-- [ ] **Step 1: Create `frontend/app/layout.tsx`**
+- [x] **Step 1: Create `frontend/app/layout.tsx`**
 
 ```tsx
 import type { Metadata } from "next"
@@ -696,7 +696,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-- [ ] **Step 2: Create `frontend/app/page.tsx`**
+- [x] **Step 2: Create `frontend/app/page.tsx`**
 
 Checks session and redirects immediately. Authenticated users → `/dashboard`; unauthenticated → `/login`.
 
@@ -711,7 +711,7 @@ export default async function RootPage() {
 }
 ```
 
-- [ ] **Step 3: Create `frontend/middleware.ts`**
+- [x] **Step 3: Create `frontend/middleware.ts`**
 
 Protects all routes under `/dashboard` and `/projects`. The `(app)` route group prefix is stripped in URLs.
 
@@ -723,7 +723,7 @@ export const config = {
 }
 ```
 
-- [ ] **Step 4: Create `frontend/app/not-found.tsx`**
+- [x] **Step 4: Create `frontend/app/not-found.tsx`**
 
 ```tsx
 import Link from "next/link"
@@ -740,7 +740,7 @@ export default function NotFound() {
 }
 ```
 
-- [ ] **Step 5: Create `frontend/app/error.tsx`**
+- [x] **Step 5: Create `frontend/app/error.tsx`**
 
 Error boundaries must be Client Components.
 
@@ -775,7 +775,7 @@ export default function ErrorPage({
 }
 ```
 
-- [ ] **Step 6: Verify TypeScript**
+- [x] **Step 6: Verify TypeScript**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend
@@ -784,7 +784,7 @@ npx tsc --noEmit
 
 Expected: no errors.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents
@@ -805,7 +805,7 @@ The `(auth)` route group produces URLs `/login` and `/register` (group name stri
 
 **Key pattern for Server Actions with redirects:** `signIn(...)` throws `NEXT_REDIRECT` on success. `AuthError` is thrown on credential failure. Always re-throw non-`AuthError` exceptions so Next.js can handle `NEXT_REDIRECT`.
 
-- [ ] **Step 1: Create `frontend/app/(auth)/layout.tsx`**
+- [x] **Step 1: Create `frontend/app/(auth)/layout.tsx`**
 
 ```tsx
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -817,7 +817,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-- [ ] **Step 2: Create `frontend/app/(auth)/login/page.tsx`**
+- [x] **Step 2: Create `frontend/app/(auth)/login/page.tsx`**
 
 ```tsx
 import { signIn } from "@/lib/auth"
@@ -901,7 +901,7 @@ export default async function LoginPage({
 }
 ```
 
-- [ ] **Step 3: Create `frontend/app/(auth)/register/page.tsx`**
+- [x] **Step 3: Create `frontend/app/(auth)/register/page.tsx`**
 
 The register action calls `POST /auth/register` directly (not via `lib/api.ts` — no token needed), then auto-logs in via `signIn`. `role` defaults to `"consumer"` and `tenant_id` defaults to `null` on the backend; we don't send them from the form.
 
@@ -1008,7 +1008,7 @@ export default async function RegisterPage({
 }
 ```
 
-- [ ] **Step 4: Verify TypeScript**
+- [x] **Step 4: Verify TypeScript**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend
@@ -1017,7 +1017,7 @@ npx tsc --noEmit
 
 Expected: no errors.
 
-- [ ] **Step 5: Smoke test in browser**
+- [x] **Step 5: Smoke test in browser**
 
 Start the backend:
 ```bash
@@ -1036,7 +1036,7 @@ Register a new user. Expected: redirected to `/dashboard` (blank page is fine �
 Sign out. Expected: redirected to `/login`.
 Log in with the created credentials. Expected: redirected to `/dashboard`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents
@@ -1052,7 +1052,7 @@ git commit -m "feat: add login and register pages with Server Actions"
 - Create: `frontend/app/(app)/layout.tsx`
 - Create: `frontend/app/(app)/dashboard/page.tsx`
 
-- [ ] **Step 1: Create `frontend/app/(app)/layout.tsx`**
+- [x] **Step 1: Create `frontend/app/(app)/layout.tsx`**
 
 The layout reads the session for the user's email (used in the nav) and renders the sign-out button. The `signOut` Server Action redirect throws `NEXT_REDIRECT`; it must be re-thrown.
 
@@ -1091,7 +1091,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 }
 ```
 
-- [ ] **Step 2: Create `frontend/app/(app)/dashboard/page.tsx`**
+- [x] **Step 2: Create `frontend/app/(app)/dashboard/page.tsx`**
 
 ```tsx
 import { auth } from "@/lib/auth"
@@ -1144,7 +1144,7 @@ export default async function DashboardPage() {
 }
 ```
 
-- [ ] **Step 3: Verify TypeScript**
+- [x] **Step 3: Verify TypeScript**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend
@@ -1153,11 +1153,11 @@ npx tsc --noEmit
 
 Expected: no errors.
 
-- [ ] **Step 4: Smoke test**
+- [x] **Step 4: Smoke test**
 
 With backend + frontend running (from Task 6 Step 5), visit `http://localhost:3000/dashboard`. Expected: project grid (empty or with projects). "Configurator" logo in nav. Sign-out link visible.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents
@@ -1172,7 +1172,7 @@ git commit -m "feat: add app shell layout and dashboard page"
 **Files:**
 - Create: `frontend/app/(app)/projects/new/page.tsx`
 
-- [ ] **Step 1: Create `frontend/app/(app)/projects/new/page.tsx`**
+- [x] **Step 1: Create `frontend/app/(app)/projects/new/page.tsx`**
 
 The Server Action calls `auth()` to retrieve the token (cookies are available in Server Actions). After creating the project it redirects to the project detail page.
 
@@ -1235,7 +1235,7 @@ export default async function NewProjectPage() {
 }
 ```
 
-- [ ] **Step 2: Verify TypeScript**
+- [x] **Step 2: Verify TypeScript**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend
@@ -1244,11 +1244,11 @@ npx tsc --noEmit
 
 Expected: no errors.
 
-- [ ] **Step 3: Smoke test**
+- [x] **Step 3: Smoke test**
 
 Click "+ New Project" on the dashboard. Fill in a name. Submit. Expected: redirected to `/projects/{id}` (404 or blank page — detail page not built yet).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents
@@ -1264,7 +1264,7 @@ git commit -m "feat: add new project page"
 - Create: `frontend/app/(app)/projects/[id]/page.tsx`
 - Create: `frontend/app/(app)/projects/[id]/not-found.tsx`
 
-- [ ] **Step 1: Create `frontend/app/(app)/projects/[id]/not-found.tsx`**
+- [x] **Step 1: Create `frontend/app/(app)/projects/[id]/not-found.tsx`**
 
 ```tsx
 import Link from "next/link"
@@ -1281,7 +1281,7 @@ export default function ProjectNotFound() {
 }
 ```
 
-- [ ] **Step 2: Create `frontend/app/(app)/projects/[id]/page.tsx`**
+- [x] **Step 2: Create `frontend/app/(app)/projects/[id]/page.tsx`**
 
 Fetches project + configurations in parallel. Then fetches furniture type names for unique `furniture_type_id` values (also in parallel, deduplicated). `notFound()` is called on `ApiError(404)`.
 
@@ -1387,7 +1387,7 @@ export default async function ProjectDetailPage({
 }
 ```
 
-- [ ] **Step 3: Verify TypeScript**
+- [x] **Step 3: Verify TypeScript**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend
@@ -1396,13 +1396,13 @@ npx tsc --noEmit
 
 Expected: no errors.
 
-- [ ] **Step 4: Smoke test**
+- [x] **Step 4: Smoke test**
 
 Navigate to a project from the dashboard. Expected: project name, "New Configuration" button (disabled), configuration cards if any exist (or "No configurations yet." if not).
 
 Visit `/projects/nonexistent-id`. Expected: "Project not found." page with a back link.
 
-- [ ] **Step 5: Run all tests**
+- [x] **Step 5: Run all tests**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend
@@ -1418,7 +1418,7 @@ cd /Users/rovshennurybayev/claude_agents/backend
 
 Expected: all backend tests PASS (including the 2 new configuration list tests).
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents

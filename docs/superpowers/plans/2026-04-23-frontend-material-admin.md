@@ -101,7 +101,7 @@ export type Material = {
 - Modify: `frontend/types/next-auth.d.ts`
 - Modify: `frontend/lib/auth.ts`
 
-- [ ] **Step 1.1: Update `types/next-auth.d.ts`**
+- [x] **Step 1.1: Update `types/next-auth.d.ts`**
 
 Full file replacement (add `role` to User, JWT, Session):
 
@@ -131,7 +131,7 @@ declare module "next-auth/jwt" {
 }
 ```
 
-- [ ] **Step 1.2: Update `lib/auth.ts` — decode JWT payload to set `token.role`**
+- [x] **Step 1.2: Update `lib/auth.ts` — decode JWT payload to set `token.role`**
 
 The current `callbacks` block:
 ```ts
@@ -171,7 +171,7 @@ Replace with:
   },
 ```
 
-- [ ] **Step 1.3: Run tests — verify 30 still pass**
+- [x] **Step 1.3: Run tests — verify 30 still pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
@@ -179,7 +179,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
 
 Expected: `Tests: 30 passed, 30 total`
 
-- [ ] **Step 1.4: Commit**
+- [x] **Step 1.4: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git add frontend/types/next-auth.d.ts frontend/lib/auth.ts && git commit -m "feat: decode JWT payload to expose role in NextAuth session"
@@ -193,7 +193,7 @@ cd /Users/rovshennurybayev/claude_agents && git add frontend/types/next-auth.d.t
 - Modify: `frontend/tests/lib/api.test.ts`
 - Modify: `frontend/lib/api.ts`
 
-- [ ] **Step 2.1: Add failing tests to `api.test.ts`**
+- [x] **Step 2.1: Add failing tests to `api.test.ts`**
 
 **2a. Update the import block** at the top of `frontend/tests/lib/api.test.ts`. Replace the existing import with:
 
@@ -349,7 +349,7 @@ describe("updateMaterial", () => {
 })
 ```
 
-- [ ] **Step 2.2: Run tests — verify 8 new tests fail**
+- [x] **Step 2.2: Run tests — verify 8 new tests fail**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -15
@@ -357,7 +357,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -15
 
 Expected: 8 failures (`getMaterial is not a function`, etc.). 30 existing tests still pass.
 
-- [ ] **Step 2.3: Add types and functions to `lib/api.ts`**
+- [x] **Step 2.3: Add types and functions to `lib/api.ts`**
 
 Append after the `dispatchOrder` function (currently at the end of the file):
 
@@ -417,7 +417,7 @@ export async function updateMaterial(
 }
 ```
 
-- [ ] **Step 2.4: Run tests — verify all 38 pass**
+- [x] **Step 2.4: Run tests — verify all 38 pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
@@ -425,7 +425,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
 
 Expected: `Tests: 38 passed, 38 total`
 
-- [ ] **Step 2.5: Commit**
+- [x] **Step 2.5: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git add frontend/lib/api.ts frontend/tests/lib/api.test.ts && git commit -m "feat: add getMaterial, createMaterial, uploadMaterial, updateMaterial to api.ts"
@@ -438,7 +438,7 @@ cd /Users/rovshennurybayev/claude_agents && git add frontend/lib/api.ts frontend
 **Files:**
 - Create: `frontend/app/actions/materials.ts`
 
-- [ ] **Step 3.1: Create `frontend/app/actions/materials.ts`**
+- [x] **Step 3.1: Create `frontend/app/actions/materials.ts`**
 
 Full content:
 
@@ -511,7 +511,7 @@ export async function updateMaterialAction(
 }
 ```
 
-- [ ] **Step 3.2: Run tests — verify 38 still pass**
+- [x] **Step 3.2: Run tests — verify 38 still pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
@@ -519,7 +519,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
 
 Expected: `Tests: 38 passed, 38 total`
 
-- [ ] **Step 3.3: Commit**
+- [x] **Step 3.3: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git add frontend/app/actions/materials.ts && git commit -m "feat: add createMaterialAction, uploadMaterialAction, updateMaterialAction"
@@ -532,7 +532,7 @@ cd /Users/rovshennurybayev/claude_agents && git add frontend/app/actions/materia
 **Files:**
 - Modify: `frontend/app/(app)/layout.tsx`
 
-- [ ] **Step 4.1: Add the Materials link to `layout.tsx`**
+- [x] **Step 4.1: Add the Materials link to `layout.tsx`**
 
 The current nav element:
 ```tsx
@@ -557,7 +557,7 @@ Replace with:
           <span className="text-xs text-slate-500">{session.user.email}</span>
 ```
 
-- [ ] **Step 4.2: Run tests — verify 38 still pass**
+- [x] **Step 4.2: Run tests — verify 38 still pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
@@ -565,7 +565,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
 
 Expected: `Tests: 38 passed, 38 total`
 
-- [ ] **Step 4.3: Commit**
+- [x] **Step 4.3: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git add "frontend/app/(app)/layout.tsx" && git commit -m "feat: add Materials nav link to app layout"
@@ -578,7 +578,7 @@ cd /Users/rovshennurybayev/claude_agents && git add "frontend/app/(app)/layout.t
 **Files:**
 - Create: `frontend/app/(app)/materials/page.tsx`
 
-- [ ] **Step 5.1: Create `frontend/app/(app)/materials/page.tsx`**
+- [x] **Step 5.1: Create `frontend/app/(app)/materials/page.tsx`**
 
 Full content:
 
@@ -657,7 +657,7 @@ export default async function MaterialsPage() {
 }
 ```
 
-- [ ] **Step 5.2: Run tests — verify 38 still pass**
+- [x] **Step 5.2: Run tests — verify 38 still pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
@@ -665,7 +665,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
 
 Expected: `Tests: 38 passed, 38 total`
 
-- [ ] **Step 5.3: Commit**
+- [x] **Step 5.3: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git add "frontend/app/(app)/materials/page.tsx" && git commit -m "feat: add materials list page"
@@ -679,7 +679,7 @@ cd /Users/rovshennurybayev/claude_agents && git add "frontend/app/(app)/material
 - Create: `frontend/app/(app)/materials/new/page.tsx`
 - Create: `frontend/app/(app)/materials/new/_components/NewMaterialForm.tsx`
 
-- [ ] **Step 6.1: Create `frontend/app/(app)/materials/new/page.tsx`**
+- [x] **Step 6.1: Create `frontend/app/(app)/materials/new/page.tsx`**
 
 Full content:
 
@@ -709,7 +709,7 @@ export default async function NewMaterialPage() {
 }
 ```
 
-- [ ] **Step 6.2: Create `frontend/app/(app)/materials/new/_components/NewMaterialForm.tsx`**
+- [x] **Step 6.2: Create `frontend/app/(app)/materials/new/_components/NewMaterialForm.tsx`**
 
 Full content:
 
@@ -894,7 +894,7 @@ export function NewMaterialForm() {
 }
 ```
 
-- [ ] **Step 6.3: Run tests — verify 38 still pass**
+- [x] **Step 6.3: Run tests — verify 38 still pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
@@ -902,7 +902,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
 
 Expected: `Tests: 38 passed, 38 total`
 
-- [ ] **Step 6.4: Commit**
+- [x] **Step 6.4: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git add "frontend/app/(app)/materials/new/page.tsx" "frontend/app/(app)/materials/new/_components/NewMaterialForm.tsx" && git commit -m "feat: add new material page with create/upload form"
@@ -916,7 +916,7 @@ cd /Users/rovshennurybayev/claude_agents && git add "frontend/app/(app)/material
 - Create: `frontend/app/(app)/materials/[matId]/edit/page.tsx`
 - Create: `frontend/app/(app)/materials/[matId]/edit/_components/EditMaterialForm.tsx`
 
-- [ ] **Step 7.1: Create `frontend/app/(app)/materials/[matId]/edit/page.tsx`**
+- [x] **Step 7.1: Create `frontend/app/(app)/materials/[matId]/edit/page.tsx`**
 
 Full content:
 
@@ -962,7 +962,7 @@ export default async function EditMaterialPage({
 }
 ```
 
-- [ ] **Step 7.2: Create `frontend/app/(app)/materials/[matId]/edit/_components/EditMaterialForm.tsx`**
+- [x] **Step 7.2: Create `frontend/app/(app)/materials/[matId]/edit/_components/EditMaterialForm.tsx`**
 
 Full content:
 
@@ -1121,7 +1121,7 @@ export function EditMaterialForm({ material }: Props) {
 }
 ```
 
-- [ ] **Step 7.3: Run tests — verify 38 still pass**
+- [x] **Step 7.3: Run tests — verify 38 still pass**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
@@ -1129,7 +1129,7 @@ cd /Users/rovshennurybayev/claude_agents/frontend && npm test 2>&1 | tail -10
 
 Expected: `Tests: 38 passed, 38 total`
 
-- [ ] **Step 7.4: Commit**
+- [x] **Step 7.4: Commit**
 
 ```bash
 cd /Users/rovshennurybayev/claude_agents && git add "frontend/app/(app)/materials/[matId]/edit/page.tsx" "frontend/app/(app)/materials/[matId]/edit/_components/EditMaterialForm.tsx" && git commit -m "feat: add edit material page with update form"
